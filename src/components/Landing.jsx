@@ -8,6 +8,8 @@ export default function Landing({ onEnter }) {
         "AI / ML ENGINEER",
         "FULL STACK DEVELOPER",
         "COMPETITIVE PROGRAMMER",
+        "DESIGNER",
+        "ATHLETE",
         "MACHINE LEARNING ENTHUSIAST",
     ];
 

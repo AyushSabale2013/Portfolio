@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import about from "../assets/about.png";
 import github from "../assets/github.png";
 import instagram from "../assets/instagram.png";
-import leetcode from "../assets/leetcode.png";  
+import leetcode from "../assets/leetcode.png";
 import linkedin from "../assets/linkedin.png";
 import projects from "../assets/projects.png";
 import resume from "../assets/resume.png";
@@ -11,7 +11,7 @@ import terminal from "../assets/terminal.png";
 
 const dockItems = [
     { id: "projects", name: "Projects", icon: projects },
-    { id: "about", name: "About", icon: about },
+    { id: "profile", name: "Profile", icon: about },
     { id: "resume", name: "Resume", icon: resume },
     { id: "terminal", name: "Terminal", icon: terminal },
 

@@ -7,9 +7,8 @@ import {
     MdBatteryFull,
 } from "react-icons/md";
 
-import logo from "../assets/logo.png";
 
-export default function MenuBar() {
+export default function MenuBar({ onOpen }) {
     const [time, setTime] = useState("");
     const [date, setDate] = useState("");
 
@@ -75,29 +74,78 @@ export default function MenuBar() {
                 style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "10px",
+                    gap: "8px",
                 }}
             >
-                <img
-                    src={logo}
-                    alt="Logo"
-                    style={{
-                        width: 33,
-                        height: 33,
-                        objectFit: "contain",
+                <motion.button
+                    whileHover={{
+                        backgroundColor: "rgba(255,255,255,.10)",
                     }}
-                />
-
-                <span
+                    whileTap={{
+                        scale: 0.96,
+                    }}
                     style={{
-                        fontSize: "14px",
+                        width: 30,
+                        height: 30,
+
+                        border: "none",
+                        borderRadius: "7px",
+
+                        background: "transparent",
+
+                        color: "#E5E7EB",
+
+                        fontSize: "18px",
                         fontWeight: 600,
-                        letterSpacing: "1px",
-                        color: "#C0C0C0",
+
+                        cursor: "pointer",
+
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+
+                        padding: 0,
+                        marginRight: "10px",
                     }}
                 >
-                    SPIDEY OS
-                </span>
+                    ☰
+                </motion.button>
+
+                {[
+                    { label: "Projects", id: "projects" },
+                    { label: "Resume", id: "resume" },
+                    { label: "Contact", id: "contact" },
+                ].map((item) => (
+                    <motion.button
+                        key={item.id}
+                        whileHover={{
+                            backgroundColor: "rgba(255,255,255,.10)",
+                        }}
+                        whileTap={{
+                            scale: 0.96,
+                        }}
+                        onClick={() => onOpen(item.id)}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+
+                            color: "#E5E7EB",
+
+                            cursor: "pointer",
+
+                            padding: "4px 12px",
+
+                            borderRadius: "7px",
+
+                            fontSize: "13px",
+                            fontWeight: 500,
+
+                            letterSpacing: ".3px",
+                        }}
+                    >
+                        {item.label}
+                    </motion.button>
+                ))}
             </div>
 
             {/* Center */}

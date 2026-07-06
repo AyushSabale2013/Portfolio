@@ -1,9 +1,55 @@
 import desktopWallpaper from "../assets/desktop.jpg";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import MenuBar from "./MenuBar";
 import Dock from "./Dock";
+import DesktopIcon from "./DesktopIcon";
+import WindowManager from "./WindowManager";
+import profile from "../assets/profile.png";
+import home from "../assets/home.png";
 
 export default function Desktop() {
+    const [openApps, setOpenApps] = useState([]);
+    const [highestZ, setHighestZ] = useState(1000);
+    const [windowZ, setWindowZ] = useState({});
+
+    const openApp = (id) => {
+        setOpenApps((prev) => {
+            if (prev.includes(id)) {
+                focusWindow(id);
+                return prev;
+            }
+
+            setHighestZ((current) => {
+                const next = current + 1;
+
+                setWindowZ((prevZ) => ({
+                    ...prevZ,
+                    [id]: next,
+                }));
+
+                return next;
+            });
+
+            return [...prev, id];
+        });
+    };
+
+    const closeApp = (id) => {
+        setOpenApps((prev) => prev.filter((app) => app !== id));
+    };
+    const focusWindow = (id) => {
+        setHighestZ((current) => {
+            const next = current + 1;
+
+            setWindowZ((prev) => ({
+                ...prev,
+                [id]: next,
+            }));
+
+            return next;
+        });
+    };
     return (
         <div
             style={{
@@ -81,10 +127,38 @@ export default function Desktop() {
                 }}
             />
 
-            {/* Menu Bar */}
-            <MenuBar />
 
-            <Dock />
+            {/* Desktop Icons */}
+
+            <DesktopIcon
+                icon={profile}
+                label="Profile"
+                top="8%"
+                left="2%"
+                onDoubleClick={() => openApp("profile")}
+            />
+
+            <DesktopIcon
+                icon={home}
+                label="Home"
+                top="22%"
+                left="2%"
+                onDoubleClick={() => openApp("home")}
+            />
+
+            {/* Menu Bar */}
+            <MenuBar onOpen={openApp} />
+
+            {/* Window Manager */}
+            <WindowManager
+                openApps={openApps}
+                closeApp={closeApp}
+                windowZ={windowZ}
+                focusWindow={focusWindow}
+            />
+
+            {/* Dock */}
+            <Dock onOpen={openApp} />
 
         </div>
     );

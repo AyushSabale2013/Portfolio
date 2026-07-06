@@ -1,7 +1,7 @@
-export default function Resume() {
+export default function Profile() {
     return (
         <div style={{ color: "white" }}>
-            <h1>Resume</h1>
+            <h1>Profile</h1>
         </div>
     );
 }
