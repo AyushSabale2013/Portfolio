@@ -1,0 +1,188 @@
+/* ========================================================
+   SPIDER OS ARCHITECTURE // CALENDAR OVERRIDE CORES
+======================================================== */
+
+.react-calendar {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', 'Inter', sans-serif;
+    position: relative;
+}
+
+/* Background Cyber-Web Grid Lines */
+.react-calendar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(rgba(255, 43, 70, 0.15) 1px, transparent 1px),
+        linear-gradient(to right, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px, 44px 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ========================================================
+   NAVIGATION SECTOR (HUD HEADERS)
+======================================================== */
+
+.react-calendar__navigation {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    border-bottom: 1px dashed rgba(255, 43, 70, 0.25);
+    padding-bottom: 12px;
+}
+
+.react-calendar__navigation button {
+    color: #00E5FF;
+    background: rgba(0, 229, 255, 0.03);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 6px 14px;
+    text-transform: uppercase;
+    text-shadow: 0 0 6px rgba(0, 229, 255, 0.4);
+}
+
+.react-calendar__navigation button:hover {
+    background: rgba(255, 43, 70, 0.2) !important;
+    color: #FF2B46 !important;
+    border-color: #FF2B46;
+    box-shadow: 0 0 12px rgba(255, 43, 70, 0.4);
+}
+
+.react-calendar__navigation__label {
+    font-size: 16px;
+    font-weight: 900;
+    color: #ffffff !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ========================================================
+   WEEKDAYS TERMINOLOGY 
+======================================================== */
+
+.react-calendar__month-view__weekdays {
+    text-align: center;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.react-calendar__month-view__weekdays__weekday {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* ========================================================
+   WEB NODES (DATE TILES)
+======================================================== */
+
+.react-calendar__tile {
+    position: relative;
+    height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.02) !important;
+    border-radius: 4px; /* Tech-sharp angular edges instead of round */
+    background: rgba(5, 6, 8, 0.3);
+    color: #e4e4e7;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1;
+}
+
+/* Dynamic Hover Trapped in Cyber-Webs */
+.react-calendar__tile:hover {
+    background: rgba(0, 229, 255, 0.12);
+    color: #00E5FF;
+    transform: translateY(-2px) scale(1.04);
+    border-color: rgba(0, 229, 255, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.25);
+}
+
+/* Diagonal Crosshair Corners on Tile Hover */
+.react-calendar__tile:hover::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    border-width: 1px 0 0 1px; /* Draws custom crosshair target brackets */
+    pointer-events: none;
+}
+
+/* ACTIVE TARGET SELECTED NODE (The Spidey Signal Burst) */
+.react-calendar__tile--active {
+    background: #FF2B46 !important;
+    color: #ffffff !important;
+    font-weight: 900;
+    border-color: #ff6b81 !important;
+    box-shadow: 
+        0 0 0 2px rgba(255, 43, 70, 0.15),
+        0 0 20px rgba(255, 43, 70, 0.8) !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    clip-path: polygon(0 0, 85% 0, 100% 15%, 100% 100%, 15% 100%, 0 85%); /* Cyberpunk tech-cut slice */
+}
+
+/* TODAY NODE (Spider-Sense Danger Warning Node) */
+.react-calendar__tile--now {
+    background: rgba(255, 43, 70, 0.05);
+    color: #FF2B46;
+    border: 1px dashed #FF2B46 !important;
+    font-weight: 800;
+    box-shadow: inset 0 0 8px rgba(255, 43, 70, 0.15);
+    animation: spideySensePulse 3s infinite ease-in-out;
+}
+
+/* When Today is also the Selected Active Node */
+.react-calendar__tile--now.react-calendar__tile--active {
+    background: linear-gradient(135deg, #FF2B46 0%, #ff5269 100%) !important;
+    border-style: solid !important;
+    animation: none;
+}
+
+/* Weekend Alert */
+.react-calendar__month-view__days__day--weekend {
+    color: #ff5269;
+}
+
+/* Outer Border Limits (Neighbor Months) */
+.react-calendar__month-view__days__day--neighboringMonth {
+    color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ========================================================
+   SUB-SYSTEM VIEWS (YEAR / DECADE SUB-TILES)
+======================================================== */
+
+.react-calendar__year-view__months__month:hover,
+.react-calendar__decade-view__years__year:hover,
+.react-calendar__century-view__decades__decade:hover {
+    background: rgba(0, 229, 255, 0.15);
+    border-color: #00E5FF !important;
+}
+
+/* ========================================================
+   ANIMATION MATRIX LOOPS
+======================================================== */
+
+@keyframes spideySensePulse {
+    0%, 100% {
+        box-shadow: 0 0 4px rgba(255, 43, 70, 0.2);
+        opacity: 1;
+    }
+    50% {
+        box-shadow: 0 0 16px rgba(255, 43, 70, 0.5);
+        border-color: rgba(255, 43, 70, 1) !important;
+    }
+}
+
+.react-calendar * {
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
