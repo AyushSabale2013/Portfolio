@@ -3,6 +3,7 @@ import {
     motion,
     AnimatePresence,
 } from "framer-motion";
+
 import {
     HiOutlineBars3,
     HiOutlineInformationCircle,
@@ -21,20 +22,24 @@ export default function Window({
     top = "12%",
 
     zIndex = 1000,
+
+    isMaximized = false,
+    onToggleMaximize,
+
     onFocus,
 
     isOpen = false,
 
     onClose,
 }) {
-    const [isMaximized, setIsMaximized] = useState(false);
-    const [showInfo, setShowInfo] = useState(false);
+    const [showInfo, setShowInfo] =
+        useState(false);
 
     if (!isOpen) return null;
 
     return (
         <motion.div
-            onPointerDown={onFocus}
+            onPointerDown={() => onFocus?.()}
             initial={{
                 opacity: 0,
                 scale: 0.95,
@@ -58,32 +63,48 @@ export default function Window({
             style={{
                 position: "absolute",
 
-                left: isMaximized ? "0px" : left,
-                top: isMaximized ? "34px" : top,
+                left: isMaximized
+                    ? 0
+                    : left,
 
-                width: isMaximized ? "100%" : `${width}px`,
+                top: isMaximized
+                    ? 34
+                    : top,
+
+                width: isMaximized
+                    ? "100%"
+                    : `${width}px`,
+
                 height: isMaximized
                     ? "calc(100vh - 34px)"
                     : `${height}px`,
 
-                borderRadius: isMaximized ? 0 : 16,
+                borderRadius: isMaximized
+                    ? 0
+                    : 16,
 
                 overflow: "hidden",
 
-                background: "rgba(18,20,25,.82)",
+                background:
+                    "rgba(18,20,25,.82)",
 
-                backdropFilter: "blur(30px)",
-                WebkitBackdropFilter: "blur(30px)",
+                backdropFilter:
+                    "blur(30px)",
 
-                border: "1px solid rgba(255,255,255,.08)",
+                WebkitBackdropFilter:
+                    "blur(30px)",
+
+                border:
+                    "1px solid rgba(255,255,255,.08)",
 
                 boxShadow:
                     "0 35px 80px rgba(0,0,0,.45)",
 
                 display: "flex",
+
                 flexDirection: "column",
 
-                zIndex: zIndex,
+                zIndex,
             }}
         >
             {/* ================= TITLE BAR ================= */}
@@ -93,12 +114,16 @@ export default function Window({
                     height: 48,
 
                     display: "flex",
-                    justifyContent: "space-between",
+
+                    justifyContent:
+                        "space-between",
+
                     alignItems: "center",
 
                     padding: "0 16px",
 
-                    background: "rgba(255,255,255,.03)",
+                    background:
+                        "rgba(255,255,255,.03)",
 
                     borderBottom:
                         "1px solid rgba(255,255,255,.06)",
@@ -108,6 +133,8 @@ export default function Window({
                     position: "relative",
                 }}
             >
+                {/* LEFT BUTTONS */}
+
                 <div
                     style={{
                         display: "flex",
@@ -118,17 +145,12 @@ export default function Window({
                     {/* Close */}
 
                     <button
-                        onClick={onClose}
+                        onClick={() => {
+                            onFocus?.();
+                            onClose?.();
+                        }}
                         title="Close"
                         style={circle("#FF5F57")}
-                    />
-
-                    {/* Minimize */}
-
-                    <button
-                        onClick={onClose}
-                        title="Minimize"
-                        style={circle("#FEBC2E")}
                     />
 
                     {/* Maximize */}
@@ -136,7 +158,7 @@ export default function Window({
                     <button
                         onClick={() => {
                             onFocus?.();
-                            setIsMaximized(!isMaximized);
+                            onToggleMaximize?.();
                         }}
                         title={
                             isMaximized
@@ -145,7 +167,20 @@ export default function Window({
                         }
                         style={circle("#28C840")}
                     />
+
+                    {/* Fake Minimize */}
+
+                    <button
+                        onClick={() => {
+                            onFocus?.();
+                            onClose?.();
+                        }}
+                        title="Minimize"
+                        style={circle("#FEBC2E")}
+                    />
                 </div>
+
+                {/* TITLE */}
 
                 <span
                     style={{
@@ -153,7 +188,8 @@ export default function Window({
 
                         left: "50%",
 
-                        transform: "translateX(-50%)",
+                        transform:
+                            "translateX(-50%)",
 
                         color: "#ECECEC",
 
@@ -165,7 +201,7 @@ export default function Window({
                     }}
                 >
                     {title}
-                </span>
+                </span>                {/* RIGHT BUTTONS */}
 
                 <div
                     style={{
@@ -175,53 +211,74 @@ export default function Window({
                 >
                     <button
                         onClick={() =>
-                            setShowInfo(!showInfo)
+                            setShowInfo((prev) => !prev)
                         }
+                        title="Information"
                         style={iconButton()}
                     >
                         <HiOutlineInformationCircle size={18} />
                     </button>
 
                     <button
+                        title="Menu"
                         style={iconButton()}
                     >
                         <HiOutlineBars3 size={18} />
                     </button>
                 </div>
-            </div>            {/* ================= CONTENT ================= */}
+            </div>
+
+            {/* ================= CONTENT ================= */}
 
             <div
                 style={{
                     flex: 1,
+
                     display: "flex",
+
                     position: "relative",
+
                     overflow: "hidden",
-                    background: "rgba(255,255,255,.015)",
+
+                    background:
+                        "rgba(255,255,255,.015)",
                 }}
             >
-                {/* Main Content */}
+                {/* MAIN CONTENT */}
 
                 <div
                     style={{
                         flex: 1,
+
                         padding: 24,
+
                         overflow: "auto",
+
                         color: "#ECECEC",
+
                         transition: ".25s",
                     }}
                 >
                     {children}
                 </div>
 
-                {/* Information Drawer */}
+                {/* INFORMATION DRAWER */}
 
                 <AnimatePresence>
                     {showInfo && (
                         <motion.div
-                            initial={{ x: "100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "100%" }}
-                            transition={{ duration: 0.25 }}
+                            initial={{
+                                x: "100%",
+                            }}
+                            animate={{
+                                x: 0,
+                            }}
+                            exit={{
+                                x: "100%",
+                            }}
+                            transition={{
+                                duration: 0.25,
+                            }}
                             style={{
                                 width: 300,
 
@@ -244,6 +301,7 @@ export default function Window({
                             <h3
                                 style={{
                                     margin: 0,
+
                                     marginBottom: 16,
 
                                     color: "#FF5F57",
@@ -275,16 +333,14 @@ export default function Window({
             </div>
         </motion.div>
     );
-}
-
-function circle(color) {
+}function circle(color) {
     return {
         width: 13,
         height: 13,
 
-        borderRadius: "50%",
-
         border: "none",
+
+        borderRadius: "50%",
 
         background: color,
 
@@ -294,9 +350,10 @@ function circle(color) {
 
         outline: "none",
 
-        transition: "all .2s ease",
+        transition:
+            "transform .18s ease, box-shadow .18s ease",
 
-        boxShadow: `0 0 8px ${color}30`,
+        boxShadow: `0 0 8px ${color}35`,
     };
 }
 
@@ -305,20 +362,21 @@ function iconButton() {
         width: 34,
         height: 34,
 
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+
         border: "none",
 
-        background: "transparent",
-
         borderRadius: 8,
+
+        background: "transparent",
 
         color: "#D5D9E0",
 
         cursor: "pointer",
 
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-
-        transition: "all .2s ease",
+        transition:
+            "all .18s ease",
     };
 }

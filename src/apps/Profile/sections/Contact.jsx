@@ -1,7 +1,7 @@
-export default function Profile() {
+export default function Contact() {
     return (
         <div style={{ color: "white" }}>
-            <h1>Profile</h1>
+            <h1>Contact</h1>
         </div>
     );
 }

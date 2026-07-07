@@ -5,7 +5,7 @@ import MenuBar from "./MenuBar";
 import Dock from "./Dock";
 import DesktopIcon from "./DesktopIcon";
 import WindowManager from "./WindowManager";
-import profile from "../assets/profile.png";
+import profile from "../assets/spiderLogo.png";
 import home from "../assets/home.png";
 
 export default function Desktop() {

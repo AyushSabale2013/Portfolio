@@ -1,11 +1,14 @@
+import { useState } from "react";
+
 import Window from "./Window";
 
+// Apps
 import Profile from "../apps/Profile";
-import Home from "../apps/Home";
-import Projects from "../apps/Projects";
-import Resume from "../apps/Resume";
-import Contact from "../apps/Contact";
-import Terminal from "../apps/Terminal";
+import Home from "../apps/Home/Home";
+import Projects from "../apps/Projects/Projects";
+import Resume from "../apps/Resume/Resume";
+import Contact from "../apps/Contact/Contact";
+import Terminal from "../apps/Terminal/Terminal";
 
 const apps = {
     profile: {
@@ -55,7 +58,14 @@ export default function WindowManager({
     const BASE_TOP = 12;
     const OFFSET = 3;
 
-    return (
+    const [maximizedWindow, setMaximizedWindow] =
+        useState(null);
+
+    const toggleMaximize = (id) => {
+        setMaximizedWindow((prev) =>
+            prev === id ? null : id
+        );
+    };    return (
         <>
             {Object.entries(apps).map(([id, app], index) => {
                 const Component = app.component;
@@ -66,9 +76,16 @@ export default function WindowManager({
                         id={id}
                         title={app.title}
                         infoContent={app.info}
+
                         isOpen={openApps.includes(id)}
 
-                        onClose={() => closeApp(id)}
+                        onClose={() => {
+                            if (maximizedWindow === id) {
+                                setMaximizedWindow(null);
+                            }
+
+                            closeApp(id);
+                        }}
 
                         left={`${BASE_LEFT + index * OFFSET}%`}
                         top={`${BASE_TOP + index * OFFSET}%`}
@@ -76,6 +93,14 @@ export default function WindowManager({
                         zIndex={windowZ[id] || 1000}
 
                         onFocus={() => focusWindow(id)}
+
+                        isMaximized={
+                            maximizedWindow === id
+                        }
+
+                        onToggleMaximize={() =>
+                            toggleMaximize(id)
+                        }
                     >
                         <Component />
                     </Window>
