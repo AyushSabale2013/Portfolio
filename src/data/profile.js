@@ -19,36 +19,43 @@ export const profile = {
     },
 
     roles: [
-        "AI / ML Engineer",
-        "Full Stack Developer",
-        "Competitive Programmer",
-        "Designer",
-        "Athlete",
+        "AI / ML ENGINEER",
+        "FULL STACK DEVELOPER",
+        "SOFTWARE ENGINEER",
+        "COMPETITIVE PROGRAMMER",
+        "REACT DEVELOPER",
+        "DATA SCIENCE ENTHUSIAST",
+        "CYBERSECURITY ENTHUSIAST",
+        "OPEN SOURCE LEARNER",
+        "FRIENDLY NEIGHBORHOOD DESIGNER",
+        "INNOVATOR",
+        "ATHLETE",
+
     ],
 
     socials: [
         {
             name: "GitHub",
             icon: FaGithub,
-            link: "",
+            link: "https://github.com/AyushSabale2013",
         },
 
         {
             name: "LinkedIn",
             icon: FaLinkedin,
-            link: "",
+            link: "https://www.linkedin.com/in/ayush-sabale-763908369?utm_source=share_via&utm_content=profile&utm_medium=member_android",
         },
 
         {
             name: "LeetCode",
             icon: SiLeetcode,
-            link: "",
+            link: "https://leetcode.com/u/AYUSH_SABALE_2282/",
         },
 
         {
             name: "Resume",
             icon: HiDocumentArrowDown,
-            link: "",
+            link: "/Resume.pdf",
         },
     ],
 

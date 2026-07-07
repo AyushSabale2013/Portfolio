@@ -66,7 +66,7 @@ export const apps = {
         component: Terminal,
         icon: terminalIcon,
         info: "Interactive command line interface.",
-
         desktop: true,
     },
+    
 };

@@ -218,7 +218,7 @@ export default function Header() {
                             key={item.name}
                             whileHover={{ scale: 1.15, y: -6 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => item.link && window.open(item.link, "_blank")}
+                            onClick={() => window.open(item.link, "_blank")}
                             title={item.name}
                             style={{
                                 width: 54,

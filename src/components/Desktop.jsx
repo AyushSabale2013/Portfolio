@@ -57,6 +57,13 @@ export default function Desktop() {
     const DESKTOP_START_TOP = 8;
     const DESKTOP_GAP = 14;
     const DESKTOP_LEFT = "2%";
+    const ICONS_PER_COLUMN = 6;
+
+    const START_TOP = 8;
+    const START_LEFT = 2;
+
+    const ROW_GAP = 14;
+    const COLUMN_GAP = 8;
     return (
         <div
             style={{
@@ -135,21 +142,20 @@ export default function Desktop() {
             />
 
 
-            {/* ================= DESKTOP ICONS ================= */}
-
-            {/* ================= DESKTOP ICONS ================= */}
-
             {maximizedWindow === null &&
                 Object.entries(apps).map(([id, app], index) => {
                     if (!app.desktop) return null;
+
+                    const row = index % ICONS_PER_COLUMN;
+                    const column = Math.floor(index / ICONS_PER_COLUMN);
 
                     return (
                         <DesktopIcon
                             key={id}
                             icon={app.icon}
                             label={app.title}
-                            top={`${DESKTOP_START_TOP + index * DESKTOP_GAP}%`}
-                            left={DESKTOP_LEFT}
+                            top={`${START_TOP + row * ROW_GAP}%`}
+                            left={`${START_LEFT + column * COLUMN_GAP}%`}
                             onDoubleClick={() => openApp(id)}
                         />
                     );
