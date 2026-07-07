@@ -5,13 +5,16 @@ import MenuBar from "./MenuBar";
 import Dock from "./Dock";
 import DesktopIcon from "./DesktopIcon";
 import WindowManager from "./WindowManager";
+import { apps } from "../apps/apps";
 import profile from "../assets/spiderLogo.png";
 import home from "../assets/home.png";
+
 
 export default function Desktop() {
     const [openApps, setOpenApps] = useState([]);
     const [highestZ, setHighestZ] = useState(1000);
     const [windowZ, setWindowZ] = useState({});
+    const [maximizedWindow, setMaximizedWindow] = useState(null);
 
     const openApp = (id) => {
         setOpenApps((prev) => {
@@ -50,6 +53,10 @@ export default function Desktop() {
             return next;
         });
     };
+
+    const DESKTOP_START_TOP = 8;
+    const DESKTOP_GAP = 14;
+    const DESKTOP_LEFT = "2%";
     return (
         <div
             style={{
@@ -128,37 +135,46 @@ export default function Desktop() {
             />
 
 
-            {/* Desktop Icons */}
+            {/* ================= DESKTOP ICONS ================= */}
 
-            <DesktopIcon
-                icon={profile}
-                label="Profile"
-                top="8%"
-                left="2%"
-                onDoubleClick={() => openApp("profile")}
-            />
+            {/* ================= DESKTOP ICONS ================= */}
 
-            <DesktopIcon
-                icon={home}
-                label="Home"
-                top="22%"
-                left="2%"
-                onDoubleClick={() => openApp("home")}
-            />
+            {maximizedWindow === null &&
+                Object.entries(apps).map(([id, app], index) => {
+                    if (!app.desktop) return null;
 
-            {/* Menu Bar */}
+                    return (
+                        <DesktopIcon
+                            key={id}
+                            icon={app.icon}
+                            label={app.title}
+                            top={`${DESKTOP_START_TOP + index * DESKTOP_GAP}%`}
+                            left={DESKTOP_LEFT}
+                            onDoubleClick={() => openApp(id)}
+                        />
+                    );
+                })}
+
+            {/* ================= MENU BAR ================= */}
+
             <MenuBar onOpen={openApp} />
 
-            {/* Window Manager */}
+            {/* ================= WINDOW MANAGER ================= */}
+
             <WindowManager
                 openApps={openApps}
                 closeApp={closeApp}
                 windowZ={windowZ}
                 focusWindow={focusWindow}
+                maximizedWindow={maximizedWindow}
+                setMaximizedWindow={setMaximizedWindow}
             />
 
-            {/* Dock */}
-            <Dock onOpen={openApp} />
+            {/* ================= DOCK ================= */}
+
+            {maximizedWindow === null && (
+                <Dock onOpen={openApp} />
+            )}
 
         </div>
     );

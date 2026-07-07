@@ -333,7 +333,7 @@ export default function Window({
             </div>
         </motion.div>
     );
-}function circle(color) {
+} function circle(color) {
     return {
         width: 13,
         height: 13,
