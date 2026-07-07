@@ -11,7 +11,7 @@ import terminal from "../assets/terminal.png";
 
 const dockItems = [
     { id: "projects", name: "Projects", icon: projects },
-    { id: "profile", name: "Profile", icon: about },
+    { id: "contact", name: "Contact", icon: about },
     { id: "resume", name: "Resume", icon: resume },
     { id: "terminal", name: "Terminal", icon: terminal },
 

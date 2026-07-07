@@ -110,13 +110,132 @@ export const profile = {
             "Docker",
         ],
     },
+    education: [
+        {
+            degree: "Bachelor of Technology",
 
-    interests: [
-        "Artificial Intelligence",
-        "Cyber Security",
-        "Football",
-        "Volleyball",
-        "Linux",
-        "UI Design",
+            branch: "Computer Science & Engineering",
+
+            college: "Indian Institute of Information Technology Pune",
+
+            duration: "2024 - 2028",
+
+            semester: "5th Semester",
+
+            graduation: "2028",
+
+            location: "Pune, Maharashtra",
+
+            subjectsCompleted: [
+                "Data Structures & Algorithms",
+                "Object Oriented Programming",
+                "Discrete Mathematics",
+                "Database Management Systems",
+                "Operating Systems",
+                "Computer Networks",
+                "Computer Architecture & Organization",
+                "Compiler Design",
+                "Design & Analysis of Algorithms",
+                "Theory of Computation",
+                "Software Engineering",
+                "Artificial Intelligence",
+                "Machine Learning",
+                "Probability & Statistics",
+                "Linear Algebra",
+            ],
+
+            focus: [
+                "Artificial Intelligence",
+                "Machine Learning",
+                "Full Stack Development",
+                "Deep Neural Architectures",
+            ],
+        },
     ],
+    interests: [
+        {
+            icon: "🧠",
+            title: "Artificial Intelligence",
+            description: "Building intelligent systems that solve real-world problems.",
+        },
+
+        {
+            icon: "🤖",
+            title: "Machine Learning",
+            description: "Training models and exploring modern AI techniques.",
+        },
+
+        {
+            icon: "🛡️",
+            title: "Cyber Security",
+            description: "Learning about ethical hacking and secure software.",
+        },
+
+        {
+            icon: "🌐",
+            title: "Full Stack Development",
+            description: "Creating modern, scalable web applications.",
+        },
+
+        {
+            icon: "🐧",
+            title: "Linux",
+            description: "Customizing systems and working in terminal environments.",
+        },
+
+        {
+            icon: "💻",
+            title: "Competitive Programming",
+            description: "Solving algorithmic problems and improving problem-solving skills.",
+        },
+
+        {
+            icon: "🎨",
+            title: "UI / UX Design",
+            description: "Designing clean, interactive and user-friendly interfaces.",
+        },
+
+        {
+            icon: "🏃",
+            title: "Athletics",
+            description: "Enjoying sports, fitness, teamwork and maintaining an active lifestyle.",
+        },
+
+        {
+            icon: "🏐",
+            title: "Volleyball",
+            description: "College volleyball player and main spiker.",
+        },
+
+        {
+            icon: "🎬",
+            title: "Movies & Cinema",
+            description: "Exploring storytelling, cinematography and memorable films across genres.",
+        },
+    ],
+    contacts: [
+    {
+        type: "email",
+        title: "Email",
+        value: "ayushsabale2013@gmail.com",
+    },
+
+    {
+        type: "phone",
+        title: "Phone",
+        value: "+91 7756850969",
+    },
+
+    {
+        type: "location",
+        title: "Location",
+        value: "Kolhapur, Maharashtra, India",
+    },
+
+    {
+        type: "college",
+        title: "College",
+        value: "Indian Institute of Information Technology Pune",
+    },
+],
 };
