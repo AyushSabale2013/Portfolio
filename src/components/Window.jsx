@@ -245,14 +245,19 @@ export default function Window({
                 }}
             >
                 {/* MAIN CONTENT */}
-
                 <div
                     style={{
                         flex: 1,
+                        position: "relative",
 
-                        padding: 24,
+                        padding: title === "Projects" ? 0 : 24,
 
-                        overflow: "auto",
+                        overflow: title === "Projects"
+                            ? "hidden"
+                            : "auto",
+
+                        width: "100%",
+                        height: "100%",
 
                         color: "#ECECEC",
 

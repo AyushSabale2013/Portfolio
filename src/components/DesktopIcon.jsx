@@ -1,21 +1,74 @@
-import { motion } from "framer-motion";
+import {
+    motion,
+    useMotionValue,
+    animate,
+} from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function DesktopIcon({
+    id,
     icon,
     label,
-    top,
-    left,
+
+    row,
+    col,
+
+    startX,
+    startY,
+
+    cellWidth,
+    cellHeight,
+
+    onDrop,
     onDoubleClick,
 }) {
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+
+    const [dragging, setDragging] = useState(false);
+
+    useEffect(() => {
+        const targetX = startX + col * cellWidth;
+        const targetY = startY + row * cellHeight;
+
+        const controlsX = animate(x, targetX, {
+            type: "spring",
+            stiffness: 500,
+            damping: 32,
+        });
+
+        const controlsY = animate(y, targetY, {
+            type: "spring",
+            stiffness: 500,
+            damping: 32,
+        });
+
+        return () => {
+            controlsX.stop();
+            controlsY.stop();
+        };
+    }, [
+        row,
+        col,
+        startX,
+        startY,
+        cellWidth,
+        cellHeight,
+        x,
+        y,
+    ]);
+
     return (
         <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.96 }}
-            onDoubleClick={onDoubleClick}
+            drag
+            dragMomentum={false}
+            dragElastic={0.08}
+
             style={{
                 position: "absolute",
-                top,
-                left,
+
+                x,
+                y,
 
                 width: 82,
 
@@ -23,13 +76,59 @@ export default function DesktopIcon({
                 flexDirection: "column",
                 alignItems: "center",
 
-                cursor: "default",
+                cursor: dragging
+                    ? "grabbing"
+                    : "grab",
+
                 userSelect: "none",
+
+                zIndex: dragging ? 99999 : 1,
+
+                filter: dragging
+                    ? "drop-shadow(0 14px 18px rgba(0,0,0,.35))"
+                    : "none",
+            }}
+
+            whileHover={{
+                scale: 1.05,
+            }}
+
+            whileDrag={{
+                scale: 1.08,
+                rotate: -2,
+            }}
+
+            whileTap={{
+                scale: 0.98,
+            }}
+
+            onDragStart={() => {
+                setDragging(true);
+            }}
+
+            onDragEnd={() => {
+                setDragging(false);
+
+                onDrop(
+                    id,
+                    x.get(),
+                    y.get()
+                );
+            }}
+
+            onDoubleClick={() => {
+                if (!dragging) {
+                    onDoubleClick();
+                }
             }}
         >
             <motion.div
                 whileHover={{
-                    background: "rgba(255,255,255,.08)",
+                    background:
+                        "rgba(255,255,255,.08)",
+                }}
+                transition={{
+                    duration: .15,
                 }}
                 style={{
                     width: 70,
@@ -40,8 +139,6 @@ export default function DesktopIcon({
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-
-                    transition: ".2s",
                 }}
             >
                 <img
@@ -51,7 +148,9 @@ export default function DesktopIcon({
                     style={{
                         width: 58,
                         height: 58,
+
                         objectFit: "contain",
+
                         pointerEvents: "none",
                     }}
                 />
@@ -65,11 +164,12 @@ export default function DesktopIcon({
 
                     fontSize: 13,
 
+                    fontWeight: 500,
+
                     textAlign: "center",
 
-                    textShadow: "0 2px 8px rgba(0,0,0,.8)",
-
-                    fontWeight: 500,
+                    textShadow:
+                        "0 2px 8px rgba(0,0,0,.8)",
                 }}
             >
                 {label}
