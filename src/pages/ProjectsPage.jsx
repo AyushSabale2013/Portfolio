@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-
+import ProjectsPopup from "../components/ProjectsPopup";
 import InfiniteMenu from "../components/InfiniteMenu";
 import projects from "../data/projects";
 
@@ -29,6 +29,8 @@ export default function ProjectsPage({ onClose }) {
                 backgroundImage: `url(${infiniteMenuBackground})`,
             }}
         >
+
+            <ProjectsPopup />
             {/* ================= HEADER ================= */}
 
             <header className="projects-header">
@@ -64,8 +66,13 @@ export default function ProjectsPage({ onClose }) {
 
             <main className="projects-menu-section">
 
+                {/* <InfiniteMenu
+                    items={projects}
+                /> */}
+
                 <InfiniteMenu
                     items={projects}
+                    scale={1.2}
                 />
 
             </main>

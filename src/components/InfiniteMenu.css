@@ -1,316 +1,1238 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* ======================================================
+        SPIDER-VERSE PROJECT SPHERE
+====================================================== */
 
-/* ===========================
-   CANVAS
-=========================== */
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;800&display=swap");
+
+/* ======================================================
+        VARIABLES
+====================================================== */
+
+:root {
+
+  --sv-black: #05060A;
+
+  --sv-dark: #0A0E17;
+
+  --sv-red: #D62839;
+
+  --sv-red-dark: #AA1424;
+
+  --sv-cyan: #27D9FF;
+
+  --sv-white: #F8F5EC;
+
+  --sv-silver: #E2E2E2;
+
+  --sv-silver-dark: #BBBBBB;
+
+  --sv-purple: #6E5494;
+
+  --sv-text: #E7E2D6;
+
+  --font-title: "Anton", sans-serif;
+
+  --font-tech: "Orbitron", sans-serif;
+
+  --font-body: "Space Grotesk", sans-serif;
+
+}
+
+/* ======================================================
+        CANVAS
+====================================================== */
 
 #infinite-grid-menu-canvas {
+
   position: relative;
+
   width: 100%;
+
   height: 100%;
+
   overflow: hidden;
+
   outline: none;
+
   cursor: grab;
+
   background: transparent;
+
 }
 
 #infinite-grid-menu-canvas:active {
+
   cursor: grabbing;
+
 }
 
-/* ===========================
-   SHARED FACE INFO TRANSITIONS
-=========================== */
+/* ======================================================
+        FACE CONTAINER
+====================================================== */
 
 .face-info {
-  user-select: none;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  max-width: 320px;
 
-  font-family: var(--font-body, 'Space Grotesk', sans-serif);
+  position: absolute;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  max-width: 360px;
+
+  user-select: none;
+
+  z-index: 20;
+
+  font-family: var(--font-body);
+
 }
 
+/* ======================================================
+        LEFT PANEL
+====================================================== */
+
+.face-info-left {
+
+  left: 70px;
+
+  padding-left: 28px;
+
+}
+
+.face-info-left::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  top: 4px;
+
+  width: 7px;
+
+  height: 135px;
+
+  border-radius: 999px;
+
+  background:
+
+    linear-gradient(var(--sv-red),
+
+      var(--sv-cyan));
+
+  box-shadow:
+
+    0 0 18px rgba(214, 40, 57, .35);
+
+}
+
+/* ======================================================
+        RIGHT PANEL
+====================================================== */
+
+.face-info-right {
+
+  right: 70px;
+
+  padding-right: 24px;
+
+  text-align: right;
+
+}
+
+.face-info-right::after {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  right: 0;
+
+  width: 5px;
+
+  height: 110px;
+
+  border-radius: 999px;
+
+  background:
+
+    linear-gradient(var(--sv-cyan),
+
+      transparent);
+
+}
+
+/* ======================================================
+        STATES
+====================================================== */
+
 .face-info.active {
+
   opacity: 1;
-  transform: translateY(-50%);
-  transition: 0.45s ease;
+
+  transform:
+
+    translateY(-50%) translateX(0);
+
+  transition:
+
+    opacity .45s,
+
+    transform .45s;
+
 }
 
 .face-info.inactive {
+
   opacity: 0;
+
   pointer-events: none;
-  transition: 0.15s ease;
+
+  transform:
+
+    translateY(-46%) translateX(-12px);
+
+  transition:
+
+    opacity .18s,
+
+    transform .18s;
+
 }
 
-.face-info-left {
-  left: 70px;
-  border-left: 3px solid var(--sv-red, #e6293e);
-  padding-left: 20px;
-}
+/* ======================================================
+        PROJECT SWITCH ANIMATION
+====================================================== */
 
-.face-info-left.inactive {
-  transform: translateY(-42%);
-}
+.face-category,
 
-.face-info-right {
-  right: 70px;
-  text-align: right;
-  border-right: 3px solid var(--sv-cyan, #26e0ff);
-  padding-right: 20px;
-}
+.face-title,
 
-.face-info-right.inactive {
-  transform: translateY(-40%);
-}
+.face-description,
 
-/* ===========================
-   PROJECT CATEGORY (eyebrow)
-=========================== */
-
-.face-category {
-  margin: 0 0 8px;
-
-  font-family: var(--font-accent, 'Bangers', cursive);
-  font-size: 1.15rem;
-  font-weight: 400;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-
-  color: var(--sv-cyan, #26e0ff);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-}
-
-/* ===========================
-   PROJECT TITLE
-=========================== */
-
-.face-title {
-  margin: 0;
-
-  font-family: var(--font-display, 'Anton', sans-serif);
-  font-size: clamp(2.4rem, 4vw, 4.2rem);
-  font-weight: 400;
-  letter-spacing: 1px;
-  line-height: 1.05;
-  text-transform: uppercase;
-
-  color: #ffffff;
-
-  /* crisp glitch split — no blur on the color offsets, just a tight
-     grounding shadow so the letters stay sharp against the photo */
-  text-shadow:
-    2px 0 0 var(--sv-red, #e6293e),
-    -2px 0 0 var(--sv-cyan, #26e0ff),
-    0 2px 0 rgba(0, 0, 0, 0.9),
-    0 5px 8px rgba(0, 0, 0, 0.55);
-}
-
-/* ===========================
-   DESCRIPTION
-=========================== */
-
-.face-description {
-  margin: 0;
-
-  font-family: var(--font-body, 'Space Grotesk', sans-serif);
-  font-size: 1.05rem;
-  font-weight: 500;
-  line-height: 1.75;
-
-  color: var(--sv-muted, #a9b4d0);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-}
-
-/* ===========================
-   TECH PILLS
-=========================== */
-
-.face-tech-list {
-  list-style: none;
-  margin: 18px 0 0;
-  padding: 0;
-
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.face-tech-pill {
-  font-family: var(--font-body, 'Space Grotesk', sans-serif);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-
-  color: var(--sv-paper, #f5efe0);
-  background: linear-gradient(135deg, rgba(10, 22, 45, 0.75), rgba(20, 45, 80, 0.55));
-  border: 1.5px solid rgba(38, 224, 255, 0.3);
-  border-radius: 6px;
-
-  padding: 5px 13px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 14px rgba(0, 0, 0, 0.35);
-
-  transform: skewX(-6deg);
-  transition: .2s ease;
-}
-
-.face-tech-pill:hover {
-  transform: skewX(-6deg) translateY(-2px);
-  border-color: var(--sv-cyan, #26e0ff);
-  background: linear-gradient(135deg, rgba(14, 30, 58, 0.85), rgba(26, 58, 100, 0.65));
-}
-
-/* ===========================
-   ACTION BUTTONS (Live + GitHub)
-=========================== */
+.face-tech-list,
 
 .face-actions {
-  position: absolute;
-  left: 50%;
 
-  display: flex;
-  align-items: center;
-  gap: 20px;
+  animation:
 
-  transform: translateX(-50%);
+    spiderFade .45s ease;
+
 }
 
-.face-actions.active {
-  bottom: 55px;
-  opacity: 1;
-  pointer-events: auto;
-  transition: 0.45s ease;
+@keyframes spiderFade {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+
+      translateY(18px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+
+      translateY(0);
+
+  }
+
 }
 
-.face-actions.inactive {
-  bottom: -80px;
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.15s ease;
-}
+/* ======================================================
+        CATEGORY
+====================================================== */
 
-.action-button {
+.face-category {
+
+  margin: 0;
+
+  margin-bottom: 18px;
+
+  font-family: var(--font-tech);
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 5px;
+
+  text-transform: uppercase;
+
+  color: var(--sv-red);
+
+  text-shadow:
+
+    0 2px 8px rgba(0, 0, 0, .55);
+
   position: relative;
 
-  width: 62px;
-  height: 62px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid rgba(245, 239, 224, 0.25);
-
-  background: radial-gradient(circle at 35% 30%, rgba(245,239,224,.14), rgba(255,255,255,.02) 60%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-  transition: 0.25s ease;
 }
 
-/* faint halftone reveal on hover — echoes the comic-print texture */
-.action-button::after {
+.face-category::after {
+
   content: "";
+
+  display: block;
+
+  width: 80px;
+
+  height: 2px;
+
+  margin-top: 10px;
+
+  background:
+
+    linear-gradient(90deg,
+
+      var(--sv-red),
+
+      transparent);
+
+}
+
+/* ======================================================
+        PROJECT TITLE
+====================================================== */
+
+.face-title {
+
+  margin: 0;
+
+  margin-bottom: 28px;
+
+  font-family: var(--font-title);
+
+  font-size:
+
+    clamp(4rem, 5vw, 6rem);
+
+  font-weight: 400;
+
+  line-height: .88;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+
+  color: var(--sv-white);
+
+  position: relative;
+
+  text-shadow:
+
+    3px 0 var(--sv-red),
+
+    -3px 0 var(--sv-cyan),
+
+    0 6px 0 rgba(0, 0, 0, .92),
+
+    0 15px 35px rgba(0, 0, 0, .45);
+
+}
+
+/* subtle comic glow */
+
+.face-title::after {
+
+  content: attr(data-text);
+
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background-image: radial-gradient(rgba(245,239,224,.5) .6px, transparent .6px);
-  background-size: 4px 4px;
-  opacity: 0;
-  transition: opacity .25s ease;
+
+  left: 0;
+
+  top: 0;
+
+  color: white;
+
+  opacity: .08;
+
+  filter: blur(6px);
+
+  pointer-events: none;
+
 }
 
-.action-button:hover::after {
-  opacity: .25;
+/* ======================================================
+        DESCRIPTION
+====================================================== */
+
+.face-description {
+
+  margin: 0;
+
+  margin-bottom: 34px;
+
+  max-width: 440px;
+
+  font-family: var(--font-body);
+
+  font-size: 20px;
+
+  font-weight: 500;
+
+  line-height: 1.85;
+
+  color: var(--sv-text);
+
+  text-shadow:
+
+    0 2px 10px rgba(0, 0, 0, .55);
+
 }
 
-.action-button:hover {
-  background: radial-gradient(circle at 35% 30%, rgba(245,239,224,.22), rgba(255,255,255,.04) 60%);
-  transform: scale(1.1);
-  box-shadow: 0 18px 45px rgba(38, 224, 255, 0.18);
+/* ======================================================
+        RIGHT PANEL DESCRIPTION
+====================================================== */
+
+.face-info-right .face-description {
+
+  text-align: right;
+
 }
 
-/* Live / URL button — glitch-pink web-shooter glow */
-.action-button-live {
-  background: radial-gradient(circle at 35% 30%, rgba(255,62,138,.65), rgba(255,62,138,.3) 65%);
-  border-color: rgba(255, 62, 138, 0.55);
+/* ======================================================
+        TEXT ENTRY ANIMATION
+====================================================== */
+
+.face-category {
+
+  animation:
+
+    fadeSlide .35s ease;
+
 }
 
-.action-button-live:hover {
-  background: radial-gradient(circle at 35% 30%, rgba(255,62,138,.85), rgba(255,62,138,.42) 65%);
-  box-shadow: 0 18px 45px rgba(255, 62, 138, 0.25);
+.face-title {
+
+  animation:
+
+    fadeSlide .45s ease;
+
 }
 
-/* GitHub button — dark charcoal, matching github.com's own dark theme */
-.action-button-github {
-  background: radial-gradient(circle at 35% 30%, rgba(33,38,45,.92), rgba(13,17,23,.85) 65%);
-  border-color: rgba(240, 246, 252, 0.18);
+.face-description {
+
+  animation:
+
+    fadeSlide .55s ease;
+
 }
 
-.action-button-github:hover {
-  background: radial-gradient(circle at 35% 30%, rgba(48,54,61,.95), rgba(13,17,23,.9) 65%);
-  border-color: rgba(240, 246, 252, 0.32);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
-}
+@keyframes fadeSlide {
 
-.action-button-icon {
-  user-select: none;
-  color: var(--sv-paper, #f5efe0);
-  font-size: 24px;
-  font-weight: bold;
-  transition: 0.2s ease;
-}
+  from {
 
-.action-button-icon-svg {
-  font-size: 22px;
-}
+    opacity: 0;
 
-.action-button:hover .action-button-icon {
-  transform: rotate(-10deg);
-}
+    transform:
 
-/* ===========================
-   RESPONSIVE
-=========================== */
+      translateY(18px);
 
-@media (max-width: 1400px) {
-  .face-info-left {
-    left: 40px;
   }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+
+      translateY(0);
+
+  }
+
+}
+
+/* ======================================================
+        SMALL TITLE
+====================================================== */
+
+@media(max-width:1400px) {
 
   .face-title {
-    font-size: 2.6rem;
-  }
 
-  .face-info-right {
-    right: 40px;
-    max-width: 240px;
+    font-size:
+
+      clamp(3rem, 4vw, 4.5rem);
+
   }
 
   .face-description {
-    font-size: 1rem;
+
+    font-size: 18px;
+
   }
+
 }
 
-@media (max-width: 1000px) {
-  .face-info-left,
+/* ======================================================
+        TECH STACK
+====================================================== */
+
+.face-tech-list {
+
+  list-style: none;
+
+  margin: 0;
+
+  padding: 0;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  align-items: center;
+
+}
+
+.face-info-right .face-tech-list {
+
+  justify-content: flex-end;
+
+}
+
+/* ======================================================
+        TECH PILL
+====================================================== */
+
+.face-tech-pill {
+
+  position: relative;
+
+  overflow: hidden;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 11px 22px;
+
+  border-radius: 999px;
+
+  cursor: default;
+
+  user-select: none;
+
+  border: none;
+
+  font-family: var(--font-tech);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.2px;
+
+  text-transform: uppercase;
+
+  color: #111;
+
+  background:
+
+    linear-gradient(180deg,
+
+      #F7F7F7,
+
+      #D8D8D8,
+
+      #BEBEBE);
+
+  box-shadow:
+
+    0 6px 14px rgba(0, 0, 0, .28),
+
+    inset 0 1px 0 rgba(255, 255, 255, .75);
+
+  transition:
+
+    transform .28s,
+
+    box-shadow .28s,
+
+    filter .28s;
+
+}
+
+/* metallic reflection */
+
+.face-tech-pill::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: -40%;
+
+  left: -140%;
+
+  width: 60%;
+
+  height: 180%;
+
+  transform: rotate(20deg);
+
+  background:
+
+    linear-gradient(transparent,
+
+      rgba(255, 255, 255, .8),
+
+      transparent);
+
+  transition: left .65s ease;
+
+}
+
+/* subtle comic border */
+
+.face-tech-pill::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 999px;
+
+  border: 2px solid rgba(255, 255, 255, .18);
+
+  pointer-events: none;
+
+}
+
+/* ======================================================
+        HOVER
+====================================================== */
+
+.face-tech-pill:hover {
+
+  transform:
+
+    translateY(-4px) scale(1.06);
+
+  filter: brightness(1.05);
+
+  box-shadow:
+
+    0 14px 28px rgba(0, 0, 0, .35),
+
+    0 0 16px rgba(39, 217, 255, .18);
+
+}
+
+.face-tech-pill:hover::before {
+
+  left: 170%;
+
+}
+
+/* ======================================================
+        ACTIVE
+====================================================== */
+
+.face-tech-pill:active {
+
+  transform:
+
+    translateY(-1px) scale(.98);
+
+}
+
+/* ======================================================
+        RESPONSIVE
+====================================================== */
+
+@media(max-width:1400px) {
+
+  .face-tech-list {
+
+    gap: 10px;
+
+  }
+
+  .face-tech-pill {
+
+    padding: 9px 18px;
+
+    font-size: 11px;
+
+  }
+
+}
+
+@media(max-width:1000px) {
+
+  .face-tech-list {
+
+    justify-content: flex-start;
+
+  }
+
+}
+
+/* ======================================================
+        ACTION BUTTON CONTAINER
+====================================================== */
+
+.face-actions {
+
+  position: absolute;
+
+  left: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 22px;
+
+  transform: translateX(-50%);
+
+}
+
+.face-actions.active {
+
+  bottom: 55px;
+
+  opacity: 1;
+
+  pointer-events: auto;
+
+  transition:
+
+    opacity .45s,
+
+    transform .45s,
+
+    bottom .45s;
+
+}
+
+.face-actions.inactive {
+
+  bottom: -90px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: .2s;
+
+}
+
+/* ======================================================
+        COMMON BUTTON
+====================================================== */
+
+.action-button {
+
+  position: relative;
+
+  overflow: hidden;
+
+  width: 72px;
+
+  height: 72px;
+
+  border: none;
+
+  outline: none;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  transition:
+
+    transform .28s,
+
+    box-shadow .28s,
+
+    filter .28s;
+
+}
+
+/* comic border */
+
+.action-button::before {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 50%;
+
+  border: 3px solid rgba(255, 255, 255, .18);
+
+  pointer-events: none;
+
+}
+
+/* shine */
+
+.action-button::after {
+
+  content: "";
+
+  position: absolute;
+
+  top: -45%;
+
+  left: -140%;
+
+  width: 60%;
+
+  height: 180%;
+
+  transform: rotate(20deg);
+
+  background:
+
+    linear-gradient(transparent,
+
+      rgba(255, 255, 255, .65),
+
+      transparent);
+
+  transition: left .65s ease;
+
+}
+
+.action-button:hover::after {
+
+  left: 170%;
+
+}
+
+/* ======================================================
+        LIVE DEMO
+====================================================== */
+.action-button-live {
+
+  background:
+
+    linear-gradient(135deg,
+
+      #C1121F,
+
+      #8B0000);
+
+  box-shadow:
+
+    0 8px 20px rgba(139, 0, 0, .45),
+
+    0 0 18px rgba(193, 18, 31, .25);
+
+}
+
+.action-button-live:hover {
+
+  background:
+
+    linear-gradient(135deg,
+
+      #D62839,
+
+      #A00000);
+
+  box-shadow:
+
+    0 16px 32px rgba(139, 0, 0, .55),
+
+    0 0 24px rgba(214, 40, 57, .35);
+
+}
+
+/* ======================================================
+        GITHUB
+====================================================== */
+
+.action-button-github {
+
+  background:
+
+    linear-gradient(135deg,
+
+      #30363D,
+
+      #161B22);
+
+  border: 1px solid #484F58;
+
+  box-shadow:
+
+    0 8px 20px rgba(0, 0, 0, .45),
+
+    0 0 18px rgba(255, 255, 255, .05);
+
+}
+
+.action-button-github:hover {
+
+  background:
+
+    linear-gradient(135deg,
+
+      #3C444D,
+
+      #21262D);
+
+  border-color: #8B949E;
+
+  box-shadow:
+
+    0 16px 34px rgba(0, 0, 0, .55);
+
+}
+
+/* ======================================================
+        ICON
+====================================================== */
+
+.action-button-icon {
+
+  position: relative;
+
+  z-index: 2;
+
+  color: white;
+
+  font-size: 28px;
+
+  transition:
+
+    transform .25s,
+
+    rotate .25s;
+
+}
+
+.action-button-icon-svg {
+
+  font-size: 24px;
+
+}
+
+.action-button:hover .action-button-icon {
+
+  transform: scale(1.15);
+
+  rotate: -10deg;
+
+}
+
+/* ======================================================
+        CLICK
+====================================================== */
+
+.action-button:active {
+
+  transform:
+
+    scale(.93);
+
+}
+
+/* ======================================================
+        MICRO INTERACTIONS
+====================================================== */
+
+.face-category,
+.face-title,
+.face-description,
+.face-tech-list,
+.face-actions {
+
+  will-change:
+
+    opacity,
+
+    transform;
+
+}
+
+/* ======================================================
+        SMOOTHER PROJECT CHANGE
+====================================================== */
+
+.face-info.active .face-category {
+
+  animation:
+
+    slideFade .35s ease;
+
+}
+
+.face-info.active .face-title {
+
+  animation:
+
+    slideFade .45s ease;
+
+}
+
+.face-info.active .face-description {
+
+  animation:
+
+    slideFade .55s ease;
+
+}
+
+.face-info.active .face-tech-list {
+
+  animation:
+
+    slideFade .65s ease;
+
+}
+
+.face-info.active .face-actions {
+
+  animation:
+
+    slideFade .75s ease;
+
+}
+
+@keyframes slideFade {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+
+      translateY(18px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+
+      translateY(0);
+
+  }
+
+}
+
+/* ======================================================
+        COMIC GLOW
+====================================================== */
+
+.face-title:hover {
+
+  text-shadow:
+
+    4px 0 var(--sv-red),
+
+    -4px 0 var(--sv-cyan),
+
+    0 7px 0 rgba(0, 0, 0, .92),
+
+    0 18px 40px rgba(0, 0, 0, .45);
+
+}
+
+/* ======================================================
+        INFO PANEL
+====================================================== */
+
+.face-info {
+
+  transition:
+
+    opacity .35s ease,
+
+    transform .35s ease;
+
+}
+
+/* ======================================================
+        RESPONSIVE
+====================================================== */
+
+@media(max-width:1600px) {
+
+  .face-info-left {
+
+    left: 55px;
+
+  }
+
   .face-info-right {
-    display: none;
+
+    right: 55px;
+
   }
+
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .action-button,
-  .face-tech-pill,
-  .projects-header-back {
-    transition: none;
+@media(max-width:1400px) {
+
+  .face-title {
+
+    font-size:
+
+      clamp(3rem, 4vw, 4.5rem);
+
   }
+
+  .face-description {
+
+    font-size: 18px;
+
+    line-height: 1.7;
+
+  }
+
+  .face-info {
+
+    max-width: 310px;
+
+  }
+
+}
+
+@media(max-width:1200px) {
+
+  .face-info {
+
+    max-width: 260px;
+
+  }
+
+  .face-actions {
+
+    gap: 16px;
+
+  }
+
+  .action-button {
+
+    width: 64px;
+
+    height: 64px;
+
+  }
+
+}
+
+@media(max-width:1000px) {
+
+  .face-info-left,
+
+  .face-info-right {
+
+    display: none;
+
+  }
+
+}
+
+/* ======================================================
+        FOCUS STATES
+====================================================== */
+
+.action-button:focus-visible {
+
+  outline: 3px solid var(--sv-cyan);
+
+  outline-offset: 4px;
+
+}
+
+.face-tech-pill:focus-visible {
+
+  outline: 2px solid var(--sv-red);
+
+  outline-offset: 3px;
+
+}
+
+/* ======================================================
+        SELECTION
+====================================================== */
+
+::selection {
+
+  background:
+
+    var(--sv-red);
+
+  color:
+
+    white;
+
+}
+
+/* ======================================================
+        REDUCED MOTION
+====================================================== */
+
+@media(prefers-reduced-motion:reduce) {
+
+  * {
+
+    animation: none !important;
+
+    transition: none !important;
+
+    scroll-behavior: auto !important;
+
+  }
+
+}
+
+/* ======================================================
+        PERFORMANCE
+====================================================== */
+
+.face-info,
+
+.face-tech-pill,
+
+.action-button {
+
+  backface-visibility: hidden;
+
+  transform-style: preserve-3d;
+
+}
+
+/* ======================================================
+        FINAL POLISH
+====================================================== */
+
+.face-info {
+
+  filter:
+
+    drop-shadow(0 8px 20px rgba(0, 0, 0, .25));
+
 }
