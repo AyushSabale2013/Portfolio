@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
+import { FaGithub } from 'react-icons/fa';
 import './InfiniteMenu.css';
 
 const discVertShaderSource = `#version 300 es
@@ -631,7 +632,7 @@ class InfiniteGridMenu {
   }
 
   #init(onInit) {
-    this.gl = this.canvas.getContext('webgl2', { antialias: true, alpha: false });
+    this.gl = this.canvas.getContext('webgl2', { antialias: true, alpha: true });
     const gl = this.gl;
     if (!gl) {
       throw new Error('No WebGL 2 context!');
@@ -903,10 +904,14 @@ class InfiniteGridMenu {
 
 const defaultItems = [
   {
+    id: 0,
     image: 'https://picsum.photos/900/900?grayscale',
-    link: 'https://google.com/',
     title: '',
-    description: ''
+    category: '',
+    description: '',
+    technologies: [],
+    liveUrl: '',
+    githubUrl: ''
   }
 ];
 
@@ -949,12 +954,12 @@ export default function InfiniteMenu({ items = [], scale = 1.0 }) {
     };
   }, [items, scale]);
 
-  const handleButtonClick = () => {
-    if (!activeItem?.link) return;
-    if (activeItem.link.startsWith('http')) {
-      window.open(activeItem.link, '_blank');
+  const openUrl = url => {
+    if (!url) return;
+    if (url.startsWith('http')) {
+      window.open(url, '_blank', 'noopener,noreferrer');
     } else {
-      console.log('Internal route:', activeItem.link);
+      console.log('Internal route:', url);
     }
   };
 
@@ -964,12 +969,47 @@ export default function InfiniteMenu({ items = [], scale = 1.0 }) {
 
       {activeItem && (
         <>
-          <h2 className={`face-title ${isMoving ? 'inactive' : 'active'}`}>{activeItem.title}</h2>
+          <div className={`face-info face-info-left ${isMoving ? 'inactive' : 'active'}`}>
+            {activeItem.category && <p className="face-category">{activeItem.category}</p>}
+            <h2 className="face-title">{activeItem.title}</h2>
+          </div>
 
-          <p className={`face-description ${isMoving ? 'inactive' : 'active'}`}> {activeItem.description}</p>
+          <div className={`face-info face-info-right ${isMoving ? 'inactive' : 'active'}`}>
+            <p className="face-description">{activeItem.description}</p>
 
-          <div onClick={handleButtonClick} className={`action-button ${isMoving ? 'inactive' : 'active'}`}>
-            <p className="action-button-icon">&#x2197;</p>
+            {activeItem.technologies && activeItem.technologies.length > 0 && (
+              <ul className="face-tech-list">
+                {activeItem.technologies.map(tech => (
+                  <li key={tech} className="face-tech-pill">
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className={`face-actions ${isMoving ? 'inactive' : 'active'}`}>
+            {activeItem.liveUrl && (
+              <button
+                type="button"
+                className="action-button action-button-live"
+                title="View live project"
+                onClick={() => openUrl(activeItem.liveUrl)}
+              >
+                <span className="action-button-icon">&#x2197;</span>
+              </button>
+            )}
+
+            {activeItem.githubUrl && (
+              <button
+                type="button"
+                className="action-button action-button-github"
+                title="View source on GitHub"
+                onClick={() => openUrl(activeItem.githubUrl)}
+              >
+                <FaGithub className="action-button-icon action-button-icon-svg" />
+              </button>
+            )}
           </div>
         </>
       )}

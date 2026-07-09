@@ -1,38 +1,18 @@
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 
 import InfiniteMenu from "../components/InfiniteMenu";
 import projects from "../data/projects";
 
+import infiniteMenuBackground from "../assets/projects/infiniteMenuBackground2.jpg";
+
+import "./ProjectsPage.css";
+
 export default function ProjectsPage({ onClose }) {
-    const items = projects.map((project) => ({
-        image: project.image,
-        link: project.liveUrl,
-        title: project.title,
-        description: project.description,
-    }));
-
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === "Escape") {
-                onClose();
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-
-        return () =>
-            window.removeEventListener(
-                "keydown",
-                handleKeyDown
-            );
-    }, [onClose]);
-
     return (
         <motion.div
             initial={{
                 opacity: 0,
-                scale: 1.03,
+                scale: 1.02,
             }}
             animate={{
                 opacity: 1,
@@ -44,57 +24,52 @@ export default function ProjectsPage({ onClose }) {
             transition={{
                 duration: 0.45,
             }}
+            className="projects-page"
             style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 999999,
-                background: "#f8f8f8",
-                overflow: "hidden",
+                backgroundImage: `url(${infiniteMenuBackground})`,
             }}
         >
-            {/* ================= RETURN BUTTON ================= */}
+            {/* ================= HEADER ================= */}
 
-            <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={onClose}
-                style={{
-                    position: "absolute",
-                    top: 24,
-                    left: 24,
+            <header className="projects-header">
 
-                    zIndex: 999,
+                <button
+                    className="projects-header-back"
+                    onClick={onClose}
+                >
+                    <span className="projects-header-back-arrow">
+                        ←
+                    </span>
 
-                    padding: "10px 18px",
+                    Spider Desktop
+                </button>
 
-                    background: "rgba(255,255,255,0.06)",
+                <h1
+                    className="projects-header-title"
+                    data-text="MY WORK"
+                >
+                    MY WORK
+                </h1>
 
-                    border: "1px solid rgba(255,255,255,0.12)",
+                {/* Keeps title perfectly centered */}
 
-                    borderRadius: 10,
+                <div
+                    className="projects-header-spacer"
+                    aria-hidden="true"
+                />
 
-                    color: "#F3F4F6",
+            </header>
 
-                    fontSize: 15,
+            {/* ================= SPHERE ================= */}
 
-                    fontWeight: 600,
+            <main className="projects-menu-section">
 
-                    cursor: "pointer",
+                <InfiniteMenu
+                    items={projects}
+                />
 
-                    backdropFilter: "blur(16px)",
+            </main>
 
-                    transition: ".2s",
-                }}
-            >
-                ← Desktop
-            </motion.button>
-
-            {/* ================= PROJECT MENU ================= */}
-
-            <InfiniteMenu
-                items={items}
-                scale={1}
-            />
         </motion.div>
     );
 }

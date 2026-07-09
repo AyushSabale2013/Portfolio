@@ -1,0 +1,226 @@
+/* ======================================================
+   SPIDER-VERSE PORTFOLIO — DESIGN TOKENS
+   Palette pulled straight from the skyline art: deep void
+   navy, ink black, warm paper white, comic red, glitch pink
+   and web cyan (the chromatic-aberration accent colors used
+   throughout the Spider-Verse films).
+====================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --sv-void:   #090c1f;
+  --sv-ink:    #05060a;
+  --sv-paper:  #f5efe0;
+  --sv-red:    #e6293e;
+  --sv-pink:   #ff3e8a;
+  --sv-cyan:   #26e0ff;
+  --sv-indigo: #5b3df0;
+  --sv-muted:  #a9b4d0;
+
+  --font-display: 'Anton', sans-serif;      /* poster headline */
+  --font-accent:  'Bangers', cursive;       /* comic eyebrow label */
+  --font-body:    'Space Grotesk', sans-serif; /* clean, professional body */
+}
+
+/* ======================================================
+   PROJECT PAGE
+====================================================== */
+
+.projects-page {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+    outline: none;
+
+    z-index: 999999;
+
+    font-family: var(--font-body);
+
+    /* 👉 point this at wherever you save the uploaded skyline
+       image in your project, e.g. /assets/spiderverse-skyline.jpg */
+    background-image:
+        linear-gradient(180deg, rgba(9,12,31,.55) 0%, rgba(5,6,10,.35) 45%, rgba(5,6,10,.9) 100%),
+        url("/assets/spiderverse-skyline.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--sv-void);
+}
+
+/* subtle halftone / comic-ink texture screened over the photo */
+.projects-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+
+    background-image: radial-gradient(rgba(245, 239, 224, 0.1) 1px, transparent 1px);
+    background-size: 5px 5px;
+    mix-blend-mode: overlay;
+    opacity: .5;
+}
+
+/* faint drifting RGB scanlines — a quiet nod to the film's
+   print-glitch transitions, not a loud effect */
+.projects-page::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(38, 224, 255, 0.035) 0px,
+        rgba(255, 62, 138, 0.035) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    opacity: .4;
+    animation: sv-scan 9s linear infinite;
+}
+
+@keyframes sv-scan {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(40px); }
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.projects-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 95px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 55px;
+
+    z-index: 100;
+    overflow: hidden;
+
+    background: linear-gradient(180deg, rgba(5,6,10,.78) 0%, rgba(5,6,10,0) 100%);
+    border-bottom: 1px solid rgba(245, 239, 224, 0.08);
+}
+
+/* a thin RGB scan-bar that periodically sweeps the header,
+   like a page transition catching a glitch frame */
+.projects-header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -30%;
+    width: 30%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(38, 224, 255, 0.08) 35%,
+        rgba(255, 62, 138, 0.1) 55%,
+        transparent 100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    animation: sv-header-sweep 7s ease-in-out infinite;
+}
+
+@keyframes sv-header-sweep {
+    0%, 60% { left: -30%; }
+    100%    { left: 130%; }
+}
+
+/* ================= BACK BUTTON ================= */
+
+.projects-header-back {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+    cursor: pointer;
+
+    color: var(--sv-paper);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+
+    transition: .25s ease;
+}
+
+.projects-header-back:hover {
+    transform: translateX(-6px);
+    color: var(--sv-red);
+    text-shadow:
+        1.5px 0 var(--sv-cyan),
+        -1.5px 0 var(--sv-pink);
+}
+
+.projects-header-back-arrow {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--sv-paper);
+}
+
+/* ================= TITLE ================= */
+
+.projects-header-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 2vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+
+    color: #ffffff;
+    -webkit-text-stroke: 1px rgba(5, 6, 10, .5);
+
+    /* crisp chromatic-aberration split + a grounded drop shadow
+       (kept tight so it reads sharp/glitchy, never soft or blurry) */
+    text-shadow:
+        2px 0 0 var(--sv-cyan),
+        -2px 0 0 var(--sv-red),
+        0 3px 0 rgba(0, 0, 0, .9),
+        0 6px 10px rgba(0, 0, 0, .6);
+}
+
+/* keeps title centered */
+.projects-header-spacer {
+    width: 220px;
+}
+
+/* ======================================================
+   SPHERE
+====================================================== */
+
+.projects-menu-section {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .projects-page::after,
+    .projects-header-back {
+        animation: none;
+        transition: none;
+    }
+}
