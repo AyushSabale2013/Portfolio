@@ -1,11 +1,11 @@
 import Window from "./Window";
-
-// Appsw";
 import { apps } from "../apps/apps";
 
 export default function WindowManager({
     openApps,
+    openApp,
     closeApp,
+
     windowZ,
     focusWindow,
 
@@ -20,7 +20,9 @@ export default function WindowManager({
         setMaximizedWindow((prev) =>
             prev === id ? null : id
         );
-    };    return (
+    };
+
+    return (
         <>
             {Object.entries(apps).map(([id, app], index) => {
                 const Component = app.component;
@@ -32,6 +34,14 @@ export default function WindowManager({
                         title={app.title}
                         infoContent={app.info}
                         isOpen={openApps.includes(id)}
+                        left={`${BASE_LEFT + index * OFFSET}%`}
+                        top={`${BASE_TOP + index * OFFSET}%`}
+                        zIndex={windowZ[id] ?? 1000}
+                        isMaximized={maximizedWindow === id}
+                        onFocus={() => focusWindow(id)}                        onToggleMaximize={() => {
+                            focusWindow(id);
+                            toggleMaximize(id);
+                        }}
 
                         onClose={() => {
                             if (maximizedWindow === id) {
@@ -40,22 +50,13 @@ export default function WindowManager({
 
                             closeApp(id);
                         }}
-
-                        left={`${BASE_LEFT + index * OFFSET}%`}
-                        top={`${BASE_TOP + index * OFFSET}%`}
-
-                        zIndex={windowZ[id] ?? 1000}
-
-                        onFocus={() => focusWindow(id)}
-
-                        isMaximized={maximizedWindow === id}
-
-                        onToggleMaximize={() => {
-                            focusWindow(id);
-                            toggleMaximize(id);
-                        }}
                     >
-                        <Component />
+                        <Component
+                            openApp={openApp}
+                            closeApp={closeApp}
+                            focusWindow={focusWindow}
+                            windowId={id}
+                        />
                     </Window>
                 );
             })}

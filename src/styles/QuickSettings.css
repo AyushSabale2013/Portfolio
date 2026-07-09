@@ -1,0 +1,293 @@
+/* ==========================================================
+   QUICK SETTINGS — Spidey OS
+   macOS-style control center, Spider-Verse accent palette
+========================================================== */
+
+:root{
+    --qs-bg:#181416;
+    --qs-surface:#241E1F;
+    --qs-surface-hover:#332A2B;
+    --qs-border:#4A2E28;
+    --qs-text:#F4F4F5;
+    --qs-subtext:#B8A9A0;
+
+    --qs-red:#ED1C24;
+    --qs-orange:#FF6B1A;
+    --qs-yellow:#FFC72C;
+
+    --qs-radius:22px;
+    --qs-pill-radius:999px;
+}
+
+/* ==========================================================
+   BACKDROP
+========================================================== */
+
+.qs-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.18);
+    z-index:9998;
+}
+
+/* ==========================================================
+   PANEL — smaller footprint than before
+========================================================== */
+
+.quick-settings{
+    position:absolute;
+    top:44px;
+    right:14px;
+    width:400px;
+
+    border-radius:var(--qs-radius);
+    background:var(--qs-bg);
+    border:1.5px solid var(--qs-border);
+    overflow:hidden;
+
+    /* halftone comic-print texture in warm tones */
+    background-image:
+        radial-gradient(rgba(255,199,44,.06) 1.2px, transparent 1.2px),
+        radial-gradient(rgba(237,28,36,.05) 1.2px, transparent 1.2px);
+    background-size:12px 12px, 12px 12px;
+    background-position:0 0, 6px 6px;
+
+    box-shadow:
+        0 22px 55px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,107,26,.10);
+
+    z-index:9999;
+    color:var(--qs-text);
+    font-family:Inter, system-ui, sans-serif;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.qs-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 16px;
+    border-bottom:1px solid var(--qs-border);
+}
+
+.qs-battery{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.qs-header-icons{
+    display:flex;
+    gap:6px;
+}
+
+.qs-header-icons button{
+    width:30px;
+    height:30px;
+    border:none;
+    border-radius:10px;
+    background:var(--qs-surface);
+    color:var(--qs-text);
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:12px;
+    transition:.18s;
+}
+
+.qs-header-icons button:hover{
+    background:linear-gradient(135deg, var(--qs-red), var(--qs-orange));
+    transform:translateY(-1px);
+}
+
+/* ==========================================================
+   SLIDERS
+========================================================== */
+
+.qs-slider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 16px 4px;
+}
+
+.slider-icon{
+    font-size:16px;
+    color:var(--qs-text);
+    flex-shrink:0;
+}
+
+.qs-slider input{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:100px;
+    background:#3A3D46;
+    cursor:pointer;
+}
+
+.qs-slider input::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--qs-red), var(--qs-yellow));
+    cursor:pointer;
+    border:2px solid #FFFFFF;
+}
+
+.qs-slider input::-moz-range-thumb{
+    width:14px;
+    height:14px;
+    border:none;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--qs-red), var(--qs-yellow));
+    cursor:pointer;
+}
+
+/* ==========================================================
+   GRID — 2 cols, tight gap
+========================================================== */
+
+.qs-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:10px;
+    padding:16px 18px 0;
+}
+
+.qs-grid-single{
+    grid-template-columns:1fr;
+    padding-top:8px;
+    padding-bottom:14px;
+}
+
+/* ==========================================================
+   PILL — compact row instead of tall card
+========================================================== */
+
+.qs-pill{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    min-height:50px;
+    border-radius:var(--qs-pill-radius);
+    background:var(--qs-surface);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:background .2s, transform .15s, border-color .2s;
+}
+
+.qs-pill:hover{
+    background:var(--qs-surface-hover);
+    border-color:#4A4E59;
+}
+
+.qs-pill:active{
+    transform:scale(.98);
+}
+
+.qs-pill-icon{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-shrink:0;
+    font-size:12px;
+    color:#FFFFFF;
+    background:rgba(255,255,255,.08);
+}
+
+.qs-pill-text{
+    display:flex;
+    flex-direction:column;
+    line-height:1.15;
+    overflow:hidden;
+}
+
+.qs-pill-text span{
+    font-size:12.5px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.qs-pill-text small{
+    font-size:10.5px;
+    color:var(--qs-subtext);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.qs-pill-arrow{
+    margin-left:auto;
+    font-size:10px;
+    color:var(--qs-subtext);
+    flex-shrink:0;
+}
+
+/* ==========================================================
+   ACTIVE PILL — red-to-blue Spider-Verse gradient
+========================================================== */
+
+.qs-pill.active{
+    background:linear-gradient(115deg, var(--qs-red) 0%, var(--qs-orange) 55%, var(--qs-yellow) 100%);
+    border:1.5px solid rgba(0,0,0,.35);
+    box-shadow:0 6px 16px rgba(255,107,26,.25);
+}
+
+.qs-pill.active .qs-pill-icon{
+    background:rgba(255,255,255,.18);
+}
+
+.qs-pill.active .qs-pill-text small{
+    color:rgba(255,255,255,.85);
+}
+
+.qs-pill.active .qs-pill-arrow{
+    color:rgba(255,255,255,.85);
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.qs-footer{
+    padding:12px 16px 16px;
+    border-top:1px solid var(--qs-border);
+}
+
+.qs-time{
+    font-size:16px;
+    font-weight:700;
+    color:var(--qs-text);
+    margin-right:8px;
+}
+
+.qs-date{
+    font-size:11px;
+    color:var(--qs-subtext);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:600px){
+    .quick-settings{
+        width:92vw;
+        right:4vw;
+    }
+}

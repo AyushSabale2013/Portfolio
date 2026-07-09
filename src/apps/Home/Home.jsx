@@ -6,235 +6,608 @@ import {
     FaHome,
     FaSearch,
 } from "react-icons/fa";
-import { apps } from "../../apps/apps"; // Adjust this relative path to match your folder tree location
 
-// Scalable Vector Graphics Component for Windows-inspired Yellow Folders
-const YellowFolderIcon = () => (
-    <svg width="56" height="56" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style={{ pointerEvents: "none" }}>
+import { apps } from "../../apps/apps";
+
+/* ======================================================
+        WINDOWS STYLE FOLDER ICON
+====================================================== */
+
+const FolderIcon = () => (
+    <svg
+        width="58"
+        height="58"
+        viewBox="0 0 64 64"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ pointerEvents: "none" }}
+    >
         <defs>
-            <linearGradient id="folderBack" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FFCF4D"/>
-                <stop offset="100%" stopColor="#FDB813"/>
+            <linearGradient
+                id="folderBack"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+            >
+                <stop
+                    offset="0%"
+                    stopColor="#FFD75E"
+                />
+                <stop
+                    offset="100%"
+                    stopColor="#F2B322"
+                />
             </linearGradient>
-            <linearGradient id="folderFront" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FFE08A"/>
-                <stop offset="100%" stopColor="#FFC530"/>
+
+            <linearGradient
+                id="folderFront"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+            >
+                <stop
+                    offset="0%"
+                    stopColor="#FFE48B"
+                />
+                <stop
+                    offset="100%"
+                    stopColor="#FFC83A"
+                />
             </linearGradient>
         </defs>
-        <path d="M4 14c0-2.2 1.8-4 4-4h14l4 5h26c2.2 0 4 1.8 4 4v3H4v-8z" fill="url(#folderBack)" />
-        <rect x="4" y="18" width="56" height="34" rx="5" fill="url(#folderBack)"/>
-        <path d="M4 24c0-2.2 1.8-4 4-4h44c2.2 0 4 1.8 4 4v22c0 3.3-2.7 6-6 6H10c-3.3 0-6-2.7-6-6V24z" fill="url(#folderFront)" />
+
+        <path
+            d="M4 14
+               C4 11.8 5.8 10 8 10
+               H21
+               L26 15
+               H56
+               C58.2 15 60 16.8 60 19
+               V22
+               H4
+               Z"
+            fill="url(#folderBack)"
+        />
+
+        <rect
+            x="4"
+            y="18"
+            width="56"
+            height="34"
+            rx="5"
+            fill="url(#folderBack)"
+        />
+
+        <path
+            d="M4 24
+               C4 21.8 5.8 20 8 20
+               H56
+               C58.2 20 60 21.8 60 24
+               V46
+               C60 49.5 57.5 52 54 52
+               H10
+               C6.5 52 4 49.5 4 46
+               Z"
+            fill="url(#folderFront)"
+        />
     </svg>
 );
 
-export default function Home({ openApp }) {
-    
-    // Intercept launcher mechanism loops
-    const handleFolderClick = (appKey) => {
-        // If your main application shell uses a state-setter prop to open windows:
-        if (typeof openApp === "function") {
-            openApp(appKey);
-        } else {
-            console.log(`System Intercept: Requesting launch container for key [${appKey}]`);
-            // alert(`To execute apps directly, connect your parent launch window handler hook to Home.jsx!`);
-        }
-    };
+/* ======================================================
+        HOME
+====================================================== */
 
-    return (
+export default function Home({ openApp }) {
+
+    /* ----------------------------------
+            REAL APPS
+    ---------------------------------- */
+
+    const realApps = Object.entries(apps).filter(
+
+        ([key, app]) =>
+
+            key !== "home" &&
+            !app.isFake
+
+    );
+
+    /* ----------------------------------
+            FAKE FOLDERS
+    ---------------------------------- */
+
+    const fakeFolders = Object.entries(apps).filter(
+
+        ([, app]) =>
+
+            app.isFake
+
+    );
+
+    /* ----------------------------------
+            OPEN
+    ---------------------------------- */
+
+    const handleOpen = (key, fake = false) => {
+
+        if (!openApp) return;
+
+        if (fake) {
+
+            openApp("folder");
+
+            return;
+
+        }
+
+        openApp(key);
+
+    }; return (
+
         <div
             style={{
+                width: "100%",
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                background: "#1f1f1f",
-                color: "#fff",
-                borderRadius: 16,
+                background: "#282828",
                 overflow: "hidden",
+                userSelect: "none",
             }}
         >
-            {/* ================= Toolbar ================= */}
+
+            {/* ======================================================
+                    TOOLBAR
+            ====================================================== */}
+
             <motion.div
                 initial={{ opacity: 0, y: -15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: .35 }}
                 style={{
                     height: 58,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
                     padding: "0 18px",
-                    background: "#2b2b2b",
-                    borderBottom: "1px solid rgba(255,255,255,.08)",
+                    background: "#282828",
+                    borderBottom: "1px solid #D6D6D6",
+                    flexShrink: 0,
                 }}
             >
+
                 {/* Navigation */}
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <FaArrowLeft style={{ cursor: "pointer", color: "#bdbdbd" }} />
-                    <FaArrowRight style={{ cursor: "pointer", color: "#bdbdbd" }} />
-                    <FaArrowUp style={{ cursor: "pointer", color: "#bdbdbd" }} />
+
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                    }}
+                >
+
+                    <FaArrowLeft
+                        style={{
+                            color: "#acacac",
+                            cursor: "pointer",
+                        }}
+                    />
+
+                    <FaArrowRight
+                        style={{
+                            color: "#acacac",
+                            cursor: "pointer",
+                        }}
+                    />
+
+                    <FaArrowUp
+                        style={{
+                            color: "#acacac",
+                            cursor: "pointer",
+                        }}
+                    />
+
                 </div>
 
                 {/* Breadcrumb */}
+
                 <div
                     style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 10,
-                        background: "#3a3a3a",
                         padding: "8px 18px",
+                        background: "#e4e1e1",
+                        border: "1px solid #D9D9D9",
                         borderRadius: 10,
+                        color: "#444",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        minWidth: 240,
+                        justifyContent: "center",
                     }}
                 >
+
                     <FaHome />
-                    <span>Home / Ayush</span>
+
+                    <span>
+                        Home
+                    </span>
+
                 </div>
 
                 {/* Search */}
+
                 <div
                     style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 10,
-                        background: "#3a3a3a",
                         padding: "8px 14px",
+                        background: "#e4e1e1",
+                        border: "1px solid #D9D9D9",
                         borderRadius: 10,
-                        color: "#bdbdbd",
+                        color: "#888",
+                        minWidth: 200,
                     }}
                 >
+
                     <FaSearch />
-                    <span>Search</span>
+
+                    <span>
+                        Search Home
+                    </span>
+
                 </div>
+
             </motion.div>
 
-            {/* ================= Main ================= */}
-            <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-                {/* Sidebar */}
+            {/* ======================================================
+                    BODY
+            ====================================================== */}
+
+            <div
+                style={{
+                    flex: 1,
+                    display: "flex",
+                    overflow: "hidden",
+                }}
+            >
+
+                {/* ======================================================
+                        SIDEBAR
+                ====================================================== */}
+
                 <div
                     style={{
                         width: 220,
-                        background: "#262626",
-                        borderRight: "1px solid rgba(255,255,255,.08)",
+                        background:  "#282828",
+                        borderRight: "1px solid #3c3c3c",
                         padding: 18,
+                        overflowY: "auto",
+                        flexShrink: 0,
                     }}
                 >
-                    <h3
+
+                    <div
                         style={{
-                            marginTop: 0,
-                            marginBottom: 20,
-                            fontWeight: 600,
-                            color: "#bdbdbd",
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: "#fff9f9",
+                            marginBottom: 18,
+                            textTransform: "uppercase",
+                            letterSpacing: 1,
                         }}
                     >
-                        Favorites
-                    </h3>
+                        Quick Access
+                    </div>
 
-                    {Object.keys(apps).map((key) => (
+                    {[
+
+                        "Desktop",
+
+                        "Home",
+
+                        "Documents",
+
+                        "Downloads",
+
+                        "Pictures",
+
+                        "Music",
+
+                        "Videos",
+
+                        "Trash",
+
+                    ].map((item) => (
+
                         <div
-                            key={key}
-                            onClick={() => handleFolderClick(key)}
+                            key={item}
                             style={{
                                 padding: "10px 14px",
-                                borderRadius: 10,
-                                marginBottom: 6,
+                                borderRadius: 8,
+                                marginBottom: 4,
+                                color: "#f5f5f5",
+                                fontSize: 14,
                                 cursor: "pointer",
-                                transition: ".25s",
-                                fontSize: "14px"
+                                transition: ".2s",
                             }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-                            onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                            onMouseEnter={(e) =>
+                                e.currentTarget.style.background = "#171717"
+                            }
+                            onMouseLeave={(e) =>
+                                e.currentTarget.style.background = "transparent"
+                            }
                         >
-                            📁 {apps[key].title}
+                            📁 {item}
                         </div>
+
                     ))}
+
                 </div>
 
-                {/* File Area Viewport */}
+                {/* ======================================================
+                        MAIN CONTENT
+                ====================================================== */}
+
                 <div
                     style={{
                         flex: 1,
-                        padding: 28,
-                        overflowY: "auto",
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "space-between"
+                        padding: 28,
+                        overflow: "hidden",
                     }}
-                >
-                    {/* ================= Folder Grid Matrix ================= */}
+                >                    {/* ======================================================
+                            FOLDER GRID
+                    ====================================================== */}
+
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.5 }}
+                        transition={{ duration: .4 }}
                         style={{
+                            flex: 1,
+                            overflowY: "auto",
                             display: "grid",
-                            gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                            gap: 30,
+                            gridTemplateColumns:
+                                "repeat(auto-fill,minmax(120px,1fr))",
                             alignContent: "start",
+                            gap: 28,
+                            paddingRight: 6,
                         }}
                     >
-                        {Object.keys(apps).map((key) => {
-                            const appItem = apps[key];
-                            return (
-                                <motion.div
-                                    key={key}
-                                    whileHover={{ scale: 1.05, y: -4 }}
-                                    whileTap={{ scale: 0.97 }}
-                                    onClick={() => handleFolderClick(key)}
+
+                        {/* ===============================
+                                REAL APPS
+                        =============================== */}
+
+                        {realApps.map(([key, app]) => (
+
+                            <motion.div
+
+                                key={key}
+
+                                whileHover={{
+                                    y: -5,
+                                    scale: 1.05,
+                                }}
+
+                                whileTap={{
+                                    scale: .95,
+                                }}
+
+                                onClick={() => handleOpen(key)}
+
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 12,
+
+                                    padding: "14px",
+
+                                    borderRadius: 10,
+
+                                    cursor: "pointer",
+
+                                    transition: ".2s",
+
+                                    minHeight: 120,
+                                }}
+
+                                onMouseEnter={(e) => {
+
+                                    e.currentTarget.style.background =
+                                        "#000000";
+
+                                }}
+
+                                onMouseLeave={(e) => {
+
+                                    e.currentTarget.style.background =
+                                        "transparent";
+
+                                }}
+
+                            >
+
+                                <FolderIcon />
+
+                                <span
+
                                     style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        gap: 12,
-                                        padding: 14,
-                                        borderRadius: 12,
-                                        cursor: "pointer",
-                                        userSelect: "none",
+
+                                        color: "#f0f0f0",
+
+                                        fontSize: 14,
+
+                                        fontWeight: 500,
+
+                                        textAlign: "center",
+
+                                        lineHeight: 1.35,
+
+                                        wordBreak: "break-word",
+
                                     }}
-                                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
-                                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+
                                 >
-                                    {/* Swapped regular emojis for your clean yellow vector asset layout */}
-                                    <YellowFolderIcon />
 
-                                    {/* Folder Name Identifier */}
-                                    <span
-                                        style={{
-                                            textAlign: "center",
-                                            fontSize: 14,
-                                            color: "#ECECEC",
-                                            lineHeight: 1.4,
-                                        }}
-                                    >
-                                        {appItem.title}
-                                    </span>
-                                </motion.div>
-                            );
-                        })}
-                    </motion.div>
+                                    {app.title}
 
-                    {/* ================= Status Bar ================= */}
+                                </span>
+
+                            </motion.div>
+
+                        ))}
+
+                        {/* ===============================
+                                FAKE FOLDERS
+                        =============================== */}
+
+                        {fakeFolders.map(([key, app]) => (
+
+                            <motion.div
+
+                                key={key}
+
+                                whileHover={{
+                                    y: -5,
+                                    scale: 1.05,
+                                }}
+
+                                whileTap={{
+                                    scale: .95,
+                                }}
+
+                                onClick={() => handleOpen(key, true)}
+
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 12,
+
+                                    padding: "14px",
+
+                                    borderRadius: 10,
+
+                                    cursor: "pointer",
+
+                                    transition: ".2s",
+
+                                    minHeight: 120,
+                                }}
+
+                                onMouseEnter={(e) => {
+
+                                    e.currentTarget.style.background =
+                                        "#000000";
+
+                                }}
+
+                                onMouseLeave={(e) => {
+
+                                    e.currentTarget.style.background =
+                                        "transparent";
+
+                                }}
+
+                            >
+
+                                <FolderIcon />
+
+                                <span
+
+                                    style={{
+
+                                        color: "#e0dfdf",
+
+                                        fontSize: 14,
+
+                                        fontWeight: 500,
+
+                                        textAlign: "center",
+
+                                        lineHeight: 1.35,
+
+                                        wordBreak: "break-word",
+
+                                    }}
+
+                                >
+
+                                    {app.title}
+
+                                </span>
+
+                            </motion.div>
+
+                        ))}
+
+                    </motion.div>                    {/* ======================================================
+                            STATUS BAR
+                    ====================================================== */}
+
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.35 }}
+                        transition={{ delay: .25 }}
                         style={{
-                            marginTop: 40,
-                            padding: "14px 20px",
-                            borderRadius: 12,
-                            background: "#2b2b2b",
-                            border: "1px solid rgba(255,255,255,.08)",
+                            height: 52,
+                            marginTop: 18,
+
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-                            color: "#BDBDBD",
+
+                            padding: "0 18px",
+
+                            background: "#191707",
+
+                            border: "1px solid #000000",
+
+                            borderRadius: 10,
+
+                            color: "#fdfdfd",
+
                             fontSize: 13,
+
+                            flexShrink: 0,
                         }}
                     >
-                        <span>{Object.keys(apps).length} Items</span>
-                        <span>Home Directory</span>
-                        <span>Spider OS v1.0</span>
+
+                        <span>
+
+                            {realApps.length + fakeFolders.length} Items
+
+                        </span>
+
+                        <span>
+
+                            Home Directory
+
+                        </span>
+
+                        <span>
+
+                            Spider OS v1.0
+
+                        </span>
+
                     </motion.div>
+
                 </div>
+
             </div>
+
         </div>
+
     );
+
 }

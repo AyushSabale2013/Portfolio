@@ -9,13 +9,14 @@ import {
 
 import Calendar from "react-calendar";
 import "../styles/Calendar.css";
+import QuickSettings from "../styles/QuickSettings";
 
 export default function MenuBar() {
     const [time, setTime] = useState("");
     const [date, setDate] = useState("");
     const [showCalendar, setShowCalendar] = useState(false);
     const [value, setValue] = useState(new Date());
-
+    const [showQuickSettings, setShowQuickSettings] = useState(false);
     const calendarRef = useRef(null);
 
     useEffect(() => {
@@ -211,19 +212,18 @@ export default function MenuBar() {
             {/* ================= RIGHT ================= */}
 
             <div
+                onClick={() => setShowQuickSettings((prev) => !prev)}
                 style={{
                     display: "flex",
                     alignItems: "center",
-
                     gap: 14,
-
                     fontSize: 18,
+                    cursor: "pointer",
+                    position: "relative",
                 }}
             >
                 <MdWifi />
-
                 <MdBluetooth />
-
                 <MdVolumeUp />
 
                 <div
@@ -234,7 +234,6 @@ export default function MenuBar() {
                     }}
                 >
                     <MdBatteryFull />
-
                     <span
                         style={{
                             fontSize: 12,
@@ -249,9 +248,7 @@ export default function MenuBar() {
                     style={{
                         width: 1,
                         height: 16,
-
-                        background:
-                            "rgba(255,255,255,.12)",
+                        background: "rgba(255,255,255,.12)",
                     }}
                 />
 
@@ -259,16 +256,18 @@ export default function MenuBar() {
                     style={{
                         fontSize: 13,
                         fontWeight: 500,
-
                         color: "#D1D5DB",
-
                         minWidth: 55,
-
                         textAlign: "right",
                     }}
                 >
                     {time}
                 </span>
+
+                <QuickSettings
+                    isOpen={showQuickSettings}
+                    onClose={() => setShowQuickSettings(false)}
+                />
             </div>
         </motion.div>
     );

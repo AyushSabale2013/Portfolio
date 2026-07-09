@@ -350,13 +350,12 @@ export default function Desktop() {
 
             <WindowManager
                 openApps={openApps}
+                openApp={openApp}
                 closeApp={closeApp}
                 windowZ={windowZ}
                 focusWindow={focusWindow}
                 maximizedWindow={maximizedWindow}
-                setMaximizedWindow={
-                    setMaximizedWindow
-                }
+                setMaximizedWindow={setMaximizedWindow}
             />
 
             {/* ================= DOCK ================= */}

@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-    motion,
-    AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
     HiOutlineBars3,
@@ -32,8 +29,7 @@ export default function Window({
 
     onClose,
 }) {
-    const [showInfo, setShowInfo] =
-        useState(false);
+    const [showInfo, setShowInfo] = useState(false);
 
     if (!isOpen) return null;
 
@@ -42,8 +38,8 @@ export default function Window({
             onPointerDown={() => onFocus?.()}
             initial={{
                 opacity: 0,
-                scale: 0.95,
-                y: 20,
+                scale: 0.96,
+                y: 24,
             }}
             animate={{
                 opacity: 1,
@@ -52,336 +48,348 @@ export default function Window({
             }}
             exit={{
                 opacity: 0,
-                scale: 0.95,
-                y: 20,
+                scale: 0.97,
+                y: 18,
             }}
             transition={{
                 type: "spring",
-                stiffness: 280,
+                stiffness: 260,
                 damping: 24,
             }}
             style={{
                 position: "absolute",
 
-                left: isMaximized
-                    ? 0
-                    : left,
-
-                top: isMaximized
-                    ? 34
-                    : top,
+                left: isMaximized ? 0 : left,
+                top: isMaximized ? 32 : top,
 
                 width: isMaximized
                     ? "100%"
                     : `${width}px`,
 
                 height: isMaximized
-                    ? "calc(100vh - 34px)"
+                    ? "calc(100vh - 32px)"
                     : `${height}px`,
 
-                borderRadius: isMaximized
-                    ? 0
-                    : 16,
+                borderRadius: isMaximized ? 0 : 14,
 
                 overflow: "hidden",
 
-                background:
-                    "rgba(18,20,25,.82)",
+                display: "flex",
+                flexDirection: "column",
 
-                backdropFilter:
-                    "blur(30px)",
+                background: "#1E1E20",
 
-                WebkitBackdropFilter:
-                    "blur(30px)",
-
-                border:
-                    "1px solid rgba(255,255,255,.08)",
+                border: "1px solid #343437",
 
                 boxShadow:
-                    "0 35px 80px rgba(0,0,0,.45)",
-
-                display: "flex",
-
-                flexDirection: "column",
+                    "0 22px 65px rgba(0,0,0,.55)",
 
                 zIndex,
             }}
         >
-            {/* ================= TITLE BAR ================= */}
+
+            {/* ===================================================
+                            TITLE BAR
+            =================================================== */}
 
             <div
                 style={{
-                    height: 48,
+                    height: 50,
 
                     display: "flex",
-
-                    justifyContent:
-                        "space-between",
-
                     alignItems: "center",
+                    justifyContent: "space-between",
 
                     padding: "0 16px",
 
-                    background:
-                        "rgba(255,255,255,.03)",
+                    background: "#2C2C2E",
 
                     borderBottom:
-                        "1px solid rgba(255,255,255,.06)",
+                        "1px solid #3C3C3E",
 
                     userSelect: "none",
+
+                    flexShrink: 0,
 
                     position: "relative",
                 }}
             >
-                {/* LEFT BUTTONS */}
+
+                {/* ================= LEFT ================= */}
 
                 <div
                     style={{
                         display: "flex",
-                        gap: 8,
                         alignItems: "center",
+                        gap: 8,
                     }}
                 >
-                    {/* Close */}
 
                     <button
+                        title="Close"
                         onClick={() => {
                             onFocus?.();
                             onClose?.();
                         }}
-                        title="Close"
                         style={circle("#FF5F57")}
                     />
 
-                    {/* Maximize */}
-
                     <button
-                        onClick={() => {
-                            onFocus?.();
-                            onToggleMaximize?.();
-                        }}
                         title={
                             isMaximized
                                 ? "Restore"
                                 : "Maximize"
                         }
+                        onClick={() => {
+                            onFocus?.();
+                            onToggleMaximize?.();
+                        }}
                         style={circle("#28C840")}
                     />
 
-                    {/* Fake Minimize */}
-
                     <button
-                        onClick={() => {
-                            onFocus?.();
-                            onClose?.();
-                        }}
                         title="Minimize"
                         style={circle("#FEBC2E")}
                     />
+
                 </div>
 
-                {/* TITLE */}
+                {/* ================= TITLE ================= */}
 
                 <span
                     style={{
                         position: "absolute",
 
                         left: "50%",
-
                         transform:
                             "translateX(-50%)",
 
-                        color: "#ECECEC",
+                        color: "#F2F2F7",
 
-                        fontSize: 14,
+                        fontSize: 13,
 
                         fontWeight: 600,
 
-                        letterSpacing: ".4px",
+                        letterSpacing: ".2px",
+
+                        fontFamily:
+                            "-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif",
                     }}
                 >
                     {title}
-                </span>                {/* RIGHT BUTTONS */}
+                </span>
+
+                {/* ================= RIGHT ================= */}
 
                 <div
                     style={{
                         display: "flex",
-                        gap: 6,
+                        alignItems: "center",
+                        gap: 4,
                     }}
                 >
+
                     <button
-                        onClick={() =>
-                            setShowInfo((prev) => !prev)
-                        }
                         title="Information"
+                        onClick={() =>
+                            setShowInfo(!showInfo)
+                        }
                         style={iconButton()}
                     >
-                        <HiOutlineInformationCircle size={18} />
+                        <HiOutlineInformationCircle
+                            size={18}
+                        />
                     </button>
 
                     <button
                         title="Menu"
                         style={iconButton()}
                     >
-                        <HiOutlineBars3 size={18} />
+                        <HiOutlineBars3
+                            size={18}
+                        />
                     </button>
-                </div>
-            </div>
 
-            {/* ================= CONTENT ================= */}
+                </div>
+
+            </div>
+            {/* ===================================================
+                CONTENT
+=================================================== */}
 
             <div
                 style={{
                     flex: 1,
-
                     display: "flex",
-
-                    position: "relative",
-
                     overflow: "hidden",
-
-                    background:
-                        "rgba(255,255,255,.015)",
+                    position: "relative",
+                    background: "#1E1E20",
                 }}
             >
                 {/* MAIN CONTENT */}
-                <div
+
+                <motion.div
+                    layout
                     style={{
                         flex: 1,
-                        position: "relative",
-
-                        padding: title === "Projects" ? 0 : 24,
-
-                        overflow: title === "Projects"
-                            ? "hidden"
-                            : "auto",
-
                         width: "100%",
                         height: "100%",
-
-                        color: "#ECECEC",
-
-                        transition: ".25s",
+                        overflow:
+                            title === "Projects"
+                                ? "hidden"
+                                : "auto",
+                        padding:
+                            title === "Projects"
+                                ? 0
+                                : 24,
+                        color: "#F2F2F7",
+                        background: "#1E1E20",
+                        transition: ".25s ease",
                     }}
                 >
                     {children}
-                </div>
+                </motion.div>
 
-                {/* INFORMATION DRAWER */}
+                {/* INFO DRAWER */}
 
                 <AnimatePresence>
                     {showInfo && (
                         <motion.div
-                            initial={{
-                                x: "100%",
-                            }}
-                            animate={{
-                                x: 0,
-                            }}
-                            exit={{
-                                x: "100%",
-                            }}
+                            initial={{ x: 320 }}
+                            animate={{ x: 0 }}
+                            exit={{ x: 320 }}
                             transition={{
-                                duration: 0.25,
+                                type: "spring",
+                                stiffness: 260,
+                                damping: 28,
                             }}
                             style={{
-                                width: 300,
-
+                                width: 310,
                                 flexShrink: 0,
-
-                                background:
-                                    "rgba(18,20,25,.96)",
-
-                                borderLeft:
-                                    "1px solid rgba(255,255,255,.08)",
-
-                                padding: 20,
-
-                                overflowY: "auto",
-
-                                boxShadow:
-                                    "-20px 0 40px rgba(0,0,0,.35)",
+                                display: "flex",
+                                flexDirection: "column",
+                                background: "#2C2C2E",
+                                borderLeft: "1px solid #3C3C3E",
+                                overflow: "hidden",
                             }}
                         >
-                            <h3
+                            {/* Drawer Header */}
+
+                            <div
                                 style={{
-                                    margin: 0,
-
-                                    marginBottom: 16,
-
-                                    color: "#FF5F57",
-
+                                    height: 50,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "0 20px",
+                                    borderBottom: "1px solid #3C3C3E",
+                                    color: "#F2F2F7",
+                                    fontWeight: 600,
                                     fontSize: 13,
-
-                                    letterSpacing: "1px",
+                                    letterSpacing: ".5px",
+                                    textTransform: "uppercase",
                                 }}
                             >
-                                INFORMATION
-                            </h3>
+                                Information
+                            </div>
 
-                            <p
+                            {/* Drawer Body */}
+
+                            <div
                                 style={{
-                                    margin: 0,
-
-                                    color: "#B8BDC7",
-
-                                    fontSize: 13,
-
-                                    lineHeight: 1.7,
+                                    flex: 1,
+                                    padding: 20,
+                                    overflowY: "auto",
                                 }}
                             >
-                                {infoContent}
-                            </p>
+                                <div
+                                    style={{
+                                        color: "#9A9AA0",
+                                        fontSize: 12,
+                                        marginBottom: 12,
+                                        textTransform: "uppercase",
+                                        letterSpacing: "1px",
+                                    }}
+                                >
+                                    Description
+                                </div>
+
+                                <p
+                                    style={{
+                                        margin: 0,
+                                        color: "#E5E5EA",
+                                        fontSize: 14,
+                                        lineHeight: 1.8,
+                                    }}
+                                >
+                                    {infoContent || "No information available."}
+                                </p>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
         </motion.div>
     );
-} function circle(color) {
+}
+
+function circle(color) {
     return {
-        width: 13,
-        height: 13,
+        width: 12,
+        height: 12,
 
         border: "none",
-
         borderRadius: "50%",
 
         background: color,
 
-        cursor: "pointer",
-
         padding: 0,
+        margin: 0,
+
+        cursor: "pointer",
 
         outline: "none",
 
-        transition:
-            "transform .18s ease, box-shadow .18s ease",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
 
-        boxShadow: `0 0 8px ${color}35`,
+        transition:
+            "transform .18s ease, filter .18s ease, box-shadow .18s ease",
+
+        boxShadow: "none",
+
+        appearance: "none",
+
+        WebkitAppearance: "none",
     };
 }
 
 function iconButton() {
     return {
-        width: 34,
-        height: 34,
+        width: 30,
+        height: 30,
+
+        border: "none",
+        outline: "none",
 
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
 
-        border: "none",
-
-        borderRadius: 8,
+        borderRadius: 7,
 
         background: "transparent",
 
-        color: "#D5D9E0",
+        color: "#A1A1AA",
 
         cursor: "pointer",
 
-        transition:
-            "all .18s ease",
+        transition: "all .18s ease",
+
+        fontSize: 16,
+
+        appearance: "none",
+
+        WebkitAppearance: "none",
     };
 }
