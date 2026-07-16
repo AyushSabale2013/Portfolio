@@ -1,7 +1,7 @@
-import spiderOS from "../assets/projects/men.png";
-import trackAcademy from "../assets/projects/men.png";
+import spiderOS from "../assets/projects/spiderOS.png";
+import trackAcademy from "../assets/projects/trackAcademy.png";
 import solarFlare from "../assets/projects/men.png";
-import community from "../assets/projects/men.png";
+import community from "../assets/projects/community.png";
 
 const projects = [
     {
@@ -19,9 +19,9 @@ const projects = [
             "CSS",
         ],
 
-        liveUrl: "https://www.iiitp.ac.in/",
+        liveUrl: "https://portfolio-five-rosy-095v6w6jha.vercel.app/",
 
-        githubUrl: "https://github.com/AyushSabale2013",
+        githubUrl: "https://github.com/AyushSabale2013/Portfolio",
     },
 
     {
@@ -43,7 +43,7 @@ const projects = [
 
         liveUrl: "https://www.iiitp.ac.in/",
 
-        githubUrl: "https://github.com/AyushSabale2013",
+        githubUrl: "https://github.com/AyushSabale2013/track",
     },
 
     {
@@ -87,7 +87,7 @@ const projects = [
 
         liveUrl: "https://www.iiitp.ac.in/",
 
-        githubUrl: "https://github.com/AyushSabale2013",
+        githubUrl: "https://github.com/AyushSabale2013/fixmycampus",
     },
 ];
 

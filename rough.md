@@ -15,3 +15,4 @@ Terminal -> Not yet (in college)
 
 
 Real data insersion - Not yet
+Change some logos - NOT yet

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import TextPressure from "./TextPressure";
 
+
 export default function Landing({ onEnter }) {
     const roles = [
         "AI / ML ENGINEER",

@@ -25,7 +25,7 @@ export default function ProjectsPage({ onClose }) {
             }}
             className="projects-page"
             style={{
-                background: "#050B1A", // nearly black navy blue
+                background: "#041745", // nearly black navy blue
             }}
         >
 
