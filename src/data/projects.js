@@ -1,7 +1,7 @@
-import spiderOS from "../assets/projects/menu.png";
-import trackAcademy from "../assets/projects/menu.png";
-import solarFlare from "../assets/projects/menu.png";
-import community from "../assets/projects/menu.png";
+import spiderOS from "../assets/projects/men.png";
+import trackAcademy from "../assets/projects/men.png";
+import solarFlare from "../assets/projects/men.png";
+import community from "../assets/projects/men.png";
 
 const projects = [
     {

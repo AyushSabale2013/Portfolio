@@ -3,7 +3,6 @@ import ProjectsPopup from "../components/ProjectsPopup";
 import InfiniteMenu from "../components/InfiniteMenu";
 import projects from "../data/projects";
 
-import infiniteMenuBackground from "../assets/projects/infiniteMenuBackground2.jpg";
 
 import "./ProjectsPage.css";
 
@@ -26,7 +25,7 @@ export default function ProjectsPage({ onClose }) {
             }}
             className="projects-page"
             style={{
-                backgroundImage: `url(${infiniteMenuBackground})`,
+                background: "#050B1A", // nearly black navy blue
             }}
         >
 
