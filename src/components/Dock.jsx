@@ -8,12 +8,14 @@ import linkedin from "../assets/icons/linkedin.png";
 import projects from "../assets/icons/projects.png";
 import resume from "../assets/icons/resume.png";
 import terminal from "../assets/icons/terminal.png";
+import browser from "../assets/icons/browser.png";
 
 const dockItems = [
     { id: "projects", name: "Projects", icon: projects },
     { id: "contact", name: "Contact", icon: about },
     { id: "resume", name: "Resume", icon: resume },
     { id: "terminal", name: "Terminal", icon: terminal },
+    { id: "browser", name: "Browser", icon: browser },
 
     { divider: true },
 
