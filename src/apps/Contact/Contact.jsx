@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import profile from "../../assets/spiderLogo.png";
+import profile from "../../assets/icons/spiderLogo.png";
 import {
     FaEnvelope,
     FaPhoneAlt,

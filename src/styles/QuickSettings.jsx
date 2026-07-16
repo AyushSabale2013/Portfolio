@@ -23,6 +23,7 @@ import {
 
 import "./QuickSettings.css";
 
+
 /* Reusable pill row */
 function SettingPill({ icon, label, sublabel, active, onClick, arrow }) {
     return (
@@ -56,6 +57,7 @@ export default function QuickSettings({ isOpen, onClose }) {
 
     const [volume, setVolume] = useState(72);
     const [brightness, setBrightness] = useState(35);
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     /* Robust click-outside-to-close */
     useEffect(() => {
@@ -81,6 +83,26 @@ export default function QuickSettings({ isOpen, onClose }) {
         document.addEventListener("keydown", handleKey);
         return () => document.removeEventListener("keydown", handleKey);
     }, [isOpen, onClose]);
+
+    /* Real-time clock */
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+    const time = currentTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false, // change to true if you want AM/PM
+    });
+
+    const date = currentTime.toLocaleDateString([], {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+    });
 
     return (
         <AnimatePresence>
@@ -145,7 +167,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<FaWifi />}
                                 label="Wi-Fi"
-                                sublabel={wifi ? "SUJAL-5G" : "Off"}
+                                sublabel={wifi ? "SPIDEY-WIFI" : "Off"}
                                 active={wifi}
                                 arrow
                                 onClick={() => setWifi(!wifi)}
@@ -154,7 +176,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<FaBluetoothB />}
                                 label="Bluetooth"
-                                sublabel={bluetooth ? "pTron BT" : "Off"}
+                                sublabel={bluetooth ? "spiderman BT" : "Off"}
                                 active={bluetooth}
                                 arrow
                                 onClick={() => setBluetooth(!bluetooth)}
@@ -204,8 +226,8 @@ export default function QuickSettings({ isOpen, onClose }) {
                         {/* FOOTER */}
                         <div className="qs-footer">
                             <div className="qs-footer-left">
-                                <span className="qs-time">10:42</span>
-                                <span className="qs-date">Thu, Jul 9</span>
+                                <span className="qs-time">{time}</span>
+                                <span className="qs-date">{date}</span>
                             </div>
                         </div>
                     </motion.div>

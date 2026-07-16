@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 
-import about from "../assets/about.png";
-import github from "../assets/github.png";
-import instagram from "../assets/instagram.png";
-import leetcode from "../assets/leetcode.png";
-import linkedin from "../assets/linkedin.png";
-import projects from "../assets/projects.png";
-import resume from "../assets/resume.png";
-import terminal from "../assets/terminal.png";
+import about from "../assets/icons/about.png";
+import github from "../assets/icons/github.png";
+import instagram from "../assets/icons/instagram.png";
+import leetcode from "../assets/icons/leetcode.png";
+import linkedin from "../assets/icons/linkedin.png";
+import projects from "../assets/icons/projects.png";
+import resume from "../assets/icons/resume.png";
+import terminal from "../assets/icons/terminal.png";
 
 const dockItems = [
     { id: "projects", name: "Projects", icon: projects },

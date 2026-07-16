@@ -7,15 +7,17 @@ import Resume from "./Resume/Resume";
 import Contact from "./Contact/Contact";
 import Terminal from "./Terminal/Terminal";
 import Folder from "./Folder/Folder";
+import Browser from "./Browser/Browser";
 
 // Icons
-import profileIcon from "../assets/spiderLogo.png";
-import homeIcon from "../assets/home.png";
-import projectsIcon from "../assets/projects.png";
-import resumeIcon from "../assets/resume.png";
-import contactIcon from "../assets/about.png";
-import terminalIcon from "../assets/terminal.png";
-import folderIcon from "../assets/projects.png"; // Optional
+import profileIcon from "../assets/icons/spiderLogo.png";
+import homeIcon from "../assets/icons/home.png";
+import projectsIcon from "../assets/icons/projects.png";
+import resumeIcon from "../assets/icons/resume.png";
+import contactIcon from "../assets/icons/about.png";
+import terminalIcon from "../assets/icons/terminal.png";
+import folderIcon from "../assets/icons/projects.png"; // Optional
+import browserIcon from "../assets/icons/browser.png";
 
 export const apps = {
 
@@ -64,6 +66,13 @@ export const apps = {
         component: Terminal,
         icon: terminalIcon,
         info: "Interactive command line.",
+        desktop: true,
+    },
+    browser: {
+        title: "Browser",
+        component: Browser,
+        icon: browserIcon,
+        info: "Browse the web seamlessly.",
         desktop: true,
     },
 
