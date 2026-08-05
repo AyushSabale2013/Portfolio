@@ -570,7 +570,7 @@ class ArcballControl {
 
 class InfiniteGridMenu {
   TARGET_FRAME_DURATION = 1000 / 60;
-  SPHERE_RADIUS = 2;
+  SPHERE_RADIUS = 2.7; // increased by 150% (was 2)
 
   #time = 0;
   #deltaTime = 0;

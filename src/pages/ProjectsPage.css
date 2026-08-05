@@ -1,36 +1,28 @@
 /* ======================================================
-        SPIDER-VERSE DESIGN TOKENS
+   FONTS
 ====================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Bangers&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;800&display=swap");
 
-@import url("https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;700;800&display=swap");
-
+/* ======================================================
+   TOKENS
+====================================================== */
 :root {
-    --sv-black: #05060A;
-    --sv-dark: #0A0E17;
+    --sv-black:  #05060A;
+    --sv-navy:   #020810;
+    --sv-red:    #FF2B46;
+    --sv-blue:   #2563EB;
+    --sv-cyan:   #28D7FF;
+    --sv-white:  #F8F5EC;
+    --sv-text:   #C8D4EC;
 
-    --sv-red: #D62839;
-    --sv-red-dark: #B31224;
-
-    --sv-cyan: #28D7FF;
-
-    --sv-white: #F8F5EC;
-
-    --sv-silver1: #ECECEC;
-    --sv-silver2: #C9C9C9;
-
-    --sv-purple: #6E5494;
-
-    --sv-text: #E8E4D8;
-
-    --font-display: "Anton", sans-serif;
-    --font-body: "Space Grotesk", sans-serif;
-    --font-tech: "Orbitron", sans-serif;
+    --font-display: "Bangers", cursive;
+    --font-body:    "Space Grotesk", sans-serif;
+    --font-tech:    "Orbitron", sans-serif;
 }
 
 /* ======================================================
-        PAGE
+   PAGE
 ====================================================== */
-
 .projects-page {
     position: fixed;
     inset: 0;
@@ -39,120 +31,189 @@
     overflow: hidden;
     z-index: 999999;
     font-family: var(--font-body);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: var(--sv-black);
 }
 
-/* ---------- Dark Overlay ---------- */
-.projects-page::before {
-    content: "";
+/* ======================================================
+   HALFTONE OVERLAY
+====================================================== */
+.pp-halftone {
     position: absolute;
     inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    background: linear-gradient(
-        rgba(6,7,12,.62),
-        rgba(6,7,12,.72)
-    );
-}
-
-/* ---------- Halftone Texture ---------- */
-.projects-page::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
     z-index: 2;
-    opacity: .22;
-    background-image: radial-gradient(
-        rgba(255,255,255,.12) 1px,
-        transparent 1px
-    );
+    pointer-events: none;
+    opacity: .12;
+    background-image: radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px);
     background-size: 6px 6px;
     mix-blend-mode: overlay;
 }
 
 /* ======================================================
-        HEADER
+   SCANLINES OVERLAY
 ====================================================== */
+.pp-scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,.06) 3px,
+        rgba(0,0,0,.06) 4px
+    );
+}
 
+/* ======================================================
+   WEB CORNERS
+====================================================== */
+.pp-web-corner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: .38;
+}
+
+.pp-web-corner--br {
+    top: auto;
+    left: auto;
+    bottom: 0;
+    right: 0;
+    transform: rotate(180deg);
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
 .projects-header {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 88px;
+    height: 80px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 55px;
+    padding: 0 48px;
     z-index: 50;
+    border-bottom: none;
     background: linear-gradient(
-        rgba(5,6,10,.78),
-        rgba(5,6,10,0)
+        180deg,
+        rgba(2,8,24,.96) 0%,
+        rgba(2,8,24,0)   100%
     );
+    box-shadow: none;
 }
 
 /* ======================================================
-        BACK BUTTON
+   BACK BUTTON
 ====================================================== */
-
 .projects-header-back {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: transparent;
     border: none;
     cursor: pointer;
-    color: var(--sv-white);
+    color: #ffffff;
     font-family: var(--font-tech);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
-    transition: .25s;
+    transition: color .22s, transform .22s;
 }
 
 .projects-header-back:hover {
-    transform: translateX(-6px);
     color: var(--sv-red);
+    transform: translateX(-5px);
     text-shadow: 2px 0 var(--sv-cyan);
 }
 
 .projects-header-back-arrow {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 900;
+    line-height: 1;
 }
 
 /* ======================================================
-        TITLE
+   TITLE — Bangers glitch
 ====================================================== */
-
 .projects-header-title {
-    font-family: var(--font-tech);
-    font-size: clamp(1.7rem, 2vw, 2.3rem);
-    font-weight: 800;
-    letter-spacing: 8px;
+    position: relative;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.2vw, 2.8rem);
+    letter-spacing: 10px;
     text-transform: uppercase;
-    color: white;
+    color: var(--sv-white);
     user-select: none;
+
+    /* Base chromatic shadow */
     text-shadow:
-        2px 0 var(--sv-cyan),
-        -2px 0 var(--sv-red),
-        0 4px 0 rgba(0,0,0,.85),
-        0 10px 22px rgba(0,0,0,.55);
+        3px  0   0 var(--sv-cyan),
+       -3px  0   0 var(--sv-red),
+        0    0  18px rgba(40,215,255,.35),
+        0    4px 0 rgba(0,0,0,.95),
+        0   14px 28px rgba(0,0,0,.6);
 }
 
+/* Glitch pseudo-layers */
+.projects-header-title::before,
+.projects-header-title::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+}
+
+.projects-header-title::before {
+    color: var(--sv-cyan);
+    clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+    animation: glitch-top 4s infinite step-start;
+    opacity: .7;
+}
+
+.projects-header-title::after {
+    color: var(--sv-red);
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    animation: glitch-bot 4s infinite step-start;
+    opacity: .7;
+}
+
+@keyframes glitch-top {
+    0%, 90%, 100% { transform: none; opacity: 0; }
+    92%            { transform: translate(-3px, -2px); opacity: .7; }
+    94%            { transform: translate( 3px,  1px); opacity: .7; }
+    96%            { transform: translate(-2px,  2px); opacity: .7; }
+}
+
+@keyframes glitch-bot {
+    0%, 90%, 100% { transform: none; opacity: 0; }
+    93%            { transform: translate( 3px, 2px); opacity: .7; }
+    95%            { transform: translate(-3px,-1px); opacity: .7; }
+    97%            { transform: translate( 2px,-2px); opacity: .7; }
+}
+
+/* ======================================================
+   SPACER
+====================================================== */
 .projects-header-spacer {
     width: 220px;
 }
 
 /* ======================================================
-        MAIN SECTION
+   MAIN / SPHERE SECTION
 ====================================================== */
-
 .projects-menu-section {
     position: relative;
     z-index: 10;
@@ -164,270 +225,26 @@
 }
 
 /* ======================================================
-        PROJECT INFORMATION
+   RESPONSIVE
 ====================================================== */
-
-.projects-info {
-    position: absolute;
-    left: 85px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 520px;
-    z-index: 40;
-    transition:
-        opacity .35s ease,
-        transform .35s ease;
-}
-
-/* ======================================================
-        ACCENT BAR
-====================================================== */
-
-.projects-accent {
-    width: 110px;
-    height: 8px;
-    border-radius: 999px;
-    margin-bottom: 32px;
-    background: linear-gradient(
-        90deg,
-        var(--sv-red),
-        var(--sv-cyan)
-    );
-    box-shadow: 0 0 18px rgba(214,40,57,.45);
-}
-
-/* ======================================================
-        CATEGORY
-====================================================== */
-
-.projects-category {
-    margin: 0;
-    margin-bottom: 22px;
-    font-family: var(--font-tech);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--sv-red);
-    text-shadow: 0 2px 10px rgba(0,0,0,.45);
-}
-
-/* ======================================================
-        TITLE
-====================================================== */
-
-.projects-title {
-    margin: 0;
-    margin-bottom: 30px;
-    font-family: var(--font-display);
-    font-size: clamp(4.4rem, 7vw, 6.3rem);
-    line-height: .88;
-    letter-spacing: 2px;
-    color: var(--sv-white);
-    text-transform: uppercase;
-    text-shadow:
-        3px 0 var(--sv-cyan),
-        -3px 0 var(--sv-red),
-        0 6px 0 rgba(0,0,0,.85),
-        0 14px 30px rgba(0,0,0,.45);
-    transition:
-        color .3s,
-        text-shadow .3s,
-        transform .3s;
-}
-
-/* ======================================================
-        DESCRIPTION
-====================================================== */
-
-.projects-description {
-    margin: 0;
-    margin-bottom: 34px;
-    max-width: 470px;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 1.9;
-    color: var(--sv-text);
-    transition:
-        opacity .35s,
-        transform .35s;
-}
-
-/* ======================================================
-        TECH STACK
-====================================================== */
-
-.projects-tech-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 42px;
-    transition: .35s;
-}
-
-/* ======================================================
-        TECH PILLS
-====================================================== */
-
-.projects-tech-pill {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    border-radius: 999px;
-    border: none;
-    background: linear-gradient(
-        180deg,
-        var(--sv-silver1),
-        var(--sv-silver2)
-    );
-    color: #111;
-    font-family: var(--font-tech);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    box-shadow: 0 8px 18px rgba(0,0,0,.28);
-    transition:
-        transform .25s,
-        box-shadow .25s,
-        background .25s;
-}
-
-.projects-tech-pill:hover {
-    transform: translateY(-3px) scale(1.04);
-    box-shadow: 0 12px 22px rgba(0,0,0,.38);
-}
-
-/* ======================================================
-        ACTION BUTTONS
-====================================================== */
-
-.projects-actions {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    flex-wrap: wrap;
-    transition:
-        opacity .35s,
-        transform .35s;
-}
-
-/* ======================================================
-        COMMON BUTTON
-====================================================== */
-
-.projects-button {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    min-width: 185px;
-    height: 56px;
-    padding: 0 28px;
-    cursor: pointer;
-    border: none;
-    outline: none;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-family: var(--font-tech);
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: white;
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        background .25s ease;
-}
-
-/* ======================================================
-        LIVE DEMO
-====================================================== */
-
-.projects-button-demo {
-    background: var(--sv-red);
-    box-shadow: 5px 5px 0 rgba(0,0,0,.95);
-}
-
-.projects-button-demo:hover {
-    transform: translate(-4px,-4px);
-    box-shadow: 9px 9px 0 rgba(0,0,0,.95);
-}
-
-/* ======================================================
-        GITHUB
-====================================================== */
-
-.projects-button-github {
-    background: var(--sv-purple);
-    box-shadow: 5px 5px 0 rgba(0,0,0,.95);
-}
-
-.projects-button-github:hover {
-    transform: translate(-4px,-4px);
-    box-shadow: 9px 9px 0 rgba(0,0,0,.95);
-}
-
-/* ======================================================
-        ICONS
-====================================================== */
-
-.projects-button svg {
-    width: 18px;
-    height: 18px;
-}
-
-/* ======================================================
-        RESPONSIVE
-====================================================== */
-
-@media (max-width: 1400px) {
-    .projects-info {
-        width: 430px;
-        left: 55px;
+@media (max-width: 768px) {
+    .projects-header {
+        padding: 0 24px;
+        height: 64px;
     }
-    .projects-title {
-        font-size: 4.5rem;
+    .projects-header-spacer {
+        display: none;
     }
-}
-
-@media (max-width: 1100px) {
-    .projects-info {
-        width: 380px;
-    }
-    .projects-title {
-        font-size: 3.8rem;
-    }
-    .projects-description {
-        font-size: 17px;
-    }
-}
-
-@media (max-width: 900px) {
-    .projects-info {
-        position: absolute;
-        left: 40px;
-        top: auto;
-        bottom: 60px;
-        transform: none;
-        width: calc(100% - 80px);
-    }
-    .projects-title {
-        font-size: 3rem;
-    }
-    .projects-description {
-        max-width: 100%;
-    }
-    .projects-actions {
-        flex-direction: column;
-        align-items: flex-start;
+    .pp-web-corner {
+        width: 130px;
+        height: 130px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
+    .projects-header-title::before,
+    .projects-header-title::after {
+        animation: none;
+        opacity: 0;
     }
 }

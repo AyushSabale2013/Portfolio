@@ -1,7 +1,7 @@
 import spiderOS from "../assets/projects/spiderOS.png";
 import trackAcademy from "../assets/projects/trackAcademy.png";
-import solarFlare from "../assets/projects/men.png";
-import community from "../assets/projects/community.png";
+import solarFlare from "../assets/projects/AdityaL1.png";
+import campass from "../assets/projects/campass.png";
 
 const projects = [
     {
@@ -70,24 +70,25 @@ const projects = [
 
     {
         id: 4,
-        title: "Community Platform",
+        title: "Campass",
         category: "Web Development",
 
-        image: community,
+        image: campass,
 
         description:
-            "Collaborative platform for notes, discussions, and study groups.",
+            "Smart campus access system with secure QR-based entry and GPS verification",
 
         technologies: [
             "React",
             "Node.js",
-            "MongoDB",
+            "MongoDB(ATLAS)",
             "Socket.io",
+            "GPS",
         ],
 
-        liveUrl: "https://www.iiitp.ac.in/",
+        liveUrl: "https://cam-pass-pi.vercel.app/gate/main-gate",
 
-        githubUrl: "https://github.com/AyushSabale2013/fixmycampus",
+        githubUrl: "https://github.com/AyushSabale2013/CamPass",
     },
 ];
 

@@ -382,7 +382,7 @@ export default function ProjectsPopup() {
 
                                 >
 
-                                    Drag the sphere to browse featured projects.
+                                    Double-click the center and drag to navigate through my projects
 
                                 </span>
 
