@@ -234,12 +234,14 @@ export default function Window({
                         flex: 1,
                         width: "100%",
                         height: "100%",
+                        // Change this block in your Window.jsx:
+
                         overflow:
-                            title === "Projects"
+                            title === "Projects" || title === "Profile"
                                 ? "hidden"
                                 : "auto",
                         padding:
-                            title === "Projects"
+                            title === "Projects" || title === "Profile"
                                 ? 0
                                 : 24,
                         color: "#F2F2F7",

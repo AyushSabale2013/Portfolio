@@ -11,6 +11,7 @@ import WelcomePopup from "./WelcomePopup";
 
 import { apps } from "../apps/apps";
 import ProjectsPage from "../pages/ProjectsPage";
+import ProfilePage from "../pages/ProfilePage"; // <-- Imported ProfilePage
 
 export default function Desktop() {
     /* ==========================================
@@ -22,6 +23,7 @@ export default function Desktop() {
     const [windowZ, setWindowZ] = useState({});
     const [maximizedWindow, setMaximizedWindow] = useState(null);
     const [showProjectsPage, setShowProjectsPage] = useState(false);
+    const [showProfilePage, setShowProfilePage] = useState(false); // <-- Added state for Profile full-screen view
     const [showWelcome, setShowWelcome] = useState(true);
 
     useEffect(() => {
@@ -182,6 +184,12 @@ export default function Desktop() {
         // Open Projects as a full-screen page
         if (id === "projects") {
             setShowProjectsPage(true);
+            return;
+        }
+
+        // Open Profile as a full-screen page
+        if (id === "profile") {
+            setShowProfilePage(true);
             return;
         }
 
@@ -363,9 +371,18 @@ export default function Desktop() {
             {maximizedWindow === null && (
                 <Dock onOpen={openApp} />
             )}
+
+            {/* ================= FULLSCREEN PAGES ================= */}
+
             {showProjectsPage && (
                 <ProjectsPage
                     onClose={() => setShowProjectsPage(false)}
+                />
+            )}
+
+            {showProfilePage && (
+                <ProfilePage
+                    onClose={() => setShowProfilePage(false)}
                 />
             )}
         </div>

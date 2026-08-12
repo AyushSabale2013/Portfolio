@@ -1,13 +1,28 @@
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
 import { HiDocumentArrowDown } from "react-icons/hi2";
+import {
+    FaBrain,
+    FaRobot,
+    FaShieldAlt,
+    FaLaptopCode,
+    FaLinux,
+    FaCode,
+    FaPalette,
+    FaRunning,
+    FaFilm,
+} from "react-icons/fa";
+import { GiVolleyballBall } from "react-icons/gi";
 
+// bundled from src/assets so the build resolves it correctly
+// (a bare "/profile.png" string only works if the file lives in /public)
+import avatarImg from "../assets/profile.png";
 
 export const profile = {
     basic: {
         name: "Ayush Sabale",
 
-        avatar: "/profile.png",
+        avatar: avatarImg,
 
         location: "Kolhapur, Maharashtra",
 
@@ -30,7 +45,6 @@ export const profile = {
         "FRIENDLY NEIGHBORHOOD DESIGNER",
         "INNOVATOR",
         "ATHLETE",
-
     ],
 
     socials: [
@@ -73,43 +87,19 @@ export const profile = {
     },
 
     skills: {
-        languages: [
-            "C++",
-            "Python",
-            "JavaScript",
-        ],
+        languages: ["C++", "Python", "JavaScript"],
 
-        frontend: [
-            "React",
-            "HTML",
-            "CSS",
-            "Tailwind",
-        ],
+        frontend: ["React", "HTML", "CSS", "Tailwind"],
 
-        backend: [
-            "Node.js",
-            "Express.js",
-        ],
+        backend: ["Node.js", "Express.js"],
 
-        databases: [
-            "MongoDB",
-            "MySQL",
-        ],
+        databases: ["MongoDB", "MySQL"],
 
-        ai: [
-            "Scikit-Learn",
-            "TensorFlow",
-            "Pandas",
-            "NumPy",
-        ],
+        ai: ["Scikit-Learn", "TensorFlow", "Pandas", "NumPy"],
 
-        tools: [
-            "Git",
-            "Linux",
-            "VS Code",
-            "Docker",
-        ],
+        tools: ["Git", "Linux", "VS Code", "Docker"],
     },
+
     education: [
         {
             degree: "Bachelor of Technology",
@@ -152,90 +142,81 @@ export const profile = {
             ],
         },
     ],
+
+    // icon components instead of emoji — render with <item.icon />
     interests: [
         {
-            icon: "🧠",
+            icon: FaBrain,
             title: "Artificial Intelligence",
             description: "Building intelligent systems that solve real-world problems.",
         },
-
         {
-            icon: "🤖",
+            icon: FaRobot,
             title: "Machine Learning",
             description: "Training models and exploring modern AI techniques.",
         },
-
         {
-            icon: "🛡️",
+            icon: FaShieldAlt,
             title: "Cyber Security",
             description: "Learning about ethical hacking and secure software.",
         },
-
         {
-            icon: "🌐",
+            icon: FaLaptopCode,
             title: "Full Stack Development",
             description: "Creating modern, scalable web applications.",
         },
-
         {
-            icon: "🐧",
+            icon: FaLinux,
             title: "Linux",
             description: "Customizing systems and working in terminal environments.",
         },
-
         {
-            icon: "💻",
+            icon: FaCode,
             title: "Competitive Programming",
             description: "Solving algorithmic problems and improving problem-solving skills.",
         },
-
         {
-            icon: "🎨",
+            icon: FaPalette,
             title: "UI / UX Design",
             description: "Designing clean, interactive and user-friendly interfaces.",
         },
-
         {
-            icon: "🏃",
+            icon: FaRunning,
             title: "Athletics",
             description: "Enjoying sports, fitness, teamwork and maintaining an active lifestyle.",
         },
-
         {
-            icon: "🏐",
+            icon: GiVolleyballBall,
             title: "Volleyball",
             description: "College volleyball player and main spiker.",
         },
-
         {
-            icon: "🎬",
+            icon: FaFilm,
             title: "Movies & Cinema",
             description: "Exploring storytelling, cinematography and memorable films across genres.",
         },
     ],
+
     contacts: [
-    {
-        type: "email",
-        title: "Email",
-        value: "ayushsabale2013@gmail.com",
-    },
-
-    {
-        type: "phone",
-        title: "Phone",
-        value: "+91 7756850969",
-    },
-
-    {
-        type: "location",
-        title: "Location",
-        value: "Kolhapur, Maharashtra, India",
-    },
-
-    {
-        type: "college",
-        title: "College",
-        value: "Indian Institute of Information Technology Pune",
-    },
-],
+        {
+            type: "email",
+            title: "Email",
+            value: "ayushsabale2013@gmail.com",
+        },
+        {
+            type: "phone",
+            title: "Phone",
+            value: "+91 7756850969",
+        },
+        {
+            type: "location",
+            title: "Location",
+            value: "Kolhapur, Maharashtra, India",
+        },
+        {
+            type: "college",
+            title: "College",
+            value: "Indian Institute of Information Technology Pune",
+        },
+    ],
 };

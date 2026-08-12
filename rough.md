@@ -16,4 +16,4 @@ Improve image genreation and try to connect docker and learn docker may be
 
 
 Real data insersion - Not yet
-Change some logos - NOT yet ***
+Change all logos - NOT yet ***

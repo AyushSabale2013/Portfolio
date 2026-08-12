@@ -1,22 +1,21 @@
 /* ==========================================================
-   QUICK SETTINGS — Spidey OS
-   macOS-style control center, Spider-Verse accent palette
+   QUICK SETTINGS — macOS Control Center Style
+   Glassmorphism, native Apple blue, system typography.
 ========================================================== */
 
 :root{
-    --qs-bg:#181416;
-    --qs-surface:#241E1F;
-    --qs-surface-hover:#332A2B;
-    --qs-border:#4A2E28;
-    --qs-text:#F4F4F5;
-    --qs-subtext:#B8A9A0;
+    --mac-bg: rgba(28, 28, 30, 0.65);
+    --mac-surface: rgba(255, 255, 255, 0.08);
+    --mac-surface-hover: rgba(255, 255, 255, 0.14);
+    --mac-border: rgba(255, 255, 255, 0.12);
+    
+    --mac-text: #ffffff;
+    --mac-subtext: rgba(235, 235, 245, 0.6);
+    --mac-active-blue: #0a84ff; /* macOS dark mode blue */
+    --mac-icon-inactive: rgba(255, 255, 255, 0.15);
 
-    --qs-red:#ED1C24;
-    --qs-orange:#FF6B1A;
-    --qs-yellow:#FFC72C;
-
-    --qs-radius:22px;
-    --qs-pill-radius:999px;
+    --mac-radius: 24px;
+    --mac-pill-radius: 12px;
 }
 
 /* ==========================================================
@@ -24,41 +23,38 @@
 ========================================================== */
 
 .qs-backdrop{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.18);
-    z-index:9998;
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 9998;
 }
 
 /* ==========================================================
-   PANEL — smaller footprint than before
+   PANEL — Acrylic Glass
 ========================================================== */
 
 .quick-settings{
-    position:absolute;
-    top:44px;
-    right:14px;
-    width:400px;
+    position: absolute;
+    top: 40px;
+    right: 16px;
+    width: 360px;
 
-    border-radius:var(--qs-radius);
-    background:var(--qs-bg);
-    border:1.5px solid var(--qs-border);
-    overflow:hidden;
+    border-radius: var(--mac-radius);
+    background: var(--mac-bg);
+    border: 1px solid var(--mac-border);
+    
+    /* The signature Apple glassmorphism */
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
 
-    /* halftone comic-print texture in warm tones */
-    background-image:
-        radial-gradient(rgba(255,199,44,.06) 1.2px, transparent 1.2px),
-        radial-gradient(rgba(237,28,36,.05) 1.2px, transparent 1.2px);
-    background-size:12px 12px, 12px 12px;
-    background-position:0 0, 6px 6px;
-
-    box-shadow:
-        0 22px 55px rgba(0,0,0,.55),
-        0 0 0 1px rgba(255,107,26,.10);
-
-    z-index:9999;
-    color:var(--qs-text);
-    font-family:Inter, system-ui, sans-serif;
+    z-index: 9999;
+    color: var(--mac-text);
+    
+    /* Native Apple system font */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* ==========================================================
@@ -66,198 +62,207 @@
 ========================================================== */
 
 .qs-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 16px;
-    border-bottom:1px solid var(--qs-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px 8px;
 }
 
 .qs-battery{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size:13px;
-    font-weight:700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--mac-text);
+}
+
+.battery-icon{
+    font-size: 16px;
+    opacity: 0.7;
 }
 
 .qs-header-icons{
-    display:flex;
-    gap:6px;
+    display: flex;
+    gap: 8px;
 }
 
 .qs-header-icons button{
-    width:30px;
-    height:30px;
-    border:none;
-    border-radius:10px;
-    background:var(--qs-surface);
-    color:var(--qs-text);
-    cursor:pointer;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:12px;
-    transition:.18s;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: var(--mac-surface);
+    color: var(--mac-text);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    transition: background 0.15s ease;
 }
 
 .qs-header-icons button:hover{
-    background:linear-gradient(135deg, var(--qs-red), var(--qs-orange));
-    transform:translateY(-1px);
+    background: var(--mac-surface-hover);
 }
 
 /* ==========================================================
-   SLIDERS
+   SLIDERS — Thicker, rounded tracks mimicking macOS
 ========================================================== */
 
+.qs-sliders-container{
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .qs-slider{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:12px 16px 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--mac-surface);
+    border-radius: 14px;
+    height: 30px;
+    padding: 0 10px;
 }
 
 .slider-icon{
-    font-size:16px;
-    color:var(--qs-text);
-    flex-shrink:0;
+    font-size: 14px;
+    color: var(--mac-text);
+    position: absolute;
+    left: 12px;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.8;
 }
 
 .qs-slider input{
-    -webkit-appearance:none;
-    appearance:none;
-    width:100%;
-    height:4px;
-    border-radius:100px;
-    background:#3A3D46;
-    cursor:pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+    margin-left: 20px;
 }
 
+/* Thumb */
 .qs-slider input::-webkit-slider-thumb{
-    -webkit-appearance:none;
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    background:linear-gradient(135deg, var(--qs-red), var(--qs-yellow));
-    cursor:pointer;
-    border:2px solid #FFFFFF;
+    -webkit-appearance: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    margin-top: 0px;
 }
 
 .qs-slider input::-moz-range-thumb{
-    width:14px;
-    height:14px;
-    border:none;
-    border-radius:50%;
-    background:linear-gradient(135deg, var(--qs-red), var(--qs-yellow));
-    cursor:pointer;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
 /* ==========================================================
-   GRID — 2 cols, tight gap
+   GRID
 ========================================================== */
 
 .qs-grid{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:10px;
-    padding:16px 18px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px 16px 0;
 }
 
 .qs-grid-single{
-    grid-template-columns:1fr;
-    padding-top:8px;
-    padding-bottom:14px;
+    grid-template-columns: 1fr;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 /* ==========================================================
-   PILL — compact row instead of tall card
+   PILL — Rounded rect modules
 ========================================================== */
 
 .qs-pill{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:10px 14px;
-    min-height:50px;
-    border-radius:var(--qs-pill-radius);
-    background:var(--qs-surface);
-    border:1px solid transparent;
-    cursor:pointer;
-    transition:background .2s, transform .15s, border-color .2s;
-}
-
-.qs-pill:hover{
-    background:var(--qs-surface-hover);
-    border-color:#4A4E59;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    min-height: 54px;
+    border-radius: var(--mac-pill-radius);
+    background: var(--mac-surface);
+    cursor: pointer;
+    transition: background 0.1s ease;
 }
 
 .qs-pill:active{
-    transform:scale(.98);
-}
-
-.qs-pill-icon{
-    width:26px;
-    height:26px;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-shrink:0;
-    font-size:12px;
-    color:#FFFFFF;
-    background:rgba(255,255,255,.08);
-}
-
-.qs-pill-text{
-    display:flex;
-    flex-direction:column;
-    line-height:1.15;
-    overflow:hidden;
-}
-
-.qs-pill-text span{
-    font-size:12.5px;
-    font-weight:600;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.qs-pill-text small{
-    font-size:10.5px;
-    color:var(--qs-subtext);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.qs-pill-arrow{
-    margin-left:auto;
-    font-size:10px;
-    color:var(--qs-subtext);
-    flex-shrink:0;
+    background: var(--mac-surface-hover);
 }
 
 /* ==========================================================
-   ACTIVE PILL — red-to-blue Spider-Verse gradient
+   MAC-STYLE ACTIVE STATE — Only the circle lights up
 ========================================================== */
 
-.qs-pill.active{
-    background:linear-gradient(115deg, var(--qs-red) 0%, var(--qs-orange) 55%, var(--qs-yellow) 100%);
-    border:1.5px solid rgba(0,0,0,.35);
-    box-shadow:0 6px 16px rgba(255,107,26,.25);
+.qs-pill-icon-wrapper{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--mac-icon-inactive);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
 }
 
-.qs-pill.active .qs-pill-icon{
-    background:rgba(255,255,255,.18);
+.qs-pill-icon{
+    font-size: 13px;
+    color: var(--mac-text);
+    display: flex;
 }
 
-.qs-pill.active .qs-pill-text small{
-    color:rgba(255,255,255,.85);
+/* When the setting is ON, the circle turns macOS blue */
+.qs-pill-icon-wrapper.active{
+    background: var(--mac-active-blue);
 }
 
-.qs-pill.active .qs-pill-arrow{
-    color:rgba(255,255,255,.85);
+.qs-pill-text{
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    overflow: hidden;
+}
+
+.qs-pill-text span{
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qs-pill-text small{
+    font-size: 11px;
+    color: var(--mac-subtext);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qs-pill-arrow{
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--mac-subtext);
+    flex-shrink: 0;
 }
 
 /* ==========================================================
@@ -265,29 +270,27 @@
 ========================================================== */
 
 .qs-footer{
-    padding:12px 16px 16px;
-    border-top:1px solid var(--qs-border);
+    padding: 8px 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.qs-time{
-    font-size:16px;
-    font-weight:700;
-    color:var(--qs-text);
-    margin-right:8px;
-}
-
-.qs-date{
-    font-size:11px;
-    color:var(--qs-subtext);
+.qs-time, .qs-date{
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--mac-subtext);
 }
 
 /* ==========================================================
    RESPONSIVE
 ========================================================== */
 
-@media (max-width:600px){
+@media (max-width: 600px){
     .quick-settings{
-        width:92vw;
-        right:4vw;
+        width: 92vw;
+        right: 4vw;
+        top: 20px;
     }
 }

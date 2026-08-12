@@ -1,0 +1,1178 @@
+/* ==========================================================================
+   SPIDER-VERSE DOSSIER — "INK & SPECTRUM" EDITION
+   A cleaner, art-directed pass on the comic-print portfolio theme.
+   Same class names as the original build — drop-in replacement.
+   ========================================================================== */
+
+/* ------------------------------------------------------
+   1. FONTS & DESIGN TOKENS
+   Palette logic: one warm paper ground, one true-black ink,
+   and a *restrained* two-color spot-print duo (electric blue +
+   hot red/pink) doing 80% of the accent work. Cyan / yellow /
+   purple are kept as rare, deliberate highlights rather than
+   being spread evenly everywhere — that's what reads as
+   "professional comic print" instead of "rainbow gradient."
+------------------------------------------------------ */
+@import url("https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  /* Paper & Ink — dialed a shade darker/duller than pure paper white,
+     so the page reads as a warm, slightly aged newsprint rather than
+     a bright screen-white. Still light, just less clinical. */
+  --sv-bg:          #eae5da;   /* dulled warm paper, one notch darker */
+  --sv-bg-soft:     #e2dcd1;   /* neutral warm-grey stop, blue tint removed */
+  --sv-bg-panel:    #fbf9f4;
+  --sv-panel:       rgba(251, 249, 244, 0.88);
+  --sv-panel-line:  rgba(16, 18, 38, 0.12);
+  --sv-ink:         #11131f;   /* true printing-press black */
+  --sv-ink-soft:    #2a2d42;
+  --sv-grey:        #57596f;   /* darkened for stronger contrast on the dimmer paper */
+  --sv-text:        #22243a;
+
+  /* Spot-print accents — remapped to a biscuit (rich brown + gold)
+     grading. Keeping the original variable NAMES matters: the JSX
+     still references var(--sv-cyan, ...) etc. for its accent props,
+     so repointing the values here cascades the new grading through
+     every skill-module / nav-item accent without touching the JSX
+     color logic itself. */
+  --sv-blue:        #6b4226;   /* rich brown  — labels, hero role, functional text */
+  --sv-cyan:        #caa15a;   /* rich gold   — primary accent */
+  --sv-red:         #4a2c1a;   /* deep brown  — tabs, index numbers, hover text */
+  --sv-pink:        #a97c34;   /* amber gold  */
+  --sv-yellow:      #d9a941;   /* golden yellow — badge, warm highlight */
+  --sv-purple:      #3e2415;   /* dark chocolate — interests icon + title */
+
+  /* Text-on-dark accent for hover states over warm sweeps */
+  --sv-cream:       #fbf6ec;
+
+  /* Hover / interactive accent — light brown instead of blue */
+  --sv-brown:       #b8875a;
+  --sv-brown-soft:  rgba(184, 135, 90, 0.35);
+
+  /* Hero particle accent — very dark brown */
+  --sv-brown-dark:  #241209;
+
+  /* Elevation */
+  --sv-shadow-ink:  rgba(17, 19, 31, 0.20);
+
+  /* Typography */
+  --font-display: "Bangers", cursive;
+  --font-tech:    "Orbitron", sans-serif;
+  --font-body:    "Space Grotesk", sans-serif;
+
+  /* Rhythm */
+  --sv-radius-sm: 8px;
+  --sv-radius-md: 12px;
+  --sv-radius-lg: 16px;
+}
+
+/* ------------------------------------------------------
+   2. PAGE ROOT & AMBIENT BACKGROUND
+   Layered, restrained wash + halftone + fine paper grain,
+   instead of three loud radial blobs.
+------------------------------------------------------ */
+.profile-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 99999;
+  font-family: var(--font-body);
+  color: var(--sv-text);
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(1100px 620px at 6% -8%, rgba(184, 135, 90, 0.10), transparent 60%),
+    radial-gradient(900px 560px at 102% 6%, rgba(217, 169, 65, 0.08), transparent 58%),
+    radial-gradient(1000px 700px at 100% 108%, rgba(107, 66, 38, 0.09), transparent 58%),
+    linear-gradient(180deg, var(--sv-bg) 0%, var(--sv-bg-soft) 55%, var(--sv-bg) 100%);
+  box-sizing: border-box;
+}
+
+/* Fine paper grain — cheap, convincing texture with no image asset */
+.profile-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.1;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(17,19,31,0.6) 0px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(17,19,31,0.4) 0px, transparent 1px, transparent 3px);
+  background-size: 3px 3px, 4px 4px;
+}
+
+/* Ambient ink-wash drift — slower, subtler than before */
+.profile-halftone {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  background:
+    radial-gradient(360px 360px at 6% 14%, rgba(184, 135, 90, 0.16), transparent 70%),
+    radial-gradient(340px 340px at 92% 8%, rgba(217, 169, 65, 0.13), transparent 70%),
+    radial-gradient(420px 420px at 95% 92%, rgba(107, 66, 38, 0.14), transparent 70%);
+  animation: sv-drift 30s ease-in-out infinite alternate;
+}
+
+@keyframes sv-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-1.5%, 1.5%, 0) scale(1.04); }
+}
+
+/* Ben-Day halftone dots — the one comic-print texture, used sparingly */
+.profile-chromatic-edge {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(rgba(202, 161, 90, 0.30) 0.8px, transparent 0.8px),
+    radial-gradient(rgba(107, 66, 38, 0.22) 0.8px, transparent 0.8px);
+  background-size: 22px 22px, 22px 22px;
+  background-position: 0 0, 11px 11px;
+}
+
+/* Spider-web corner sketches — quieter, single-tone */
+.profile-web-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 180px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.22;
+  color: var(--sv-ink);
+}
+
+.profile-web-corner--br {
+  top: auto;
+  left: auto;
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+  opacity: 0.18;
+  color: var(--sv-red);
+}
+
+/* Brief hue-flash on nav click — kept, toned down */
+.sv-multiverse-glitch {
+  animation: sv-glitch-flash 0.35s steps(2, end);
+}
+
+@keyframes sv-glitch-flash {
+  0%   { filter: none; }
+  40%  { filter: hue-rotate(8deg) saturate(1.15); }
+  100% { filter: none; }
+}
+
+/* ------------------------------------------------------
+   3. HEADER & TITLE
+------------------------------------------------------ */
+.profile-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 48px;
+  z-index: 50;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 246, 239, 0.96) 0%,
+    rgba(249, 246, 239, 0) 100%
+  );
+}
+
+.profile-header-back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sv-ink);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.profile-header-back:hover,
+.profile-header-back:focus-visible {
+  color: var(--sv-red);
+  transform: translateX(-4px);
+}
+
+.profile-header-back-arrow {
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.sv-glitch-text {
+  position: relative;
+}
+
+/* Title: solid ink type with a single crisp chromatic offset
+   pair (cyan/red) — a controlled comic mis-registration effect
+   rather than a full rainbow gradient. Reads cleaner at a glance,
+   still unmistakably "print glitch" on close look. */
+.profile-header-title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  color: var(--sv-ink);
+  user-select: none;
+}
+
+.profile-header-title::before,
+.profile-header-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.profile-header-title::before {
+  color: var(--sv-cyan);
+  clip-path: polygon(0 22%, 100% 22%, 100% 40%, 0 40%);
+  animation: glitch-top 6s infinite step-start;
+  opacity: 0.8;
+}
+
+.profile-header-title::after {
+  color: var(--sv-red);
+  clip-path: polygon(0 60%, 100% 60%, 100% 78%, 0 78%);
+  animation: glitch-bot 6s infinite step-start;
+  opacity: 0.8;
+}
+
+@keyframes glitch-top {
+  0%, 92%, 100% { transform: none; opacity: 0; }
+  93%           { transform: translate(-2.5px, -1.5px); opacity: 0.8; }
+  95%           { transform: translate(2px, 1px); opacity: 0.8; }
+  97%           { transform: translate(-1.5px, 1.5px); opacity: 0.8; }
+}
+
+@keyframes glitch-bot {
+  0%, 92%, 100% { transform: none; opacity: 0; }
+  94%           { transform: translate(2.5px, 1.5px); opacity: 0.8; }
+  96%           { transform: translate(-2px, -1px); opacity: 0.8; }
+  98%           { transform: translate(1.5px, -1.5px); opacity: 0.8; }
+}
+
+.profile-header-spacer {
+  width: 180px;
+}
+
+/* ------------------------------------------------------
+   4. LAYOUT SHELL & SIDEBAR NAVIGATION
+------------------------------------------------------ */
+.profile-shell {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  width: 100%;
+  height: 100%;
+  padding-top: 80px;
+  box-sizing: border-box;
+}
+
+.profile-sidebar {
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+  padding-left: 44px;
+  padding-top: 64px;
+  overflow: visible;
+}
+
+.sv-side-nav {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-left: 8px;
+}
+
+/* Laser web thread — animated, but gentle */
+.sv-side-nav::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    var(--sv-cyan),
+    var(--sv-blue),
+    var(--sv-purple),
+    var(--sv-red),
+    var(--sv-yellow)
+  );
+  background-size: 100% 220%;
+  opacity: 0.55;
+  animation: sv-thread-pulse 7s ease-in-out infinite;
+}
+
+@keyframes sv-thread-pulse {
+  0%, 100% { background-position: 0 0%; opacity: 0.45; }
+  50%      { background-position: 0 100%; opacity: 0.7; }
+}
+
+.sv-side-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-tech);
+  color: var(--sv-grey);
+}
+
+.sv-side-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--nav-accent, var(--sv-blue));
+  box-shadow: 0 0 0 3px var(--sv-bg), 0 0 0 4px var(--nav-accent, var(--sv-blue));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sv-side-index {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--nav-accent, var(--sv-blue));
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.sv-side-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--sv-ink);
+  white-space: nowrap;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.22s ease, max-width 0.28s ease;
+}
+
+.sv-side-link:hover .sv-side-dot,
+.sv-side-link.is-active .sv-side-dot {
+  transform: scale(1.4);
+}
+
+.sv-side-link:hover .sv-side-label,
+.sv-side-link.is-active .sv-side-label {
+  opacity: 1;
+  max-width: 140px;
+}
+
+.sv-side-link.is-active .sv-side-index {
+  opacity: 1;
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------
+   5. SCROLL CONTENT & SECTION SHELL
+------------------------------------------------------ */
+.profile-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 56px 72px 140px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+.profile-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.profile-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--sv-cyan), var(--sv-red));
+  border-radius: 3px;
+}
+
+.sv-fullbleed {
+  width: calc(100% + 144px);
+  margin-left: -72px;
+  margin-right: -72px;
+}
+
+.sv-section {
+  position: relative;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.sv-section--hero {
+  padding: 8px 0;
+  text-align: center;
+}
+
+.sv-section--last {
+  padding-bottom: 24px;
+}
+
+/* Section titles: ink type + a short two-tone underline stroke
+   instead of gradient-clipped text. More legible, still bold. */
+.sv-section-title {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+  letter-spacing: 2.5px;
+  color: var(--sv-ink);
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+
+.sv-section-title::before {
+  content: attr(data-index);
+  font-family: var(--font-tech);
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--sv-red);
+}
+
+.sv-section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 46px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--sv-blue), var(--sv-cyan));
+}
+
+.sv-section-sub {
+  color: var(--sv-grey);
+  font-size: 0.95rem;
+  margin: 6px 0 24px;
+}
+
+/* Multiverse / chromatic panel — border removed per feedback; the
+   offset "ink registration" shadow alone now carries the comic-panel
+   look, and text inside is forced to stay dark ink for contrast. */
+.sv-comic-panel-border {
+  border: none;
+  border-radius: var(--sv-radius-md);
+  color: var(--sv-ink);
+  box-shadow:
+    3px 3px 0 var(--sv-brown),
+    -2px -2px 0 var(--sv-red);
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.sv-comic-panel-border:hover {
+  transform: translate(-2px, -2px);
+  box-shadow:
+    5px 5px 0 var(--sv-brown),
+    -3px -3px 0 var(--sv-red);
+}
+
+/* ------------------------------------------------------
+   6. HERO & ID STRIP
+------------------------------------------------------ */
+.sv-hero-particle {
+  height: clamp(260px, 36vw, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0 22px;
+  position: relative;
+  color: var(--sv-brown-dark); /* very dark brown — used if the particle system reads currentColor */
+}
+
+.sv-hero-name-static {
+  margin: 0;
+  color: var(--sv-brown-dark);
+  font-family: inherit;
+  font-weight: 900;
+  font-size: clamp(2.4rem, 13vw, 3.4rem);
+  line-height: 1.05;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.sv-hero-role-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 34px;
+  margin-bottom: 30px;
+}
+
+.sv-hero-role-bracket {
+  font-family: var(--font-tech);
+  color: var(--sv-purple);
+  opacity: 0.85;
+  font-size: 1.1rem;
+}
+
+.sv-hero-role {
+  font-family: var(--font-tech);
+  font-weight: 700;
+  letter-spacing: 4px;
+  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+  color: var(--sv-ink);
+  text-transform: uppercase;
+}
+
+.sv-id-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  background: var(--sv-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--sv-panel-line);
+  border-radius: var(--sv-radius-md);
+  padding: 16px 26px;
+  text-align: left;
+  box-shadow: 0 10px 30px -14px var(--sv-shadow-ink);
+}
+
+.sv-id-strip--flat {
+  display: flex;
+  width: 100%;
+  box-shadow: none;
+  border: none;
+  padding: 0 0 16px;
+  margin-bottom: 4px;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.sv-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Avatar ring — the rainbow spectrum ring is gone per feedback.
+   A single warm-gold ring keeps a bit of ceremony around the photo
+   without turning it into a rainbow, and the photo itself is
+   larger so it actually reads as the focal point of the strip. */
+.sv-avatar-container::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--sv-brown-dark);
+  opacity: 0.9;
+  z-index: 0;
+}
+
+.sv-avatar {
+  position: relative;
+  z-index: 1;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--sv-bg-panel);
+  display: block;
+}
+
+.sv-avatar-badge {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--sv-yellow);
+  color: var(--sv-ink);
+  font-family: var(--font-tech);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sv-ink);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.sv-id-fields {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.sv-id-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.sv-id-label {
+  font-family: var(--font-tech);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--sv-blue);
+  opacity: 0.9;
+}
+
+.sv-block-label {
+  display: block;
+  margin: 18px 0 8px;
+}
+
+.sv-id-value {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--sv-ink);
+  font-size: 0.95rem;
+}
+
+.sv-id-divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(17, 19, 31, 0.15);
+}
+
+/* Rainbow dashed thread — used as a section divider */
+.sv-web-divider {
+  max-width: 880px;
+  margin: 8px auto;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--sv-blue) 0, var(--sv-blue) 6px,
+    transparent 6px, transparent 14px
+  );
+  opacity: 0.28;
+}
+
+/* ------------------------------------------------------
+   7. SKILLS, ABOUT, INTERESTS, CHANNELS
+------------------------------------------------------ */
+.sv-skill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.sv-skill-card {
+  position: relative;
+  background: var(--sv-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--sv-panel-line);
+  border-radius: var(--sv-radius-md);
+  padding: 20px 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px -18px var(--sv-shadow-ink);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sv-skill-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 0 14px 30px -16px var(--sv-shadow-ink);
+}
+
+.sv-skill-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--card-accent, var(--sv-blue)) 0.6px, transparent 0.6px);
+  background-size: 12px 12px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.sv-skill-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sv-skill-id {
+  font-family: var(--font-tech);
+  font-size: 12px;
+  color: var(--card-accent, var(--sv-red));
+  border: 1px solid var(--card-accent, var(--sv-red));
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+.sv-skill-label {
+  font-family: var(--font-tech);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sv-ink);
+}
+
+.sv-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sv-skill-tag {
+  font-size: 0.82rem;
+  color: var(--sv-ink);
+  background: var(--sv-bg);
+  border: 1px solid rgba(17, 19, 31, 0.14);
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+.sv-skill-tag--muted {
+  color: var(--sv-grey);
+  font-size: 0.78rem;
+}
+
+/* Comic panel — About / Education. Dark-navy palette removed;
+   rebuilt as the same light ink-on-paper card used for skills and
+   interests elsewhere, so About/Education stays visually parallel
+   with the rest of the page instead of being an isolated dark block. */
+.sv-comic-panel {
+  position: relative;
+  background: var(--sv-bg-panel);
+  border: 1px solid var(--sv-panel-line);
+  border-radius: var(--sv-radius-lg);
+  padding: 30px 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 16px 34px -22px var(--sv-shadow-ink);
+}
+
+.sv-comic-tab {
+  position: absolute;
+  top: -14px;
+  left: 24px;
+  background: #1d5fe0;
+  color: #fff;
+  font-family: var(--font-tech);
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  border: 1.5px solid var(--sv-ink);
+}
+
+.sv-comic-panel p {
+  color: var(--sv-text);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+
+.sv-comic-desc {
+  color: #060a26;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+
+.sv-comic-panel .sv-id-label {
+  color: var(--sv-blue);
+}
+
+.sv-comic-panel .sv-id-value {
+  color: var(--sv-ink);
+}
+
+.sv-comic-panel .sv-id-divider {
+  background: rgba(17, 19, 31, 0.15);
+}
+
+.sv-comic-panel .sv-skill-tag {
+  background: var(--sv-bg);
+  border-color: var(--sv-panel-line);
+  color: var(--sv-ink);
+}
+
+.sv-comic-panel .sv-skill-tag--muted {
+  color: var(--sv-grey);
+}
+
+.sv-about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.sv-about-item p {
+  font-size: 0.92rem;
+  margin-top: 4px;
+  color: var(--sv-grey);
+}
+
+/* Interests */
+.sv-interest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.sv-interest-card {
+  background: #ffffff;
+  border: 1px solid var(--sv-panel-line);
+  border-radius: var(--sv-radius-md);
+  padding: 18px;
+  box-shadow: 0 10px 24px -18px var(--sv-shadow-ink);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.sv-interest-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 rgba(62, 36, 21, 0.32);
+}
+
+.sv-interest-icon {
+  width: 26px;
+  height: 26px;
+  color: #150c07;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.sv-interest-title {
+  font-family: var(--font-tech);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #150c07;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.sv-interest-desc {
+  color: var(--sv-grey);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Channels / links */
+.sv-channel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sv-channel-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  background: #ffffff;
+  border: 1px solid var(--sv-panel-line);
+  border-radius: var(--sv-radius-md);
+  padding: 16px 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px -18px var(--sv-shadow-ink);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+/* Light-brown card fill — fades in on hover instead of animating
+   background-color directly, so it layers smoothly under the
+   existing lift/shadow transition. */
+.sv-channel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(184, 135, 90, 0.22);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 0;
+}
+
+.sv-channel-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--sv-brown);
+  border-color: transparent;
+}
+
+.sv-channel-card:hover::before {
+  opacity: 1;
+}
+
+.sv-channel-card:hover .sv-channel-icon,
+.sv-channel-card:hover .sv-channel-label {
+  color: var(--sv-brown-dark);
+}
+
+.sv-channel-card:hover .sv-channel-arrow {
+  color: var(--sv-brown-dark);
+}
+
+.sv-channel-top,
+.sv-channel-arrow {
+  position: relative;
+  z-index: 1;
+}
+
+.sv-channel-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sv-channel-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--sv-ink);
+  transition: color 0.2s ease;
+}
+
+.sv-channel-label {
+  font-family: var(--font-tech);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--sv-ink);
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.sv-channel-arrow {
+  color: var(--sv-red);
+  font-size: 1.1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.sv-channel-card:hover .sv-channel-arrow {
+  transform: translateX(3px);
+}
+
+.sv-quicklinks {
+  background: #ffffff;
+  border-radius: var(--sv-radius-lg);
+  padding: 24px 26px 20px;
+}
+
+.sv-quicklinks-title {
+  display: block;
+  font-family: var(--font-tech);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--sv-ink);
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 2px dashed rgba(17, 19, 31, 0.16);
+}
+
+.sv-quicklinks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 24px;
+}
+
+.sv-quicklink-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 6px;
+  border-radius: var(--sv-radius-sm);
+  text-decoration: none;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.sv-quicklink-row .sv-id-label {
+  width: 84px;
+  flex-shrink: 0;
+  color: var(--sv-ink);
+  opacity: 1;
+}
+
+.sv-quicklink-value {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--sv-ink);
+  transition: color 0.18s ease, font-weight 0.18s ease;
+}
+
+a.sv-quicklink-row:hover {
+  background: rgba(184, 135, 90, 0.14);
+  transform: translateX(2px);
+}
+
+a.sv-quicklink-row:hover .sv-quicklink-value,
+a.sv-quicklink-row:hover .sv-id-label {
+  color: var(--sv-brown-dark);
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------
+   8. ACCESSIBILITY
+------------------------------------------------------ */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--sv-brown);
+  outline-offset: 3px;
+}
+
+/* Generic buttons: hover state is light brown, not blue */
+button:hover {
+  color: var(--sv-brown);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-page,
+  .profile-halftone,
+  .sv-side-nav::before,
+  .profile-header-title::before,
+  .profile-header-title::after {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------
+   9. RESPONSIVE
+------------------------------------------------------ */
+@media (max-width: 900px) {
+  .profile-shell {
+    grid-template-columns: 1fr;
+  }
+  .profile-sidebar {
+    display: none;
+  }
+  .profile-scroll {
+    padding: 40px 28px 100px;
+  }
+  .sv-fullbleed {
+    width: calc(100% + 56px);
+    margin-left: -28px;
+    margin-right: -28px;
+  }
+  .sv-skill-grid {
+    grid-template-columns: 1fr;
+  }
+  .sv-about-grid {
+    grid-template-columns: 1fr;
+  }
+  .sv-channel-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+  .sv-quicklinks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 0 24px;
+    height: 64px;
+  }
+  .profile-header-spacer {
+    display: none;
+  }
+  .profile-web-corner {
+    width: 120px;
+    height: 120px;
+  }
+  .sv-id-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .sv-id-fields {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .sv-id-divider {
+    display: none;
+  }
+  .sv-comic-panel {
+    padding: 26px 20px;
+  }
+  .sv-quicklinks {
+    padding: 20px 18px 16px;
+  }
+  .sv-avatar {
+    width: 76px;
+    height: 76px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header-title {
+    letter-spacing: 4px;
+  }
+  .profile-header-back-arrow {
+    font-size: 18px;
+  }
+  .profile-header-back .sv-glitch-text {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+  .sv-section-title {
+    letter-spacing: 1.5px;
+    flex-wrap: wrap;
+  }
+  .profile-scroll {
+    padding: 28px 16px 90px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sv-channel-grid {
+    grid-template-columns: 1fr;
+  }
+  .sv-quicklink-row {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .sv-quicklink-row .sv-id-label {
+    width: auto;
+  }
+  .sv-avatar-badge {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+  .sv-hero-role {
+    letter-spacing: 2px;
+  }
+}

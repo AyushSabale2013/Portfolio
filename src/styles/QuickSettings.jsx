@@ -23,15 +23,13 @@ import {
 
 import "./QuickSettings.css";
 
-
-/* Reusable pill row */
+/* Reusable pill row - Mac style uses the icon circle for active state */
 function SettingPill({ icon, label, sublabel, active, onClick, arrow }) {
     return (
-        <div
-            className={`qs-pill ${active ? "active" : ""}`}
-            onClick={onClick}
-        >
-            <span className="qs-pill-icon">{icon}</span>
+        <div className="qs-pill" onClick={onClick}>
+            <div className={`qs-pill-icon-wrapper ${active ? "active" : ""}`}>
+                <span className="qs-pill-icon">{icon}</span>
+            </div>
 
             <div className="qs-pill-text">
                 <span>{label}</span>
@@ -46,7 +44,6 @@ function SettingPill({ icon, label, sublabel, active, onClick, arrow }) {
 }
 
 export default function QuickSettings({ isOpen, onClose }) {
-
     const panelRef = useRef(null);
 
     const [wifi, setWifi] = useState(true);
@@ -69,7 +66,6 @@ export default function QuickSettings({ isOpen, onClose }) {
             }
         }
 
-        // mousedown feels more native than click for panels like this
         document.addEventListener("mousedown", handleClick);
         return () => document.removeEventListener("mousedown", handleClick);
     }, [isOpen, onClose]);
@@ -92,10 +88,11 @@ export default function QuickSettings({ isOpen, onClose }) {
 
         return () => clearInterval(interval);
     }, []);
+
     const time = currentTime.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false, // change to true if you want AM/PM
+        hour12: false,
     });
 
     const date = currentTime.toLocaleDateString([], {
@@ -119,47 +116,48 @@ export default function QuickSettings({ isOpen, onClose }) {
                         ref={panelRef}
                         className="quick-settings"
                         onClick={(e) => e.stopPropagation()}
-                        initial={{ opacity: 0, scale: 0.96, y: -14 }}
+                        initial={{ opacity: 0, scale: 0.96, y: -8 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.96, y: -14 }}
-                        transition={{ type: "spring", stiffness: 320, damping: 26 }}
+                        exit={{ opacity: 0, scale: 0.96, y: -8 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                     >
                         {/* HEADER */}
                         <div className="qs-header">
                             <div className="qs-battery">
-                                <FaBatteryThreeQuarters />
                                 <span>54%</span>
+                                <FaBatteryThreeQuarters className="battery-icon" />
                             </div>
 
                             <div className="qs-header-icons">
-                                <button><FaCamera /></button>
-                                <button><FaCog /></button>
-                                <button><FaLock /></button>
-                                <button><FaPowerOff /></button>
+                                <button aria-label="Camera"><FaCamera /></button>
+                                <button aria-label="Settings"><FaCog /></button>
+                                <button aria-label="Lock"><FaLock /></button>
+                                <button aria-label="Power"><FaPowerOff /></button>
                             </div>
                         </div>
 
-                        {/* SLIDERS */}
-                        <div className="qs-slider">
-                            <HiSpeakerWave className="slider-icon" />
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={volume}
-                                onChange={(e) => setVolume(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="qs-slider">
-                            <HiSun className="slider-icon" />
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={brightness}
-                                onChange={(e) => setBrightness(e.target.value)}
-                            />
+                        {/* SLIDERS (Mac Style Thick Sliders) */}
+                        <div className="qs-sliders-container">
+                            <div className="qs-slider">
+                                <HiSun className="slider-icon" />
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={brightness}
+                                    onChange={(e) => setBrightness(e.target.value)}
+                                />
+                            </div>
+                            <div className="qs-slider">
+                                <HiSpeakerWave className="slider-icon" />
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={volume}
+                                    onChange={(e) => setVolume(e.target.value)}
+                                />
+                            </div>
                         </div>
 
                         {/* PILL GRID */}
@@ -167,7 +165,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<FaWifi />}
                                 label="Wi-Fi"
-                                sublabel={wifi ? "SPIDEY-WIFI" : "Off"}
+                                sublabel={wifi ? "Network" : "Off"}
                                 active={wifi}
                                 arrow
                                 onClick={() => setWifi(!wifi)}
@@ -176,7 +174,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<FaBluetoothB />}
                                 label="Bluetooth"
-                                sublabel={bluetooth ? "spiderman BT" : "Off"}
+                                sublabel={bluetooth ? "On" : "Off"}
                                 active={bluetooth}
                                 arrow
                                 onClick={() => setBluetooth(!bluetooth)}
@@ -184,23 +182,23 @@ export default function QuickSettings({ isOpen, onClose }) {
 
                             <SettingPill
                                 icon={<HiBolt />}
-                                label="Power Mode"
-                                sublabel="Balanced"
+                                label="Battery"
+                                sublabel="Optimized"
                                 arrow
                             />
 
                             <SettingPill
                                 icon={<FaMoon />}
-                                label="Night Light"
-                                sublabel={night ? "Enabled" : "Disabled"}
+                                label="Night Shift"
+                                sublabel={night ? "On" : "Off"}
                                 active={night}
                                 onClick={() => setNight(!night)}
                             />
 
                             <SettingPill
                                 icon={<HiSun />}
-                                label="Dark Style"
-                                sublabel={dark ? "Enabled" : "Disabled"}
+                                label="Dark Mode"
+                                sublabel={dark ? "On" : "Off"}
                                 active={dark}
                                 onClick={() => setDark(!dark)}
                             />
@@ -208,7 +206,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<FaKeyboard />}
                                 label="Keyboard"
-                                sublabel="US Layout"
+                                sublabel="Default"
                                 arrow
                             />
                         </div>
@@ -217,7 +215,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<FaPlane />}
                                 label="Airplane Mode"
-                                sublabel={airplane ? "Enabled" : "Disabled"}
+                                sublabel={airplane ? "On" : "Off"}
                                 active={airplane}
                                 onClick={() => setAirplane(!airplane)}
                             />
@@ -225,10 +223,8 @@ export default function QuickSettings({ isOpen, onClose }) {
 
                         {/* FOOTER */}
                         <div className="qs-footer">
-                            <div className="qs-footer-left">
-                                <span className="qs-time">{time}</span>
-                                <span className="qs-date">{date}</span>
-                            </div>
+                            <span className="qs-time">{time}</span>
+                            <span className="qs-date">{date}</span>
                         </div>
                     </motion.div>
                 </>

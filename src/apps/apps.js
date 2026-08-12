@@ -1,6 +1,6 @@
 // src/apps/apps.js
 
-import Profile from "./Profile/Profile";
+import Profile from "./Profile/Profile"; // <-- Make sure this import exists or update it if your path differs
 import Home from "./Home/Home";
 import Projects from "./Projects/Projects";
 import Resume from "./Resume/Resume";
@@ -23,7 +23,7 @@ export const apps = {
 
     profile: {
         title: "Profile",
-        component: Profile,
+        component: Profile, // <-- Ensure this points to your newly created Profile wrapper component
         icon: profileIcon,
         info: "Personal profile.",
         desktop: true,
