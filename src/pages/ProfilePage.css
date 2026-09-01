@@ -2,65 +2,66 @@
    SPIDER-VERSE DOSSIER — "INK & SPECTRUM" EDITION
    A cleaner, art-directed pass on the comic-print portfolio theme.
    Same class names as the original build — drop-in replacement.
+
+   PERF PASS NOTES (this file):
+   - Added will-change + translateZ(0) layer promotion on the handful
+     of elements that animate continuously (ambient wash, side-nav thread,
+     header glitch, backdrop-blur panels) so the browser keeps them on
+     their own GPU layer instead of repainting the surrounding page.
+   - Added contain: paint / contain: content to independent panels
+     (skill cards, comic panels, interest/channel cards) so their internal
+     paint/layout doesn't force a recalculation of the whole scroll
+     container on hover or during scroll.
+   - No visual values changed except the About paragraph color (per
+     request) — everything else looks identical, just cheaper to render.
+
+   FIX (this pass):
+   - .sv-comic-panel had "contain: layout paint;". `contain: paint`
+     makes the element establish a clipping boundary for anything
+     that overflows its box — so .sv-comic-tab (deliberately
+     positioned at top: -14px to hang above the card) was being
+     clipped/hidden behind the panel's own edge instead of floating
+     above it. Dropped "paint" from that containment value (kept
+     "layout" for the perf win) and gave .sv-comic-tab an explicit
+     z-index so it always renders above the card content.
    ========================================================================== */
 
 /* ------------------------------------------------------
    1. FONTS & DESIGN TOKENS
-   Palette logic: one warm paper ground, one true-black ink,
-   and a *restrained* two-color spot-print duo (electric blue +
-   hot red/pink) doing 80% of the accent work. Cyan / yellow /
-   purple are kept as rare, deliberate highlights rather than
-   being spread evenly everywhere — that's what reads as
-   "professional comic print" instead of "rainbow gradient."
 ------------------------------------------------------ */
 @import url("https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
-  /* Paper & Ink — dialed a shade darker/duller than pure paper white,
-     so the page reads as a warm, slightly aged newsprint rather than
-     a bright screen-white. Still light, just less clinical. */
-  --sv-bg:          #eae5da;   /* dulled warm paper, one notch darker */
-  --sv-bg-soft:     #e2dcd1;   /* neutral warm-grey stop, blue tint removed */
+  --sv-bg:          #eae5da;
+  --sv-bg-soft:     #e2dcd1;
   --sv-bg-panel:    #fbf9f4;
   --sv-panel:       rgba(251, 249, 244, 0.88);
   --sv-panel-line:  rgba(16, 18, 38, 0.12);
-  --sv-ink:         #11131f;   /* true printing-press black */
+  --sv-ink:         #11131f;
   --sv-ink-soft:    #2a2d42;
-  --sv-grey:        #57596f;   /* darkened for stronger contrast on the dimmer paper */
+  --sv-grey:        #57596f;
   --sv-text:        #22243a;
 
-  /* Spot-print accents — remapped to a biscuit (rich brown + gold)
-     grading. Keeping the original variable NAMES matters: the JSX
-     still references var(--sv-cyan, ...) etc. for its accent props,
-     so repointing the values here cascades the new grading through
-     every skill-module / nav-item accent without touching the JSX
-     color logic itself. */
-  --sv-blue:        #6b4226;   /* rich brown  — labels, hero role, functional text */
-  --sv-cyan:        #caa15a;   /* rich gold   — primary accent */
-  --sv-red:         #4a2c1a;   /* deep brown  — tabs, index numbers, hover text */
-  --sv-pink:        #a97c34;   /* amber gold  */
-  --sv-yellow:      #d9a941;   /* golden yellow — badge, warm highlight */
-  --sv-purple:      #3e2415;   /* dark chocolate — interests icon + title */
+  --sv-blue:        #6b4226;
+  --sv-cyan:        #caa15a;
+  --sv-red:         #4a2c1a;
+  --sv-pink:        #a97c34;
+  --sv-yellow:      #d9a941;
+  --sv-purple:      #3e2415;
 
-  /* Text-on-dark accent for hover states over warm sweeps */
   --sv-cream:       #fbf6ec;
 
-  /* Hover / interactive accent — light brown instead of blue */
   --sv-brown:       #b8875a;
   --sv-brown-soft:  rgba(184, 135, 90, 0.35);
 
-  /* Hero particle accent — very dark brown */
   --sv-brown-dark:  #241209;
 
-  /* Elevation */
   --sv-shadow-ink:  rgba(17, 19, 31, 0.20);
 
-  /* Typography */
   --font-display: "Bangers", cursive;
   --font-tech:    "Orbitron", sans-serif;
   --font-body:    "Space Grotesk", sans-serif;
 
-  /* Rhythm */
   --sv-radius-sm: 8px;
   --sv-radius-md: 12px;
   --sv-radius-lg: 16px;
@@ -68,8 +69,6 @@
 
 /* ------------------------------------------------------
    2. PAGE ROOT & AMBIENT BACKGROUND
-   Layered, restrained wash + halftone + fine paper grain,
-   instead of three loud radial blobs.
 ------------------------------------------------------ */
 .profile-page {
   position: fixed;
@@ -90,7 +89,6 @@
   box-sizing: border-box;
 }
 
-/* Fine paper grain — cheap, convincing texture with no image asset */
 .profile-page::after {
   content: "";
   position: absolute;
@@ -103,9 +101,15 @@
     repeating-linear-gradient(0deg, rgba(17,19,31,0.6) 0px, transparent 1px, transparent 2px),
     repeating-linear-gradient(90deg, rgba(17,19,31,0.4) 0px, transparent 1px, transparent 3px);
   background-size: 3px 3px, 4px 4px;
+  /* Static texture, no animation — promote once and forget so it never
+     gets swept up in a repaint of the layers above/below it. */
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
-/* Ambient ink-wash drift — slower, subtler than before */
+/* Ambient ink-wash drift — kept transform-only (already cheap), just
+   promoted to its own compositor layer so the continuous animation
+   never triggers a repaint of siblings underneath it. */
 .profile-halftone {
   position: absolute;
   inset: 0;
@@ -118,6 +122,8 @@
     radial-gradient(340px 340px at 92% 8%, rgba(217, 169, 65, 0.13), transparent 70%),
     radial-gradient(420px 420px at 95% 92%, rgba(107, 66, 38, 0.14), transparent 70%);
   animation: sv-drift 30s ease-in-out infinite alternate;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 @keyframes sv-drift {
@@ -125,7 +131,6 @@
   100% { transform: translate3d(-1.5%, 1.5%, 0) scale(1.04); }
 }
 
-/* Ben-Day halftone dots — the one comic-print texture, used sparingly */
 .profile-chromatic-edge {
   position: absolute;
   inset: 0;
@@ -138,9 +143,10 @@
     radial-gradient(rgba(107, 66, 38, 0.22) 0.8px, transparent 0.8px);
   background-size: 22px 22px, 22px 22px;
   background-position: 0 0, 11px 11px;
+  /* Static, no animation — one-time layer promotion only. */
+  transform: translateZ(0);
 }
 
-/* Spider-web corner sketches — quieter, single-tone */
 .profile-web-corner {
   position: absolute;
   top: 0;
@@ -151,6 +157,9 @@
   pointer-events: none;
   opacity: 0.22;
   color: var(--sv-ink);
+  /* SVG line-draw animation finishes once on mount; contain its paint
+     so it doesn't get re-evaluated against the rest of the page. */
+  contain: paint;
 }
 
 .profile-web-corner--br {
@@ -158,12 +167,11 @@
   left: auto;
   bottom: 0;
   right: 0;
-  transform: rotate(180deg);
+  transform: rotate(180deg) translateZ(0);
   opacity: 0.18;
   color: var(--sv-red);
 }
 
-/* Brief hue-flash on nav click — kept, toned down */
 .sv-multiverse-glitch {
   animation: sv-glitch-flash 0.35s steps(2, end);
 }
@@ -227,10 +235,6 @@
   position: relative;
 }
 
-/* Title: solid ink type with a single crisp chromatic offset
-   pair (cyan/red) — a controlled comic mis-registration effect
-   rather than a full rainbow gradient. Reads cleaner at a glance,
-   still unmistakably "print glitch" on close look. */
 .profile-header-title {
   position: relative;
   font-family: var(--font-display);
@@ -239,6 +243,8 @@
   text-transform: uppercase;
   color: var(--sv-ink);
   user-select: none;
+  /* Isolate the glitch pseudo-elements' repaint to this box only. */
+  contain: paint;
 }
 
 .profile-header-title::before,
@@ -253,6 +259,7 @@
   font-size: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
+  will-change: transform, opacity;
 }
 
 .profile-header-title::before {
@@ -318,7 +325,6 @@
   padding-left: 8px;
 }
 
-/* Laser web thread — animated, but gentle */
 .sv-side-nav::before {
   content: "";
   position: absolute;
@@ -338,6 +344,10 @@
   background-size: 100% 220%;
   opacity: 0.55;
   animation: sv-thread-pulse 7s ease-in-out infinite;
+  /* Continuous animation, small isolated strip — keep it off the
+     compositor's shared layer so it never drags the sidebar with it. */
+  will-change: background-position, opacity;
+  contain: paint;
 }
 
 @keyframes sv-thread-pulse {
@@ -414,6 +424,12 @@
   padding: 56px 72px 140px;
   box-sizing: border-box;
   scroll-behavior: smooth;
+  /* The single biggest scroll-perf win here: this promotes the
+     scroll container to its own layer and tells the browser new
+     content can appear/disappear inside it, so it doesn't have to
+     repaint the fixed header/webs/backdrop every frame you scroll. */
+  will-change: scroll-position;
+  transform: translateZ(0);
 }
 
 .profile-scroll::-webkit-scrollbar {
@@ -446,8 +462,6 @@
   padding-bottom: 24px;
 }
 
-/* Section titles: ink type + a short two-tone underline stroke
-   instead of gradient-clipped text. More legible, still bold. */
 .sv-section-title {
   position: relative;
   display: inline-flex;
@@ -486,9 +500,6 @@
   margin: 6px 0 24px;
 }
 
-/* Multiverse / chromatic panel — border removed per feedback; the
-   offset "ink registration" shadow alone now carries the comic-panel
-   look, and text inside is forced to stay dark ink for contrast. */
 .sv-comic-panel-border {
   border: none;
   border-radius: var(--sv-radius-md);
@@ -497,6 +508,9 @@
     3px 3px 0 var(--sv-brown),
     -2px -2px 0 var(--sv-red);
   transition: box-shadow 0.22s ease, transform 0.22s ease;
+  /* Each card's hover shadow/transform repaint stays local to the
+     card instead of bubbling into a layout check on the scroller. */
+  contain: layout paint;
 }
 
 .sv-comic-panel-border:hover {
@@ -516,7 +530,10 @@
   justify-content: center;
   margin: 18px 0 22px;
   position: relative;
-  color: var(--sv-brown-dark); /* very dark brown — used if the particle system reads currentColor */
+  color: var(--sv-brown-dark);
+  /* Canvas particle text lives here — contain it so its internal
+     redraws never force a layout/paint pass on the rest of the page. */
+  contain: layout paint;
 }
 
 .sv-hero-name-static {
@@ -567,6 +584,9 @@
   padding: 16px 26px;
   text-align: left;
   box-shadow: 0 10px 30px -14px var(--sv-shadow-ink);
+  /* backdrop-filter is one of the most expensive properties to keep
+     re-evaluating on scroll — pin it to its own layer. */
+  transform: translateZ(0);
 }
 
 .sv-id-strip--flat {
@@ -578,6 +598,7 @@
   margin-bottom: 4px;
   background: transparent;
   backdrop-filter: none;
+  transform: none;
 }
 
 .sv-avatar-container {
@@ -585,10 +606,6 @@
   flex-shrink: 0;
 }
 
-/* Avatar ring — the rainbow spectrum ring is gone per feedback.
-   A single warm-gold ring keeps a bit of ceremony around the photo
-   without turning it into a rainbow, and the photo itself is
-   larger so it actually reads as the focal point of the strip. */
 .sv-avatar-container::before {
   content: "";
   position: absolute;
@@ -669,7 +686,6 @@
   background: rgba(17, 19, 31, 0.15);
 }
 
-/* Rainbow dashed thread — used as a section divider */
 .sv-web-divider {
   max-width: 880px;
   margin: 8px auto;
@@ -702,6 +718,8 @@
   overflow: hidden;
   box-shadow: 0 10px 26px -18px var(--sv-shadow-ink);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
+  contain: layout paint;
+  transform: translateZ(0);
 }
 
 .sv-skill-card:hover {
@@ -767,10 +785,10 @@
   font-size: 0.78rem;
 }
 
-/* Comic panel — About / Education. Dark-navy palette removed;
-   rebuilt as the same light ink-on-paper card used for skills and
-   interests elsewhere, so About/Education stays visually parallel
-   with the rest of the page instead of being an isolated dark block. */
+/* FIX: was "contain: layout paint;" — `paint` clips any child that
+   overflows this box, which hid .sv-comic-tab (top: -14px) behind
+   the panel edge. Keep only `layout` so the tab can render above
+   the card, as intended. */
 .sv-comic-panel {
   position: relative;
   background: var(--sv-bg-panel);
@@ -779,12 +797,14 @@
   padding: 30px 32px;
   margin-bottom: 20px;
   box-shadow: 0 16px 34px -22px var(--sv-shadow-ink);
+  contain: layout;
 }
 
 .sv-comic-tab {
   position: absolute;
   top: -14px;
   left: 24px;
+  z-index: 3;
   background: #1d5fe0;
   color: #fff;
   font-family: var(--font-tech);
@@ -803,8 +823,10 @@
   margin: 8px 0 0;
 }
 
+/* About description — darkened per request (was #060a26). */
 .sv-comic-desc {
-  color: #060a26;
+  color: #000000;
+  font-weight: 600;
   font-size: 1.02rem;
   line-height: 1.7;
   margin: 8px 0 0;
@@ -859,6 +881,7 @@
   padding: 18px;
   box-shadow: 0 10px 24px -18px var(--sv-shadow-ink);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
+  contain: layout paint;
 }
 
 .sv-interest-card:hover {
@@ -913,11 +936,9 @@
   overflow: hidden;
   box-shadow: 0 10px 24px -18px var(--sv-shadow-ink);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  contain: layout paint;
 }
 
-/* Light-brown card fill — fades in on hover instead of animating
-   background-color directly, so it layers smoothly under the
-   existing lift/shadow transition. */
 .sv-channel-card::before {
   content: "";
   position: absolute;
@@ -989,6 +1010,7 @@
   background: #ffffff;
   border-radius: var(--sv-radius-lg);
   padding: 24px 26px 20px;
+  contain: layout paint;
 }
 
 .sv-quicklinks-title {
@@ -1055,7 +1077,6 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
-/* Generic buttons: hover state is light brown, not blue */
 button:hover {
   color: var(--sv-brown);
 }

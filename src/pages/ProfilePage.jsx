@@ -1,5 +1,5 @@
 // src/pages/ProfilePage.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./ProfilePage.css";
 
@@ -57,8 +57,347 @@ const fadeUpItem = {
     visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 120, damping: 14 } }
 };
 
-export default function ProfilePage({ onClose }) {
+/* ------------------------------------------------------
+   WEB CORNER — static per-mount SVG decoration.
+   Extracted + memoized so it never re-renders once painted
+   (it used to re-render on every scroll-spy / role tick).
+------------------------------------------------------ */
+const WebCorner = memo(function WebCorner({ variant }) {
+    return (
+        <svg
+            className={`profile-web-corner ${variant === "br" ? "profile-web-corner--br" : ""}`}
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            {[0, 18, 36, 54, 72, 90].map((angle, i) => {
+                const rad = (angle * Math.PI) / 180;
+                return (
+                    <motion.line
+                        key={`${variant}-line-${i}`} x1="0" y1="0" x2={Math.cos(rad) * 220} y2={Math.sin(rad) * 220}
+                        stroke="currentColor" strokeWidth="1.5"
+                        custom={i} variants={webVariants} initial="hidden" animate="visible"
+                    />
+                );
+            })}
+            {[40, 80, 120, 160].map((r, i) => (
+                <motion.path
+                    key={`${variant}-arc-${i}`} d={`M ${r} 0 A ${r} ${r} 0 0 1 0 ${r}`}
+                    fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 2"
+                    custom={i + 4} variants={webVariants} initial="hidden" animate="visible"
+                />
+            ))}
+        </svg>
+    );
+});
+
+/* ------------------------------------------------------
+   HERO NAME — canvas particle text (or static heading on
+   mobile). Memoized on isMobile only, so it never re-mounts
+   or re-renders because of unrelated state (scroll-spy,
+   role rotation, glitch flash) ticking in the parent.
+------------------------------------------------------ */
+const HeroName = memo(function HeroName({ isMobile, name }) {
+    if (isMobile) {
+        return <h1 className="sv-hero-name-static">{name}</h1>;
+    }
+    return (
+        <ParticleText
+            text={name}
+            particleSize={2.2} density={4}
+            color="#241209" highlightColor="#CAA15A"
+            scatter={190} gatherDuration={1600} stagger={420}
+            pointerRepel={60} repelRadius={150} idleDrift={0.8}
+            trigger="mount" fontSize="clamp(3.5rem, 13vw, 9.5rem)"
+            fontWeight={900} fontFamily="inherit" glow
+        />
+    );
+});
+
+/* ------------------------------------------------------
+   ROLE ROTATOR — owns its own interval/state so the
+   2.5s tick only re-renders this small span, not the
+   whole page.
+------------------------------------------------------ */
+const RoleRotator = memo(function RoleRotator({ roles }) {
     const [roleIndex, setRoleIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRoleIndex((prev) => (prev + 1) % roles.length);
+        }, 2500);
+        return () => clearInterval(interval);
+    }, [roles.length]);
+
+    return (
+        <div className="sv-hero-role-wrap">
+            <span className="sv-hero-role-bracket" style={{ color: '#3E2415' }}>[</span>
+            <AnimatePresence mode="wait">
+                <motion.span
+                    key={roles[roleIndex]}
+                    className="sv-hero-role"
+                    initial={{ opacity: 0, y: 20, rotateX: 90 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    exit={{ opacity: 0, y: -20, rotateX: -90 }}
+                    transition={{ duration: 0.4, type: "spring", bounce: 0.4 }}
+                >
+                    {roles[roleIndex]}
+                </motion.span>
+            </AnimatePresence>
+            <span className="sv-hero-role-bracket" style={{ color: '#3E2415' }}>]</span>
+        </div>
+    );
+});
+
+/* ------------------------------------------------------
+   SIDEBAR NAV — isolated so scroll-spy updates
+   (activeSection) only re-render this small list instead
+   of the entire page.
+------------------------------------------------------ */
+const SidebarNav = memo(function SidebarNav({ activeSection, onNavigate }) {
+    return (
+        <aside className="profile-sidebar" aria-label="Section navigation">
+            <nav className="sv-side-nav">
+                {NAV_ITEMS.map((item) => (
+                    <button
+                        key={item.id}
+                        type="button"
+                        className={`sv-side-link ${activeSection === item.id ? "is-active" : ""}`}
+                        style={{ "--nav-accent": item.accent }}
+                        onClick={() => onNavigate(item.id)}
+                        aria-current={activeSection === item.id ? "true" : undefined}
+                    >
+                        <span className="sv-side-dot" aria-hidden="true" />
+                        <span className="sv-side-index">{item.index}</span>
+                        <span className="sv-side-label">{item.label}</span>
+                    </button>
+                ))}
+            </nav>
+        </aside>
+    );
+});
+
+/* ------------------------------------------------------
+   MAIN CONTENT — skill matrix / about / education /
+   interests / channels. None of this depends on
+   activeSection, roleIndex, or glitchActive, so it's
+   memoized and effectively renders once.
+------------------------------------------------------ */
+const ContentSections = memo(function ContentSections() {
+    return (
+        <>
+            <div className="sv-web-divider" aria-hidden="true" />
+
+            {/* ============ SKILL MATRIX ============ */}
+            <section id="skill-matrix" className="sv-section">
+                <h2 className="sv-section-title" data-index="02">Skill Matrix</h2>
+                <p className="sv-section-sub">Skills sharpened and stacked up over time.</p>
+
+                <motion.div
+                    className="sv-skill-grid"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                >
+                    {SKILL_MODULES.map((mod) => (
+                        <motion.div
+                            key={mod.id}
+                            variants={fadeUpItem}
+                            className="sv-skill-card sv-comic-panel-border"
+                            style={{ "--card-accent": mod.accent }}
+                            whileHover={{ scale: 1.03, y: -6 }}
+                        >
+                            <div className="sv-skill-card-head">
+                                <span className="sv-skill-id">{mod.id}</span>
+                                <span className="sv-skill-label">{mod.label}</span>
+                            </div>
+                            <ul className="sv-skill-tags">
+                                {mod.skills.map((skill) => (
+                                    <li key={skill} className="sv-skill-tag">{skill}</li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </section>
+
+            <div className="sv-web-divider" aria-hidden="true" />
+
+            {/* ============ ABOUT ============ */}
+            <section id="about" className="sv-section">
+                <h2 className="sv-section-title" data-index="03">{profile.about.title}</h2>
+
+                <motion.div
+                    className="sv-comic-panel sv-comic-panel-border"
+                    initial={{ opacity: 0, rotate: -2 }}
+                    whileInView={{ opacity: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                >
+                    <div className="sv-comic-tab" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        AUDIO TRANSMISSION LOG // SECURE
+                        {/* Animated Waveform representation */}
+                        <div style={{ display: 'flex', gap: '2px', height: '12px', alignItems: 'flex-end' }}>
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <motion.div
+                                    key={i}
+                                    style={{ width: '3px', background: 'currentColor', borderRadius: '2px' }}
+                                    animate={{ height: ["4px", "12px", "4px"] }}
+                                    transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                    <p className="sv-comic-desc">{profile.about.description}</p>
+                    <div className="sv-about-grid">
+                        <div className="sv-about-item">
+                            <span className="sv-id-label">Core Objective</span>
+                            <p>{profile.about.goal}</p>
+                        </div>
+                        <div className="sv-about-item">
+                            <span className="sv-id-label">Active Focus</span>
+                            <p>{profile.about.focus}</p>
+                        </div>
+                    </div>
+                </motion.div>
+            </section>
+
+            <div className="sv-web-divider" aria-hidden="true" />
+
+            {/* ============ EDUCATION ============ */}
+            <section id="education" className="sv-section">
+                <h2 className="sv-section-title" data-index="04">Education Records</h2>
+
+                <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                    {profile.education.map((edu) => (
+                        <motion.div variants={fadeUpItem} className="sv-comic-panel sv-comic-panel-border" key={edu.college}>
+                            <span className="sv-comic-tab">ACADEMIC DOSSIER — VERIFIED</span>
+                            <div className="sv-id-strip sv-id-strip--flat">
+                                <div className="sv-id-fields">
+                                    <div className="sv-id-field">
+                                        <span className="sv-id-label">Degree</span>
+                                        <span className="sv-id-value">{edu.degree}</span>
+                                    </div>
+                                    <div className="sv-id-divider" aria-hidden="true" />
+                                    <div className="sv-id-field">
+                                        <span className="sv-id-label">Branch</span>
+                                        <span className="sv-id-value">{edu.branch}</span>
+                                    </div>
+                                    <div className="sv-id-divider" aria-hidden="true" />
+                                    <div className="sv-id-field">
+                                        <span className="sv-id-label">Timeline</span>
+                                        <span className="sv-id-value">{edu.duration} · {edu.semester}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span className="sv-id-label sv-block-label">Focus Specialties</span>
+                            <ul className="sv-skill-tags">
+                                {edu.focus.map((f) => <li key={f} className="sv-skill-tag">{f}</li>)}
+                            </ul>
+
+                            <span className="sv-id-label sv-block-label">Core Modules Passed</span>
+                            <ul className="sv-skill-tags">
+                                {edu.subjectsCompleted.map((s) => (
+                                    <li key={s} className="sv-skill-tag sv-skill-tag--muted">{s}</li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </section>
+
+            <div className="sv-web-divider" aria-hidden="true" />
+
+            {/* ============ INTERESTS ============ */}
+            <section id="interests" className="sv-section">
+                <h2 className="sv-section-title" data-index="05">Interests & Hobbies</h2>
+                <p className="sv-section-sub">Off-duty operational parameters.</p>
+
+                <motion.div
+                    className="sv-interest-grid"
+                    variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}
+                >
+                    {profile.interests.map((item) => (
+                        <motion.div
+                            variants={fadeUpItem}
+                            className="sv-interest-card sv-comic-panel-border"
+                            key={item.title}
+                            whileHover={{ y: -6, scale: 1.02 }}
+                        >
+                            <item.icon className="sv-interest-icon" />
+                            <span className="sv-interest-title">{item.title}</span>
+                            <p className="sv-interest-desc">{item.description}</p>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </section>
+
+            <div className="sv-web-divider" aria-hidden="true" />
+
+            {/* ============ CHANNELS ============ */}
+            <section id="channels" className="sv-section sv-section--last">
+                <h2 className="sv-section-title" data-index="06">Direct Multiverse Channels</h2>
+                <p className="sv-section-sub">Shoot a web. Signal received instantaneously.</p>
+
+                <div className="sv-channel-grid">
+                    {profile.socials.map((ch) => (
+                        <motion.a
+                            key={ch.name}
+                            className="sv-channel-card sv-comic-panel-border"
+                            href={ch.link} target="_blank" rel="noreferrer"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
+                            <div className="sv-channel-top">
+                                <ch.icon className="sv-channel-icon" />
+                                <span className="sv-channel-label">{ch.name}</span>
+                            </div>
+                            <motion.span
+                                className="sv-channel-arrow"
+                                initial={{ x: 0 }}
+                                whileHover={{ x: 5 }}
+                            >→</motion.span>
+                        </motion.a>
+                    ))}
+                </div>
+
+                <motion.div
+                    className="sv-quicklinks sv-comic-panel-border"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                >
+                    <span className="sv-quicklinks-title">Quick Links</span>
+                    <div className="sv-quicklinks-grid">
+                        {profile.contacts.map((c) => (
+                            c.link ? (
+                                <a
+                                    className="sv-quicklink-row"
+                                    key={c.type}
+                                    href={c.link}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    <span className="sv-id-label">{c.title}</span>
+                                    <span className="sv-quicklink-value">{c.value}</span>
+                                </a>
+                            ) : (
+                                <div className="sv-quicklink-row" key={c.type}>
+                                    <span className="sv-id-label">{c.title}</span>
+                                    <span className="sv-quicklink-value">{c.value}</span>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                </motion.div>
+            </section>
+        </>
+    );
+});
+
+export default function ProfilePage({ onClose }) {
     const [glitchActive, setGlitchActive] = useState(false);
     const [activeSection, setActiveSection] = useState(NAV_ITEMS[0].id);
     const [isMobile, setIsMobile] = useState(false);
@@ -74,15 +413,9 @@ export default function ProfilePage({ onClose }) {
         return () => mql.removeEventListener("change", handleChange);
     }, []);
 
-    // Rotate through roles
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setRoleIndex((prev) => (prev + 1) % profile.roles.length);
-        }, 2500);
-        return () => clearInterval(interval);
-    }, []);
-
-    // Scroll-spy: highlight the sidebar item for whichever section is in view
+    // Scroll-spy: highlight the sidebar item for whichever section is in view.
+    // Only touches activeSection state — SidebarNav is the only thing that
+    // re-renders because of it (see memoized components above).
     useEffect(() => {
         const scrollRoot = document.querySelector(".profile-scroll");
         if (!scrollRoot) return;
@@ -91,7 +424,7 @@ export default function ProfilePage({ onClose }) {
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        setActiveSection(entry.target.id);
+                        setActiveSection((prev) => (prev === entry.target.id ? prev : entry.target.id));
                     }
                 });
             },
@@ -106,15 +439,20 @@ export default function ProfilePage({ onClose }) {
         return () => observer.disconnect();
     }, []);
 
-    const triggerGlitch = () => {
+    const triggerGlitch = useCallback(() => {
         setGlitchActive(true);
-        setTimeout(() => setGlitchActive(false), 350); // Snappier glitch
-    };
+        setTimeout(() => setGlitchActive(false), 350);
+    }, []);
 
-    const scrollToSection = (id) => {
+    const scrollToSection = useCallback((id) => {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
+    }, []);
+
+    const handleBack = useCallback(() => {
+        triggerGlitch();
+        onClose();
+    }, [triggerGlitch, onClose]);
 
     return (
         <motion.div
@@ -128,55 +466,17 @@ export default function ProfilePage({ onClose }) {
             <div className="profile-halftone" aria-hidden="true" />
             <div className="profile-chromatic-edge" aria-hidden="true" />
 
-            {/* Dynamic Animated Spider Webs (Top Left) */}
-            <svg className="profile-web-corner" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                {[0, 18, 36, 54, 72, 90].map((angle, i) => {
-                    const rad = (angle * Math.PI) / 180;
-                    return (
-                        <motion.line
-                            key={`line-${i}`} x1="0" y1="0" x2={Math.cos(rad) * 220} y2={Math.sin(rad) * 220}
-                            stroke="currentColor" strokeWidth="1.5"
-                            custom={i} variants={webVariants} initial="hidden" animate="visible"
-                        />
-                    );
-                })}
-                {[40, 80, 120, 160].map((r, i) => (
-                    <motion.path
-                        key={`arc-${i}`} d={`M ${r} 0 A ${r} ${r} 0 0 1 0 ${r}`}
-                        fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 2"
-                        custom={i + 4} variants={webVariants} initial="hidden" animate="visible"
-                    />
-                ))}
-            </svg>
-
-            {/* Dynamic Animated Spider Webs (Bottom Right) */}
-            <svg className="profile-web-corner profile-web-corner--br" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                {[0, 18, 36, 54, 72, 90].map((angle, i) => {
-                    const rad = (angle * Math.PI) / 180;
-                    return (
-                        <motion.line
-                            key={`br-line-${i}`} x1="0" y1="0" x2={Math.cos(rad) * 220} y2={Math.sin(rad) * 220}
-                            stroke="currentColor" strokeWidth="1.5"
-                            custom={i} variants={webVariants} initial="hidden" animate="visible"
-                        />
-                    );
-                })}
-                {[40, 80, 120, 160].map((r, i) => (
-                    <motion.path
-                        key={`br-arc-${i}`} d={`M ${r} 0 A ${r} ${r} 0 0 1 0 ${r}`}
-                        fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 2"
-                        custom={i + 4} variants={webVariants} initial="hidden" animate="visible"
-                    />
-                ))}
-            </svg>
+            {/* Dynamic Animated Spider Webs (Top Left / Bottom Right) */}
+            <WebCorner variant="tl" />
+            <WebCorner variant="br" />
 
             {/* Header */}
             <header className="profile-header">
-                <motion.button 
-                    whileHover={{ scale: 1.05, x: -5 }} 
+                <motion.button
+                    whileHover={{ scale: 1.05, x: -5 }}
                     whileTap={{ scale: 0.95 }}
-                    className="profile-header-back" 
-                    onClick={() => { triggerGlitch(); onClose(); }}
+                    className="profile-header-back"
+                    onClick={handleBack}
                 >
                     <span className="profile-header-back-arrow">←</span>
                     <span className="sv-glitch-text" data-text="SPIDER DESKTOP">SPIDER DESKTOP</span>
@@ -192,77 +492,32 @@ export default function ProfilePage({ onClose }) {
             {/* Shell */}
             <div className="profile-shell">
                 {/* Sidebar — biscuit gradient web-thread + scroll-spy nav */}
-                <aside className="profile-sidebar" aria-label="Section navigation">
-                    <nav className="sv-side-nav">
-                        {NAV_ITEMS.map((item) => (
-                            <button
-                                key={item.id}
-                                type="button"
-                                className={`sv-side-link ${activeSection === item.id ? "is-active" : ""}`}
-                                style={{ "--nav-accent": item.accent }}
-                                onClick={() => scrollToSection(item.id)}
-                                aria-current={activeSection === item.id ? "true" : undefined}
-                            >
-                                <span className="sv-side-dot" aria-hidden="true" />
-                                <span className="sv-side-index">{item.index}</span>
-                                <span className="sv-side-label">{item.label}</span>
-                            </button>
-                        ))}
-                    </nav>
-                </aside>
+                <SidebarNav activeSection={activeSection} onNavigate={scrollToSection} />
 
                 <main className="profile-scroll">
                     {/* ============ OVERVIEW ============ */}
                     <section id="overview" className="sv-section sv-section--hero" />
 
-
                     {/* Full-bleed hero title — particle animation on desktop/tablet,
                         a plain static heading on phones (lighter and just as legible) */}
                     <div className="sv-fullbleed sv-hero-particle">
-                        {isMobile ? (
-                            <h1 className="sv-hero-name-static">{profile.basic.name}</h1>
-                        ) : (
-                            <ParticleText
-                                text={profile.basic.name}
-                                particleSize={2.2} density={4}
-                                color="#241209" highlightColor="#CAA15A" // very dark brown ink text, gold glow
-                                scatter={190} gatherDuration={1600} stagger={420}
-                                pointerRepel={60} repelRadius={150} idleDrift={0.8}
-                                trigger="mount" fontSize="clamp(3.5rem, 13vw, 9.5rem)"
-                                fontWeight={900} fontFamily="inherit" glow
-                            />
-                        )}
+                        <HeroName isMobile={isMobile} name={profile.basic.name} />
                     </div>
 
                     <section className="sv-section sv-section--hero">
-                        <div className="sv-hero-role-wrap">
-                            <span className="sv-hero-role-bracket" style={{ color: '#3E2415' }}>[</span>
-                            <AnimatePresence mode="wait">
-                                <motion.span
-                                    key={profile.roles[roleIndex]}
-                                    className="sv-hero-role"
-                                    initial={{ opacity: 0, y: 20, rotateX: 90 }}
-                                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                                    exit={{ opacity: 0, y: -20, rotateX: -90 }}
-                                    transition={{ duration: 0.4, type: "spring", bounce: 0.4 }}
-                                >
-                                    {profile.roles[roleIndex]}
-                                </motion.span>
-                            </AnimatePresence>
-                            <span className="sv-hero-role-bracket" style={{ color: '#3E2415' }}>]</span>
-                        </div>
+                        <RoleRotator roles={profile.roles} />
 
-                        <motion.div 
+                        <motion.div
                             className="sv-id-strip sv-comic-panel-border"
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6, type: "spring" }}
                         >
                             <div className="sv-avatar-container">
-                                <motion.img 
-                                    className="sv-avatar" 
-                                    src={profile.basic.avatar} 
-                                    alt={profile.basic.name} 
+                                <motion.img
+                                    className="sv-avatar"
+                                    src={profile.basic.avatar}
+                                    alt={profile.basic.name}
                                     whileHover={{ scale: 1.06, rotate: -2 }}
                                 />
                                 <span className="sv-avatar-badge">Hey....!</span>
@@ -286,217 +541,7 @@ export default function ProfilePage({ onClose }) {
                         </motion.div>
                     </section>
 
-                    <div className="sv-web-divider" aria-hidden="true" />
-
-                    {/* ============ SKILL MATRIX ============ */}
-                    <section id="skill-matrix" className="sv-section">
-                        <h2 className="sv-section-title" data-index="02">Skill Matrix</h2>
-                        <p className="sv-section-sub">Skills sharpened and stacked up over time.</p>
-
-                        <motion.div 
-                            className="sv-skill-grid"
-                            variants={staggerContainer}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, margin: "-100px" }}
-                        >
-                            {SKILL_MODULES.map((mod) => (
-                                <motion.div
-                                    key={mod.id}
-                                    variants={fadeUpItem}
-                                    className="sv-skill-card sv-comic-panel-border"
-                                    style={{ "--card-accent": mod.accent }}
-                                    whileHover={{ scale: 1.03, y: -6 }}
-                                >
-                                    <div className="sv-skill-card-head">
-                                        <span className="sv-skill-id">{mod.id}</span>
-                                        <span className="sv-skill-label">{mod.label}</span>
-                                    </div>
-                                    <ul className="sv-skill-tags">
-                                        {mod.skills.map((skill) => (
-                                            <li key={skill} className="sv-skill-tag">{skill}</li>
-                                        ))}
-                                    </ul>
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    </section>
-
-                    <div className="sv-web-divider" aria-hidden="true" />
-
-                    {/* ============ ABOUT ============ */}
-                    <section id="about" className="sv-section">
-                        <h2 className="sv-section-title" data-index="03">{profile.about.title}</h2>
-                        
-                        <motion.div 
-                            className="sv-comic-panel sv-comic-panel-border"
-                            initial={{ opacity: 0, rotate: -2 }}
-                            whileInView={{ opacity: 1, rotate: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ type: "spring", bounce: 0.5 }}
-                        >
-                            <div className="sv-comic-tab" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                AUDIO TRANSMISSION LOG // SECURE
-                                {/* Animated Waveform representation */}
-                                <div style={{ display: 'flex', gap: '2px', height: '12px', alignItems: 'flex-end' }}>
-                                    {[1, 2, 3, 4, 5].map((i) => (
-                                        <motion.div 
-                                            key={i} 
-                                            style={{ width: '3px', background: 'currentColor', borderRadius: '2px' }}
-                                            animate={{ height: ["4px", "12px", "4px"] }}
-                                            transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                            <p className="sv-comic-desc">{profile.about.description}</p>
-                            <div className="sv-about-grid">
-                                <div className="sv-about-item">
-                                    <span className="sv-id-label">Core Objective</span>
-                                    <p>{profile.about.goal}</p>
-                                </div>
-                                <div className="sv-about-item">
-                                    <span className="sv-id-label">Active Focus</span>
-                                    <p>{profile.about.focus}</p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </section>
-
-                    <div className="sv-web-divider" aria-hidden="true" />
-
-                    {/* ============ EDUCATION ============ */}
-                    <section id="education" className="sv-section">
-                        <h2 className="sv-section-title" data-index="04">Education Records</h2>
-
-                        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                            {profile.education.map((edu) => (
-                                <motion.div variants={fadeUpItem} className="sv-comic-panel sv-comic-panel-border" key={edu.college}>
-                                    <span className="sv-comic-tab">ACADEMIC DOSSIER — VERIFIED</span>
-                                    <div className="sv-id-strip sv-id-strip--flat">
-                                        <div className="sv-id-fields">
-                                            <div className="sv-id-field">
-                                                <span className="sv-id-label">Degree</span>
-                                                <span className="sv-id-value">{edu.degree}</span>
-                                            </div>
-                                            <div className="sv-id-divider" aria-hidden="true" />
-                                            <div className="sv-id-field">
-                                                <span className="sv-id-label">Branch</span>
-                                                <span className="sv-id-value">{edu.branch}</span>
-                                            </div>
-                                            <div className="sv-id-divider" aria-hidden="true" />
-                                            <div className="sv-id-field">
-                                                <span className="sv-id-label">Timeline</span>
-                                                <span className="sv-id-value">{edu.duration} · {edu.semester}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <span className="sv-id-label sv-block-label">Focus Specialties</span>
-                                    <ul className="sv-skill-tags">
-                                        {edu.focus.map((f) => <li key={f} className="sv-skill-tag">{f}</li>)}
-                                    </ul>
-
-                                    <span className="sv-id-label sv-block-label">Core Modules Passed</span>
-                                    <ul className="sv-skill-tags">
-                                        {edu.subjectsCompleted.map((s) => (
-                                            <li key={s} className="sv-skill-tag sv-skill-tag--muted">{s}</li>
-                                        ))}
-                                    </ul>
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    </section>
-
-                    <div className="sv-web-divider" aria-hidden="true" />
-
-                    {/* ============ INTERESTS ============ */}
-                    <section id="interests" className="sv-section">
-                        <h2 className="sv-section-title" data-index="05">Interests & Hobbies</h2>
-                        <p className="sv-section-sub">Off-duty operational parameters.</p>
-
-                        <motion.div 
-                            className="sv-interest-grid"
-                            variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}
-                        >
-                            {profile.interests.map((item) => (
-                                <motion.div
-                                    variants={fadeUpItem}
-                                    className="sv-interest-card sv-comic-panel-border"
-                                    key={item.title}
-                                    whileHover={{ y: -6, scale: 1.02 }}
-                                >
-                                    {/* Icon color now comes purely from .sv-interest-icon in CSS,
-                                        which shares the same var as .sv-interest-title — that's
-                                        what keeps icon + title color identical. */}
-                                    <item.icon className="sv-interest-icon" />
-                                    <span className="sv-interest-title">{item.title}</span>
-                                    <p className="sv-interest-desc">{item.description}</p>
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    </section>
-
-                    <div className="sv-web-divider" aria-hidden="true" />
-
-                    {/* ============ CHANNELS ============ */}
-                    <section id="channels" className="sv-section sv-section--last">
-                        <h2 className="sv-section-title" data-index="06">Direct Multiverse Channels</h2>
-                        <p className="sv-section-sub">Shoot a web. Signal received instantaneously.</p>
-
-                        <div className="sv-channel-grid">
-                            {profile.socials.map((ch) => (
-                                <motion.a
-                                    key={ch.name}
-                                    className="sv-channel-card sv-comic-panel-border"
-                                    href={ch.link} target="_blank" rel="noreferrer"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ type: "spring", stiffness: 300 }}
-                                >
-                                    <div className="sv-channel-top">
-                                        <ch.icon className="sv-channel-icon" />
-                                        <span className="sv-channel-label">{ch.name}</span>
-                                    </div>
-                                    <motion.span 
-                                        className="sv-channel-arrow"
-                                        initial={{ x: 0 }}
-                                        whileHover={{ x: 5 }}
-                                    >→</motion.span>
-                                </motion.a>
-                            ))}
-                        </div>
-
-                        <motion.div 
-                            className="sv-quicklinks sv-comic-panel-border"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="sv-quicklinks-title">Quick Links</span>
-                            <div className="sv-quicklinks-grid">
-                                {profile.contacts.map((c) => (
-                                    c.link ? (
-                                        <a
-                                            className="sv-quicklink-row"
-                                            key={c.type}
-                                            href={c.link}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            <span className="sv-id-label">{c.title}</span>
-                                            <span className="sv-quicklink-value">{c.value}</span>
-                                        </a>
-                                    ) : (
-                                        <div className="sv-quicklink-row" key={c.type}>
-                                            <span className="sv-id-label">{c.title}</span>
-                                            <span className="sv-quicklink-value">{c.value}</span>
-                                        </div>
-                                    )
-                                ))}
-                            </div>
-                        </motion.div>
-                    </section>
+                    <ContentSections />
                 </main>
             </div>
         </motion.div>
