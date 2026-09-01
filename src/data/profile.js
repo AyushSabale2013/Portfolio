@@ -91,7 +91,7 @@ export const profile = {
 
         frontend: ["React", "HTML", "CSS", "Tailwind" , "Figma"],
 
-        backend: ["Node.js", "Express.js" , "FastAPI"],
+        backend: ["ok", "Express.js" , "FastAPI"],
 
         databases: ["MongoDB", "MySQL" , "PostgreSQL"],
 
