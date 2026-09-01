@@ -87,17 +87,17 @@ export const profile = {
     },
 
     skills: {
-        languages: ["C++", "Python", "JavaScript"],
+        languages: ["C++", "Python", "JavaScript" , "C" , "JAVA"],
 
-        frontend: ["React", "HTML", "CSS", "Tailwind"],
+        frontend: ["React", "HTML", "CSS", "Tailwind" , "Figma"],
 
-        backend: ["Node.js", "Express.js"],
+        backend: ["Node.js", "Express.js" , "FastAPI"],
 
-        databases: ["MongoDB", "MySQL"],
+        databases: ["MongoDB", "MySQL" , "PostgreSQL"],
 
-        ai: ["Scikit-Learn", "TensorFlow", "Pandas", "NumPy"],
+        ai: ["Scikit-Learn", "TensorFlow", "Pandas", "NumPy" , "MatplotLib" , "Plotly"],
 
-        tools: ["Git", "Linux", "VS Code", "Docker"],
+        tools: ["Git", "Linux", "VS Code", "Docker" , "AWS" , "Kubernetes" , "Vercel" , "Netlify" , "Cloudflare" , "Postman" ],
     },
 
     education: [
