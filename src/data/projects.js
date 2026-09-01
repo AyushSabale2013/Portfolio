@@ -86,7 +86,7 @@ const projects = [
             "GPS",
         ],
 
-        liveUrl: "https://cam-pass-pi.vercel.app/gate/main-gate",
+        liveUrl: "https://cam-pass-pi.vercel.app/",
 
         githubUrl: "https://github.com/AyushSabale2013/CamPass",
     },
