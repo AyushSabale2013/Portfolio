@@ -1,95 +1,105 @@
 import { useState, useEffect, useRef } from "react";
-import avatarImg from "../assets/profile.png";
 import {
-  FaGithub, FaLinkedin, FaInstagram, FaEnvelope,
-  FaBrain, FaRobot, FaShieldAlt, FaLaptopCode,
-  FaLinux, FaCode, FaPalette, FaRunning, FaFilm,
+  FaEnvelope,
+  FaCode, FaLaptopCode,
   FaMapMarkerAlt, FaUniversity, FaExternalLinkAlt,
-  FaChevronDown, FaChevronUp,
+  FaChevronDown, FaChevronUp, FaGithub,
 } from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
-import { GiSpiderWeb, GiVolleyballBall } from "react-icons/gi";
-import { HiDocumentArrowDown } from "react-icons/hi2";
+import { GiSpiderWeb } from "react-icons/gi";
 
-/* ─── DATA ───────────────────────────────────────────────── */
-const ROLES = [
-  "AI / ML ENGINEER", "FULL STACK DEVELOPER", "SOFTWARE ENGINEER",
-  "COMPETITIVE PROGRAMMER", "REACT DEVELOPER", "CYBERSECURITY ENTHUSIAST",
-  "FRIENDLY NEIGHBORHOOD DEVELOPER", "INNOVATOR",
-];
+// data
+import { profile } from "../data/profile";
+import projects from "../data/projects";
 
-const SOCIALS = [
-  { name: "GitHub",    icon: FaGithub,           href: "https://github.com/AyushSabale2013",                                               col: "#e2e8f0" },
-  { name: "LinkedIn",  icon: FaLinkedin,          href: "https://www.linkedin.com/in/ayush-sabale-763908369",                               col: "#60a5fa" },
-  { name: "LeetCode",  icon: SiLeetcode,          href: "https://leetcode.com/u/AYUSH_SABALE_2282/",                                        col: "#fbbf24" },
-  { name: "Instagram", icon: FaInstagram,         href: "https://www.instagram.com/ayush__sabale/",                                         col: "#f472b6" },
-  { name: "Gmail",     icon: FaEnvelope,          href: "mailto:ayushsabale2013@gmail.com",                                                 col: "#f87171" },
-  { name: "Resume",    icon: HiDocumentArrowDown, href: "/Resume.pdf",                                                                      col: "#34d399" },
-];
+/* ─── DERIVED DATA ───────────────────────────────────────────
+   Everything personal (name, roles, socials, skills, projects,
+   interests, education, contact) now comes from data/profile.js
+   and data/projects.js. Only presentation-only bits that don't
+   live in the data files (brand colors, section icons, nav
+   labels) stay local to this component.
+──────────────────────────────────────────────────────────── */
 
-const SKILLS = {
-  "Languages":  ["C++", "Python", "JavaScript"],
-  "Frontend":   ["React", "HTML", "CSS", "Tailwind"],
-  "Backend":    ["Node.js", "Express.js"],
-  "Databases":  ["MongoDB", "MySQL"],
-  "AI / ML":    ["Scikit-Learn", "TensorFlow", "Pandas", "NumPy"],
-  "Tools":      ["Git", "Linux", "VS Code", "Docker"],
+const ROLES = profile.roles;
+
+// Brand colors for socials aren't part of profile.js (that's a
+// data file, not a style file) — keyed by name so it still works
+// if you add/remove/reorder entries in profile.socials.
+const SOCIAL_COLORS = {
+  GitHub: "#e2e8f0",
+  LinkedIn: "#60a5fa",
+  LeetCode: "#fbbf24",
+  Instagram: "#f472b6",
+  Gmail: "#f87171",
+  Resume: "#34d399",
 };
+const SOCIAL_FALLBACK_COLORS = ["#fbbf24", "#60a5fa", "#f472b6", "#34d399", "#a78bfa", "#fb923c"];
 
-const SKILL_COLORS = ["#fbbf24","#60a5fa","#f472b6","#34d399","#a78bfa","#fb923c"];
+const SOCIALS = profile.socials.map((s, i) => ({
+  name: s.name,
+  icon: s.icon,
+  href: s.link,
+  col: SOCIAL_COLORS[s.name] ?? SOCIAL_FALLBACK_COLORS[i % SOCIAL_FALLBACK_COLORS.length],
+}));
 
-const PROJECTS = [
-  { id:1, title:"Spider OS Portfolio", tag:"WEB DEV",
-    desc:"Interactive desktop-inspired portfolio built with React and Framer Motion.",
-    tech:["React","Framer Motion","JavaScript","CSS"],
-    live:"https://portfolio-five-rosy-095v6w6jha.vercel.app/",
-    github:"https://github.com/AyushSabale2013/Portfolio", accent:"#fbbf24" },
-  { id:2, title:"Track Academy", tag:"FULL STACK",
-    desc:"Complete coaching institute management platform with student and teacher dashboards.",
-    tech:["React","Node.js","Express","MongoDB"],
-    live:"https://www.iiitp.ac.in/",
-    github:"https://github.com/AyushSabale2013/track", accent:"#60a5fa" },
-  { id:3, title:"Solar Flare Prediction", tag:"AI / ML",
-    desc:"ISRO Hackathon project forecasting solar flares using SoLEXS and HEL1OS data from Aditya-L1.",
-    tech:["Python","XGBoost","TensorFlow","React"],
-    live:"https://www.iiitp.ac.in/",
-    github:"https://github.com/AyushSabale2013", accent:"#fb923c" },
-  { id:4, title:"CamPass", tag:"WEB DEV",
-    desc:"Smart campus access system with QR-based entry, GPS verification, and role-based auth.",
-    tech:["React","Node.js","MongoDB","Socket.io","GPS"],
-    live:"https://cam-pass-pi.vercel.app/gate/main-gate",
-    github:"https://github.com/AyushSabale2013/CamPass", accent:"#34d399" },
-];
+// profile.skills keys -> display labels
+const SKILL_LABELS = {
+  languages: "Languages",
+  frontend: "Frontend",
+  backend: "Backend",
+  databases: "Databases",
+  ai: "AI / ML",
+  tools: "Tools",
+};
+const SKILLS = Object.fromEntries(
+  Object.entries(profile.skills).map(([key, tags]) => [SKILL_LABELS[key] ?? key, tags])
+);
 
-const INTERESTS = [
-  { icon: FaBrain,          title: "Artificial Intelligence",  desc: "Building intelligent systems that solve real-world problems.", col:"#fbbf24" },
-  { icon: FaRobot,          title: "Machine Learning",         desc: "Training models and exploring modern AI techniques.",         col:"#60a5fa" },
-  { icon: FaShieldAlt,      title: "Cyber Security",           desc: "Ethical hacking and secure software design.",               col:"#f472b6" },
-  { icon: FaLaptopCode,     title: "Full Stack Dev",           desc: "Creating modern, scalable web applications.",                col:"#34d399" },
-  { icon: FaLinux,          title: "Linux",                    desc: "Customizing systems and terminal environments.",             col:"#a78bfa" },
-  { icon: FaCode,           title: "Competitive Prog.",        desc: "Solving algorithmic problems and sharpening skills.",        col:"#fb923c" },
-  { icon: FaPalette,        title: "UI / UX Design",           desc: "Designing clean, interactive user-friendly interfaces.",    col:"#f43f5e" },
-  { icon: FaRunning,        title: "Athletics",                desc: "Sports, fitness, and an active lifestyle.",                  col:"#fbbf24" },
-  { icon: GiVolleyballBall, title: "Volleyball",               desc: "College volleyball player and main spiker.",                 col:"#60a5fa" },
-  { icon: FaFilm,           title: "Movies & Cinema",          desc: "Storytelling, cinematography and memorable films.",         col:"#34d399" },
-];
+const SKILL_COLORS = ["#fbbf24", "#60a5fa", "#f472b6", "#34d399", "#a78bfa", "#fb923c"];
+
+// projects.js doesn't carry an accent color, so cycle a palette
+// by index the same way skills/interests do.
+const PROJECT_ACCENTS = ["#fbbf24", "#60a5fa", "#fb923c", "#34d399", "#f472b6", "#a78bfa"];
+
+const PROJECTS = projects.map((p, i) => ({
+  id: p.id,
+  title: p.title,
+  tag: p.category?.toUpperCase() ?? "",
+  desc: p.description,
+  tech: p.technologies,
+  live: p.liveUrl,
+  github: p.githubUrl,
+  accent: PROJECT_ACCENTS[i % PROJECT_ACCENTS.length],
+}));
+
+const INTEREST_COLORS = ["#fbbf24", "#60a5fa", "#f472b6", "#34d399", "#a78bfa", "#fb923c", "#f43f5e"];
+
+const INTERESTS = profile.interests.map((it, i) => ({
+  icon: it.icon,
+  title: it.title,
+  desc: it.description,
+  col: INTEREST_COLORS[i % INTEREST_COLORS.length],
+}));
+
+const EDU = profile.education[0];
+const COURSES = EDU.subjectsCompleted;
+
+// profile.contacts -> icon + accent per type (icons aren't in the
+// data file since they're a presentation concern)
+const CONTACT_META = {
+  email:    { icon: FaEnvelope,     col: "#f87171" },
+  phone:    { icon: FaMapMarkerAlt, col: "#fbbf24" },
+  location: { icon: FaMapMarkerAlt, col: "#34d399" },
+  college:  { icon: FaUniversity,   col: "#60a5fa" },
+};
 
 const NAV = [
   { id:"hero",      label:"HOME",    icon: GiSpiderWeb   },
-  { id:"about",     label:"ABOUT",   icon: FaBrain       },
+  { id:"about",     label:"ABOUT",   icon: FaCode        },
   { id:"skills",    label:"SKILLS",  icon: FaCode        },
   { id:"projects",  label:"WORK",    icon: FaLaptopCode  },
   { id:"education", label:"EDU",     icon: FaUniversity  },
-  { id:"interests", label:"VIBES",   icon: FaFilm        },
+  { id:"interests", label:"VIBES",   icon: FaLaptopCode  },
   { id:"contact",   label:"CONTACT", icon: FaEnvelope    },
-];
-
-const COURSES = [
-  "Data Structures & Algorithms","OOP","Discrete Mathematics","DBMS",
-  "Operating Systems","Computer Networks","Computer Architecture",
-  "Compiler Design","Design & Analysis of Algorithms","Theory of Computation",
-  "Software Engineering","Artificial Intelligence","Machine Learning",
-  "Probability & Statistics","Linear Algebra",
 ];
 
 /* ─── CSS ─────────────────────────────────────────────────── */
@@ -544,12 +554,14 @@ export default function PortfolioPhone() {
         <div id="hero" ref={ref("hero")} className="pf-hero">
           <div className="pf-hero-glow"/>
           <div className="pf-avatar-wrap">
-            <img src={avatarImg} alt="Ayush Sabale" className="pf-avatar"/>
+            <img src={profile.basic.avatar} alt={profile.basic.name} className="pf-avatar"/>
             <div className="pf-web-badge"><GiSpiderWeb/></div>
           </div>
-          <div className="pf-name">AYUSH SABALE</div>
-          <div className="pf-loc"><FaMapMarkerAlt size={13}/> Kolhapur, Maharashtra</div>
-          <div className="pf-college-badge">IIIT PUNE · B.TECH CSE · 2024–28</div>
+          <div className="pf-name">{profile.basic.name.toUpperCase()}</div>
+          <div className="pf-loc"><FaMapMarkerAlt size={13}/> {profile.basic.location}</div>
+          <div className="pf-college-badge">
+            {profile.basic.college.toUpperCase()} · {profile.basic.degree.toUpperCase()} · {profile.basic.batch}
+          </div>
           <div className="pf-ticker-wrap">
             <span className="pf-ticker" key={roleKey}>{ROLES[roleIdx]}</span>
           </div>
@@ -582,20 +594,17 @@ export default function PortfolioPhone() {
         {/* ── ABOUT ── */}
         <div id="about" ref={ref("about")} className="pf-section">
           <div className="pf-sec-hdr" style={{background: HDR_COLORS.about}}>
-            <FaBrain/> ORIGIN STORY
+            <FaCode/> ORIGIN STORY
           </div>
           <div className="pf-about-body">
             <div className="pf-about-text">
-              I'm a Computer Science student at <strong>IIIT Pune</strong> passionate about
-              Artificial Intelligence, Machine Learning, and Full Stack Development. I enjoy
-              solving challenging problems and building modern web applications.
+              {profile.about.description}
             </div>
             <div className="pf-goal-box" style={{background:"#a78bfa"}}>
-              🎯 GOAL: Build AI products used by millions of people.
+              🎯 GOAL: {profile.about.goal}
             </div>
             <div className="pf-focus-text">
-              Currently focusing on <strong>DSA</strong>, <strong>Machine Learning</strong>,{" "}
-              <strong>System Design</strong>, and <strong>Full Stack Development</strong>.
+              {profile.about.focus}
             </div>
           </div>
         </div>
@@ -646,12 +655,16 @@ export default function PortfolioPhone() {
                 <div className="pf-proj-desc">{p.desc}</div>
                 <div className="pf-proj-tech">{p.tech.map(t => <span key={t}>{t}</span>)}</div>
                 <div className="pf-proj-links">
-                  <a href={p.live} target="_blank" rel="noreferrer" className="pf-proj-link">
-                    <FaExternalLinkAlt size={12}/> LIVE
-                  </a>
-                  <a href={p.github} target="_blank" rel="noreferrer" className="pf-proj-link">
-                    <FaGithub size={12}/> CODE
-                  </a>
+                  {p.live && (
+                    <a href={p.live} target="_blank" rel="noreferrer" className="pf-proj-link">
+                      <FaExternalLinkAlt size={12}/> LIVE
+                    </a>
+                  )}
+                  {p.github && (
+                    <a href={p.github} target="_blank" rel="noreferrer" className="pf-proj-link">
+                      <FaGithub size={12}/> CODE
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -664,12 +677,16 @@ export default function PortfolioPhone() {
             <FaUniversity/> TRAINING ARC
           </div>
           <div className="pf-edu-body">
-            <div className="pf-edu-degree" style={{color:"#1e40af"}}>B.TECH CSE</div>
-            <div className="pf-edu-branch">Computer Science & Engineering</div>
-            <div className="pf-edu-row"><FaUniversity size={14}/> IIIT Pune, Maharashtra</div>
-            <div className="pf-edu-row"><FaMapMarkerAlt size={14}/> Pune, Maharashtra</div>
+            <div className="pf-edu-degree" style={{color:"#1e40af"}}>{EDU.degree}</div>
+            <div className="pf-edu-branch">{EDU.branch}</div>
+            <div className="pf-edu-row"><FaUniversity size={14}/> {EDU.college}</div>
+            <div className="pf-edu-row"><FaMapMarkerAlt size={14}/> {EDU.location}</div>
             <div>
-              {[{label:"2024–2028",col:"#fbbf24"},{label:"Ongoing",col:"#34d399"},{label:"Sem 5",col:"#60a5fa"}].map(c =>
+              {[
+                {label: EDU.duration, col:"#fbbf24"},
+                {label: EDU.semester, col:"#60a5fa"},
+                {label: `Grad ${EDU.graduation}`, col:"#34d399"},
+              ].map(c =>
                 <span key={c.label} className="pf-edu-chip" style={{background: c.col + "44", borderColor: c.col}}>{c.label}</span>
               )}
             </div>
@@ -678,7 +695,7 @@ export default function PortfolioPhone() {
                 CURRENT FOCUS
               </div>
               <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-                {["Artificial Intelligence","Machine Learning","Full Stack Dev","Deep Neural Architectures"].map(f =>
+                {EDU.focus.map(f =>
                   <span key={f} style={{fontSize:"0.82rem",background:"#fbbf2422",color:"#0d0d1a",
                     border:"2px solid #fbbf24",borderRadius:3,padding:"3px 9px",fontWeight:700}}>{f}</span>
                 )}
@@ -697,7 +714,7 @@ export default function PortfolioPhone() {
         {/* ── INTERESTS ── */}
         <div id="interests" ref={ref("interests")} className="pf-section">
           <div className="pf-sec-hdr" style={{background: HDR_COLORS.interests}}>
-            <FaFilm/> MULTIVERSE OF INTERESTS
+            <FaLaptopCode/> MULTIVERSE OF INTERESTS
           </div>
           <div className="pf-interests-grid">
             {INTERESTS.map(it => (
@@ -716,33 +733,33 @@ export default function PortfolioPhone() {
             <FaEnvelope/> SEND A SIGNAL
           </div>
           <div className="pf-contact-body">
-            <a href="mailto:ayushsabale2013@gmail.com" className="pf-contact-row">
-              <FaEnvelope className="pf-contact-icon" style={{color:"#f87171"}}/>
-              <div>
-                <span className="pf-contact-label">GMAIL</span>
-                <span className="pf-contact-val">ayushsabale2013@gmail.com</span>
-              </div>
-            </a>
-            <div className="pf-contact-row">
-              <FaMapMarkerAlt className="pf-contact-icon" style={{color:"#34d399"}}/>
-              <div>
-                <span className="pf-contact-label">LOCATION</span>
-                <span className="pf-contact-val">Kolhapur, Maharashtra, India</span>
-              </div>
-            </div>
-            <div className="pf-contact-row">
-              <FaUniversity className="pf-contact-icon" style={{color:"#60a5fa"}}/>
-              <div>
-                <span className="pf-contact-label">COLLEGE</span>
-                <span className="pf-contact-val">Indian Institute of Information Technology Pune</span>
-              </div>
-            </div>
+            {profile.contacts.map(c => {
+              const meta = CONTACT_META[c.type] ?? { icon: FaEnvelope, col: "#fbbf24" };
+              const Icon = meta.icon;
+              const href = c.type === "email" ? `mailto:${c.value}` : c.link;
+
+              const content = (
+                <>
+                  <Icon className="pf-contact-icon" style={{color: meta.col}}/>
+                  <div>
+                    <span className="pf-contact-label">{c.title.toUpperCase()}</span>
+                    <span className="pf-contact-val">{c.value}</span>
+                  </div>
+                </>
+              );
+
+              return href ? (
+                <a key={c.type} href={href} className="pf-contact-row">{content}</a>
+              ) : (
+                <div key={c.type} className="pf-contact-row">{content}</div>
+              );
+            })}
           </div>
         </div>
 
         {/* ── FOOTER ── */}
         <div className="pf-footer">
-          MADE WITH <span style={{color:"#fbbf24"}}>❤</span> BY AYUSH SABALE<br/>
+          MADE WITH <span style={{color:"#fbbf24"}}>❤</span> BY {profile.basic.name.toUpperCase()}<br/>
           <span style={{fontSize:"0.82rem",letterSpacing:1,color:"#4a4a6a"}}>
             "Your friendly neighbourhood developer"
           </span>
