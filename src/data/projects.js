@@ -63,9 +63,9 @@ const projects = [
             "React",
         ],
 
-        liveUrl: "https://www.iiitp.ac.in/",
+        liveUrl: "https://solar-ai-flare.vercel.app/",
 
-        githubUrl: "https://github.com/AyushSabale2013",
+        githubUrl: "https://github.com/ashutoshrajsingh82-code/solar-ai-flare",
     },
 
     {
