@@ -163,6 +163,7 @@ const STARTER_CHIPS = [
     "What projects has he built?",
     "Why should we hire him?",
     "How can I contact him?",
+    "open profile",
 ];
 
 const DEFAULT_CHIPS = [
@@ -1010,7 +1011,7 @@ function computeReply(message, ctx) {
 function getReply(message, ctx) {
     const result = computeReply(message, ctx);
     // Only plain questions can be re-run by a "yes", not terminal commands like "cd projects"
-    ctx.chatSuggestions = result.suggestions.filter((item) => !item.startsWith("cd "));
+    ctx.chatSuggestions = result.suggestions.filter((item) => !item.startsWith("cd ") && !item.startsWith("open "));
     return result;
 }
 
