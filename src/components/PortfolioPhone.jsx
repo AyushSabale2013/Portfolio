@@ -524,6 +524,8 @@ export default function PortfolioPhone() {
     window.scrollTo({ top: y, behavior: "smooth" });
   };
 
+  // React invokes these callback refs when it attaches/detaches section nodes.
+  // eslint-disable-next-line react-hooks/refs
   const ref = id => el => { sectionRefs.current[id] = el; };
 
   const HDR_COLORS = {

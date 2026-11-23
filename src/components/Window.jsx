@@ -7,7 +7,6 @@ import {
 } from "react-icons/hi2";
 
 export default function Window({
-    id,
     title,
     children,
     infoContent,
@@ -79,7 +78,7 @@ export default function Window({
 
                 background: "#1E1E20",
 
-                border: "1px solid #343437",
+                border: title === "Terminal" ? "1px solid #3a3a3d" : "1px solid #343437",
 
                 boxShadow:
                     "0 22px 65px rgba(0,0,0,.55)",

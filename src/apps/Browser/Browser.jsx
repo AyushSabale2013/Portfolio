@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+/* eslint-disable react-hooks/refs -- The game loop keeps fast-changing simulation values in refs and forces a render tick. */
+import { useState, useRef, useEffect, useCallback } from "react";
 import "./Browser.css";
 
 /* ===========================
@@ -108,7 +109,7 @@ export default function DinoGame() {
     const [isJumping, setIsJumping] = useState(false);
     const [isDucking, setIsDucking] = useState(false);
 
-    const [renderTick, setRenderTick] = useState(0);
+    const [, setRenderTick] = useState(0);
 
     const [night, setNight] = useState(false);
 

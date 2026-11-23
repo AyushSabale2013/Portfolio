@@ -10,11 +10,13 @@ import { X, Terminal as TermIcon, MousePointer2 } from "lucide-react";
  *   https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500&display=swap
  */
 
-// Corrected: Updated timeout length to precisely 10 seconds
-const AUTO_CLOSE_MS = 10000;
-
-export default function WelcomePopup() {
+export default function WelcomePopup({ onDismiss }) {
   const [visible, setVisible] = useState(true);
+
+  const dismiss = () => {
+    setVisible(false);
+    onDismiss?.();
+  };
 
   useEffect(() => {
     const id = "spidey-popup-fonts";
@@ -27,17 +29,6 @@ export default function WelcomePopup() {
       document.head.appendChild(link);
     }
   }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-    
-    // Establishing clean side-effect execution lifecycle
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, AUTO_CLOSE_MS);
-
-    return () => clearTimeout(timer);
-  }, [visible]);
 
   return (
     <>
@@ -96,7 +87,7 @@ export default function WelcomePopup() {
 
               {/* Close button */}
               <button
-                onClick={() => setVisible(false)}
+                onClick={dismiss}
                 aria-label="Close welcome popup"
                 style={{
                   position: "absolute",
@@ -193,7 +184,7 @@ export default function WelcomePopup() {
               </ul>
 
               <button
-                onClick={() => setVisible(false)}
+                onClick={dismiss}
                 style={{
                   width: "100%",
                   fontFamily: "'JetBrains Mono', monospace",

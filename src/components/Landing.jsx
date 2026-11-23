@@ -22,7 +22,7 @@ export default function Landing({ onEnter }) {
         }, 2200);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [roles.length]);
 
     return (
         <motion.div

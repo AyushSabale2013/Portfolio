@@ -555,15 +555,11 @@ class ArcballControl {
 
     const x = (2 * pos[0] - w - 1) / s;
     const y = (2 * pos[1] - h - 1) / s;
-    let z = 0;
     const xySq = x * x + y * y;
     const rSq = r * r;
-
-    if (xySq <= rSq / 2.0) {
-      z = Math.sqrt(rSq - xySq);
-    } else {
-      z = rSq / Math.sqrt(xySq);
-    }
+    const z = xySq <= rSq / 2.0
+      ? Math.sqrt(rSq - xySq)
+      : rSq / Math.sqrt(xySq);
     return vec3.fromValues(-x, y, z);
   }
 }

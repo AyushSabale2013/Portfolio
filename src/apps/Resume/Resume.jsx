@@ -75,7 +75,6 @@ export default function Resume() {
                 className="resume-header-dock"
                 style={{
                     display: "flex",
-                    justifyContent: "between",
                     alignItems: "center",
                     justifyContent: "space-between",
                     marginBottom: 32,

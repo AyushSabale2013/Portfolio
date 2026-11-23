@@ -44,7 +44,9 @@ const waitForFonts = async font => {
 
   try {
     await document.fonts.load(font);
-  } catch {}
+  } catch {
+    // Continue with the browser's fallback font if the custom font fails.
+  }
 
   await document.fonts.ready;
 };

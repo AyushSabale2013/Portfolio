@@ -235,7 +235,7 @@ const ContentSections = memo(function ContentSections() {
                     transition={{ type: "spring", bounce: 0.5 }}
                 >
                     <div className="sv-comic-tab" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        AUDIO TRANSMISSION LOG // SECURE
+                        Small Description About me
                         {/* Animated Waveform representation */}
                         <div style={{ display: 'flex', gap: '2px', height: '12px', alignItems: 'flex-end' }}>
                             {[1, 2, 3, 4, 5].map((i) => (
@@ -400,14 +400,15 @@ const ContentSections = memo(function ContentSections() {
 export default function ProfilePage({ onClose }) {
     const [glitchActive, setGlitchActive] = useState(false);
     const [activeSection, setActiveSection] = useState(NAV_ITEMS[0].id);
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState(() =>
+        window.matchMedia("(max-width: 768px)").matches
+    );
 
     // Detect phone-sized viewports so we can skip the particle
     // animation there — it's canvas-heavy and not worth the
     // battery/perf cost on small screens.
     useEffect(() => {
         const mql = window.matchMedia("(max-width: 768px)");
-        setIsMobile(mql.matches);
         const handleChange = (e) => setIsMobile(e.matches);
         mql.addEventListener("change", handleChange);
         return () => mql.removeEventListener("change", handleChange);

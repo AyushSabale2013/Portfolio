@@ -20,6 +20,7 @@ export default function BootScreen({ onFinish }) {
 
     useEffect(() => {
         let lineIndex = 0;
+        let currentProgress = 0;
 
         // 1. Spitting out terminal lines (2X Slower: Delays increased to 300ms - 800ms)
         const printLine = () => {
@@ -34,7 +35,7 @@ export default function BootScreen({ onFinish }) {
 
         // 2. Generating rapid, flickering hacker hex logs (Updates every 100ms)
         const hexInterval = setInterval(() => {
-            if (progress < 100) {
+            if (currentProgress < 100) {
                 const randomHex = Array.from({ length: 3 }, () =>
                     `0x${Math.floor(Math.random() * 16777215).toString(16).toUpperCase().padStart(6, '0')}`
                 ).join("  |  ");
@@ -46,22 +47,23 @@ export default function BootScreen({ onFinish }) {
 
         // 3. Cinematic progress bar (Updates every 90ms)
         const progressTimer = setInterval(() => {
-            setProgress((p) => {
-                if (p >= 100) {
-                    clearInterval(progressTimer);
-                    clearInterval(hexInterval);
+            if (currentProgress >= 100) {
+                clearInterval(progressTimer);
+                clearInterval(hexInterval);
 
-                    // Dramatic 1.8-second delay after getting access before transition
-                    setTimeout(() => {
-                        onFinish();
-                    }, 1800);
+                // Dramatic 1.8-second delay after getting access before transition
+                setTimeout(() => {
+                    onFinish();
+                }, 1800);
+                return;
+            }
 
-                    return 100;
-                }
-
-                const increment = Math.random() > 0.7 ? 8 : 2;
-                return Math.min(p + increment, 100);
-            });
+            const increment = Math.random() > 0.7 ? 8 : 2;
+            currentProgress = Math.min(currentProgress + increment, 100);
+            setProgress(currentProgress);
+            if (currentProgress === 100) {
+                setHexGarbage("SYSTEM STABLE // NO LOGS EN ROUTE");
+            }
         }, 90);
 
         return () => {

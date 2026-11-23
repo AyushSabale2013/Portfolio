@@ -1,6 +1,6 @@
 import desktopWallpaper from "../assets/desktop.jpg";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import MenuBar from "./MenuBar";
@@ -19,20 +19,13 @@ export default function Desktop() {
     ========================================== */
 
     const [openApps, setOpenApps] = useState([]);
-    const [highestZ, setHighestZ] = useState(1000);
+    const [, setHighestZ] = useState(1000);
     const [windowZ, setWindowZ] = useState({});
     const [maximizedWindow, setMaximizedWindow] = useState(null);
     const [showProjectsPage, setShowProjectsPage] = useState(false);
     const [showProfilePage, setShowProfilePage] = useState(false); // <-- Added state for Profile full-screen view
     const [showWelcome, setShowWelcome] = useState(true);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowWelcome(false);
-        }, 10000);
-
-        return () => clearTimeout(timer);
-    }, []);
+    const welcomeDismissed = useRef(false);
 
     /* ==========================================
                 DESKTOP GRID
@@ -179,7 +172,20 @@ export default function Desktop() {
     };    /* ==========================================
                 WINDOW FUNCTIONS
     ========================================== */
-    const openApp = (id) => {
+    const focusWindow = useCallback((id) => {
+        setHighestZ((current) => {
+            const next = current + 1;
+
+            setWindowZ((prev) => ({
+                ...prev,
+                [id]: next,
+            }));
+
+            return next;
+        });
+    }, []);
+
+    const openApp = useCallback((id) => {
 
         // Open Projects as a full-screen page
         if (id === "projects") {
@@ -214,25 +220,27 @@ export default function Desktop() {
 
             return [...prev, id];
         });
-    };
+    }, [focusWindow]);
+
+    const handleWelcomeDismiss = useCallback(() => {
+        if (welcomeDismissed.current) return;
+        welcomeDismissed.current = true;
+
+        openApp("terminal");
+        setTimeout(() => setShowWelcome(false), 250);
+    }, [openApp]);
+
+    useEffect(() => {
+        if (!showWelcome) return undefined;
+
+        const timer = setTimeout(handleWelcomeDismiss, 10000);
+        return () => clearTimeout(timer);
+    }, [showWelcome, handleWelcomeDismiss]);
 
     const closeApp = (id) => {
         setOpenApps((prev) =>
             prev.filter((app) => app !== id)
         );
-    };
-
-    const focusWindow = (id) => {
-        setHighestZ((current) => {
-            const next = current + 1;
-
-            setWindowZ((prev) => ({
-                ...prev,
-                [id]: next,
-            }));
-
-            return next;
-        });
     };
 
     return (
@@ -348,7 +356,7 @@ export default function Desktop() {
 
             {/* ================= WELCOME ================= */}
 
-            {showWelcome && <WelcomePopup />}
+            {showWelcome && <WelcomePopup onDismiss={handleWelcomeDismiss} />}
 
             {/* ================= MENU BAR ================= */}
 

@@ -77,13 +77,13 @@ export const profile = {
         title: "About Me",
 
         description:
-            "I'm a Computer Science student at IIIT Pune passionate about Artificial Intelligence, Machine Learning and Full Stack Development. I enjoy solving challenging problems, building modern web applications and continuously improving my software engineering skills.",
+            "I'm a Computer Science student at IIIT Pune interested in Artificial Intelligence, Machine Learning, and Deep Learning. I enjoy building AI-powered applications, working with Large Language Models (LLMs), exploring Agentic AI, and implementing RAG to make AI systems more useful and context-aware. I love solving challenging problems, learning new technologies, and improving my technical skills.",
 
         goal:
             "To become a software engineer building AI products used by millions of people.",
 
         focus:
-            "Currently focusing on DSA, Machine Learning, System Design and Full Stack Development.",
+            "Currently focusing on problem-solving, Mathematics for Machine Learning, Transformers, and Agentic AI development.",
     },
 
     skills: {

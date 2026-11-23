@@ -6,7 +6,9 @@ import Desktop from "./components/Desktop";
 import PortfolioPhone from "./components/PortfolioPhone";
 
 export default function App() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    window.matchMedia("(max-width: 768px)").matches
+  );
   const [stage, setStage] = useState("landing");
 
   useEffect(() => {
@@ -15,9 +17,6 @@ export default function App() {
     const handleChange = (event) => {
       setIsMobile(event.matches);
     };
-
-    // Check initial device size
-    setIsMobile(mediaQuery.matches);
 
     // Handle resizing
     mediaQuery.addEventListener("change", handleChange);

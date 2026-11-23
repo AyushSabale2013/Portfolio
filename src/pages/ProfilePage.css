@@ -823,9 +823,9 @@
   margin: 8px 0 0;
 }
 
-/* About description — darkened per request (was #060a26). */
-.sv-comic-desc {
-  color: #000000;
+/* About description in dark brown for contrast on the light panel. */
+.sv-comic-panel p.sv-comic-desc {
+  color: var(--sv-brown-dark);
   font-weight: 600;
   font-size: 1.02rem;
   line-height: 1.7;
