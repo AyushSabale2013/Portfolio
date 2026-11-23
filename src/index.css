@@ -33,6 +33,34 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Show a lightweight preloader only until React mounts the first screen. */
+#root:empty {
+  display: grid;
+  place-items: center;
+  background: #050608;
+}
+
+#root:empty::before {
+  content: "";
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgb(255 255 255 / 18%);
+  border-top-color: #ff2b46;
+  border-radius: 50%;
+  animation: initial-loading-spin 800ms linear infinite;
+}
+
+@keyframes initial-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root:empty::before {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
+
 button,
 input {
   font: inherit;
