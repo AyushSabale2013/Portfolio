@@ -26,6 +26,12 @@ export default function WindowManager({
         <>
             {Object.entries(apps).map(([id, app], index) => {
                 const Component = app.component;
+                const left = id === "terminal"
+                    ? "25%"
+                    : `${BASE_LEFT + index * OFFSET}%`;
+                const top = id === "terminal"
+                    ? "10%"
+                    : `${BASE_TOP + index * OFFSET}%`;
 
                 return (
                     <Window
@@ -34,8 +40,8 @@ export default function WindowManager({
                         title={app.title}
                         infoContent={app.info}
                         isOpen={openApps.includes(id)}
-                        left={`${BASE_LEFT + index * OFFSET}%`}
-                        top={`${BASE_TOP + index * OFFSET}%`}
+                        left={left}
+                        top={top}
                         zIndex={windowZ[id] ?? 1000}
                         isMaximized={maximizedWindow === id}
                         onFocus={() => focusWindow(id)}                        onToggleMaximize={() => {
