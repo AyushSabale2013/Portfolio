@@ -11,7 +11,6 @@ import {
     FaLock,
     FaPowerOff,
     FaCamera,
-    FaBatteryThreeQuarters,
     FaChevronRight,
 } from "react-icons/fa";
 
@@ -20,6 +19,7 @@ import {
     HiSun,
     HiBolt,
 } from "react-icons/hi2";
+import { MdBatteryCharging50 } from "react-icons/md";
 
 import "./QuickSettings.css";
 
@@ -43,7 +43,7 @@ function SettingPill({ icon, label, sublabel, active, onClick, arrow }) {
     );
 }
 
-export default function QuickSettings({ isOpen, onClose }) {
+export default function QuickSettings({ isOpen, onClose, batteryPercent = 44 }) {
     const panelRef = useRef(null);
 
     const [wifi, setWifi] = useState(true);
@@ -124,8 +124,8 @@ export default function QuickSettings({ isOpen, onClose }) {
                         {/* HEADER */}
                         <div className="qs-header">
                             <div className="qs-battery">
-                                <span>54%</span>
-                                <FaBatteryThreeQuarters className="battery-icon" />
+                                <span>{batteryPercent}%</span>
+                                <MdBatteryCharging50 className="battery-icon" />
                             </div>
 
                             <div className="qs-header-icons">
@@ -183,7 +183,7 @@ export default function QuickSettings({ isOpen, onClose }) {
                             <SettingPill
                                 icon={<HiBolt />}
                                 label="Battery"
-                                sublabel="Optimized"
+                                sublabel="Charging"
                                 arrow
                             />
 

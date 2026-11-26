@@ -4,7 +4,7 @@ import {
     MdWifi,
     MdBluetooth,
     MdVolumeUp,
-    MdBatteryFull,
+    MdBatteryCharging50,
 } from "react-icons/md";
 
 import Calendar from "react-calendar";
@@ -12,6 +12,7 @@ import "../styles/Calendar.css";
 import QuickSettings from "../styles/QuickSettings";
 
 export default function MenuBar() {
+    const batteryPercent = 44;
     const [time, setTime] = useState("");
     const [date, setDate] = useState("");
     const [showCalendar, setShowCalendar] = useState(false);
@@ -233,14 +234,14 @@ export default function MenuBar() {
                         gap: 4,
                     }}
                 >
-                    <MdBatteryFull />
+                    <MdBatteryCharging50 />
                     <span
                         style={{
                             fontSize: 12,
                             fontWeight: 500,
                         }}
                     >
-                        100%
+                        {batteryPercent}%
                     </span>
                 </div>
 
@@ -267,6 +268,7 @@ export default function MenuBar() {
                 <QuickSettings
                     isOpen={showQuickSettings}
                     onClose={() => setShowQuickSettings(false)}
+                    batteryPercent={batteryPercent}
                 />
             </div>
         </motion.div>

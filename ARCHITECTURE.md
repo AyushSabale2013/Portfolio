@@ -44,6 +44,7 @@ The Profile and Projects pages are also used by their registry wrappers, but the
 | `src/components/` | Landing, boot, desktop, icons, dock, menu bar, welcome popup, windows, and visual effects. |
 | `src/apps/apps.js` | Central registry of desktop applications and virtual folders. |
 | `src/apps/` | Individual app implementations, including Terminal, profile, projects, contact, resume, home, folder, and the dinosaur runner. |
+| `src/chatbot/` | Validated portfolio knowledge, retrieval, local NLP and replies, plus the simulated Terminal command registry. |
 | `src/pages/` | Full-screen Profile and Projects page layouts. |
 | `src/data/profile.js` | Profile, education, skills, interests, contact data, and social links. |
 | `src/data/projects.js` | Project descriptions, categories, technologies, images, and links. |
@@ -55,7 +56,7 @@ The Profile and Projects pages are also used by their registry wrappers, but the
 
 ## Data flow and navigation
 
-Profile and project content is imported from the data modules. The Profile page and mobile portfolio both read `profile.js` and `projects.js`; Terminal also reads these modules when preparing local answers. This keeps shared portfolio facts in one place.
+The Profile page and mobile portfolio read `src/data/profile.js` and `src/data/projects.js`. Terminal chatbot facts come from `src/chatbot/knowledge/portfolio.json`, validated and queried through the knowledge API. `src/data/projects.js` derives its project text from that JSON and maps bundled images by project ID.
 
 Navigation is callback-based rather than URL-based:
 
@@ -68,15 +69,55 @@ The project does not currently configure a client-side route system.
 
 ## Terminal behavior
 
-`src/apps/Terminal/Terminal.jsx` contains both the command registry and the local conversational response logic:
+`src/apps/Terminal/Terminal.jsx` owns the Kali-style UI, input, conversation rendering, command history, and typing animation. Message rows are memoized so typing in the input does not re-render the full transcript.
 
-- Recognized commands such as `help`, `ls`, `clear`, `history`, `echo`, `cd`, and `open` run locally.
-- `cd` and `open` update a virtual prompt directory and use `openApp` to navigate to registered portfolio sections.
-- Other natural-language input is matched against rules, glossary entries, and data from `profile.js` and `projects.js`.
+- `src/chatbot/commands.js` contains the simulated command registry. Recognized commands such as `help`, `ls`, `clear`, `history`, `echo`, `cd`, and `open` run locally.
+- `cd` and `open` update a virtual prompt directory and use `openApp` to navigate to registered portfolio sections. No real shell commands run.
+- `src/chatbot/nlp/` contains local text preprocessing, intent ranking, sentiment, bounded conversation context, reply builders, and the `getReply` entry point. Input is capped at 500 characters. Portfolio facts are read through the validated knowledge API.
 - The reply is shown with a typing delay and character-by-character display, with reduced-motion support.
+- The Terminal component is lazy-loaded from the app registry. `WindowManager` provides a `Suspense` boundary while it loads.
 - Conversation messages, command history, current directory, and input navigation are held in component state or refs. `clear` empties the visible conversation and cancels a pending reply.
 
 There is no `fetch`, Axios, or other chatbot backend client in the current source. Terminal responses are local; the typing display is a presentation effect, not server streaming.
+
+## Portfolio chatbot knowledge
+
+`src/chatbot/knowledge/portfolio.json` is the chatbot's source of truth for public owner information: profile, education, skills, projects, experience, achievements, certifications, contact details and interests. Leave unknown or private fields empty; the bot uses explicit fallbacks rather than inventing details.
+
+```text
+src/chatbot/knowledge/
+  portfolio.json   chatbot data
+  loader.js        validation, normalization and sanitizing
+  retrieval.js     read-only query API
+  text.js          matching helpers
+  index.js         ready-to-use knowledge instance
+  knowledge.test.js
+
+src/chatbot/nlp/
+  preprocess.js    normalization, tokenization, stemming and fuzzy matching
+  intents.js       intent definitions and ranking
+  sentiment.js     sentiment classification
+  context.js       bounded conversation history and list-reference resolution
+  replies.js       knowledge-driven reply builders and getReply implementation
+  sections.js      generic section reply formatting
+  compliments.js   compliment handling
+  index.js         public NLP exports
+
+src/chatbot/commands.js   simulated command registry; no real shell execution
+```
+
+```text
+portfolio.json -> loader.validateKnowledge -> retrieval.createKnowledgeBase -> local reply builders
+                                                                  └---------> src/data/projects.js -> UI project cards
+```
+
+The loader never throws for malformed data. It trims and de-duplicates strings, skips projects without titles, keeps only HTTP(S) links, validates email addresses and removes secret-looking fields or values. Validation issues are collected as errors or warnings; development builds print warnings to the browser console.
+
+The retrieval API covers profile, education, contact, skills, projects and the experience, achievement, certification and interest sections. It supports project lookup by title or alias, technology, category and topic. Technology matching tolerates punctuation and parenthetical labels. Entity extraction returns portfolio-backed entities only.
+
+To add a project, update `portfolio.json` with a unique ID and its public details, then add the bundled image mapping in `src/data/projects.js`. Optional project fields include aliases, summary, problem, highlights, topics and `isPortfolioSite`. The data is bundled with the frontend, so only public information belongs in the JSON.
+
+Project list follow-ups such as “the first one”, “second one”, “last one”, “that one”, “the other one” and “both” use the bounded conversation context. Topic search uses a small vocabulary in `retrieval.js` together with the project categories, descriptions, technologies and topics.
 
 `src/cliVersion.js` reads the build-time constant `__SPIDER_CLI_VERSION__`. `vite.config.js` reads the `Spider CLI` entry from `versions.md`, validates its format, and injects the value. Components should use the exported brand/version instead of adding a separate literal.
 

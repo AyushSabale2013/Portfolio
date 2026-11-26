@@ -1,3 +1,3 @@
 # Application versions
 
-- Spider CLI: 2.1.0
+- Spider CLI: 2.4.0

@@ -1,0 +1,376 @@
+{
+    "meta": {
+        "schemaVersion": 1,
+        "lastUpdated": "2026-11-26",
+        "note": "Public portfolio knowledge source. The chatbot must answer only from this file and must not invent missing details. Empty values mean the information is not available."
+    },
+    "profile": {
+        "name": "Ayush",
+        "fullName": "Ayush Ramesh Sabale",
+        "headline": "Computer Science Undergraduate | Software Development | AI and Machine Learning",
+        "summary": "I am a Computer Science and Engineering undergraduate at IIIT Pune. I enjoy solving challenging problems and building software, web applications, and AI-powered projects. I am interested in Artificial Intelligence, Machine Learning, Deep Learning, Large Language Models, and modern AI systems.",
+        "focus": "Currently focusing on problem-solving, Mathematics for Machine Learning, Transformers, Deep Learning, and Agentic AI development.",
+        "goal": "To become a software engineer who builds useful AI-powered products that can make an impact at scale.",
+        "location": "Kolhapur, Maharashtra, India",
+        "interests": [
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Deep Learning",
+            "Agentic AI",
+            "Large Language Models",
+            "Retrieval-Augmented Generation (RAG)",
+            "Cybersecurity",
+            "Full Stack Development",
+            "Linux",
+            "Competitive Programming",
+            "UI/UX Design",
+            "Athletics",
+            "Volleyball",
+            "Movies and Cinema"
+        ],
+        "expertise": [
+            "Frontend development with React",
+            "Backend development with Node.js and Express",
+            "Building full-stack web applications",
+            "Machine learning projects using Python",
+            "Working with data and machine learning libraries",
+            "Interactive user interface development"
+        ],
+        "strengths": [
+            "Problem-solving",
+            "Learning new technologies",
+            "Building practical projects",
+            "Interest in mathematics and analytical thinking",
+            "Teamwork through collaborative projects and sports"
+        ],
+        "currentLearning": [
+            "Mathematics for Machine Learning",
+            "Transformers",
+            "Deep Learning",
+            "Agentic AI",
+            "Large Language Models"
+        ],
+        "roles": [
+            "AI / ML Engineer",
+            "Full Stack Developer",
+            "Software Engineer",
+            "Competitive Programmer",
+            "React Developer",
+            "Data Science Enthusiast",
+            "Cybersecurity Enthusiast"
+        ]
+    },
+    "education": [
+        {
+            "institution": "Indian Institute of Information Technology Pune",
+            "shortName": "IIIT Pune",
+            "degree": "Bachelor of Technology",
+            "field": "Computer Science and Engineering",
+            "batch": "2024-2028",
+            "status": "Undergraduate",
+            "expectedGraduation": "2028",
+            "currentSemester": "5th Semester",
+            "location": "Pune, Maharashtra, India",
+            "subjectsCompleted": [
+                "Data Structures and Algorithms",
+                "Object-Oriented Programming",
+                "Discrete Mathematics",
+                "Database Management Systems",
+                "Operating Systems",
+                "Computer Networks",
+                "Computer Architecture and Organization",
+                "Compiler Design",
+                "Design and Analysis of Algorithms",
+                "Theory of Computation",
+                "Software Engineering",
+                "Artificial Intelligence",
+                "Machine Learning",
+                "Probability and Statistics",
+                "Linear Algebra"
+            ],
+            "academicFocus": [
+                "Artificial Intelligence",
+                "Machine Learning",
+                "Full Stack Development",
+                "Deep Neural Architectures"
+            ],
+            "website": "https://www.iiitp.ac.in/"
+        }
+    ],
+    "skills": {
+        "languages": {
+            "label": "Programming Languages",
+            "items": [
+                "C",
+                "C++",
+                "Java",
+                "JavaScript",
+                "Python"
+            ]
+        },
+        "frontend": {
+            "label": "Frontend Development and Design",
+            "items": [
+                "React",
+                "HTML",
+                "CSS",
+                "Tailwind CSS",
+                "Framer Motion",
+                "Figma"
+            ]
+        },
+        "backend": {
+            "label": "Backend Development",
+            "items": [
+                "Node.js",
+                "Express.js",
+                "FastAPI"
+            ]
+        },
+        "databases": {
+            "label": "Databases",
+            "items": [
+                "MongoDB",
+                "MySQL",
+                "PostgreSQL"
+            ]
+        },
+        "ai": {
+            "label": "AI, Machine Learning and Data",
+            "items": [
+                "Scikit-learn",
+                "XGBoost",
+                "TensorFlow",
+                "Pandas",
+                "NumPy",
+                "Matplotlib",
+                "Plotly"
+            ]
+        },
+        "tools": {
+            "label": "Tools and Platforms",
+            "items": [
+                "Git",
+                "GitHub",
+                "Linux",
+                "VS Code",
+                "Docker",
+                "AWS",
+                "Kubernetes",
+                "Vercel",
+                "Netlify",
+                "Cloudflare",
+                "Postman"
+            ]
+        }
+    },
+    "projects": [
+        {
+            "id": 1,
+            "title": "Spider OS Portfolio",
+            "aliases": [
+                "Spider OS",
+                "SpiderOS",
+                "Portfolio"
+            ],
+            "category": "Web Development",
+            "description": "An interactive desktop-inspired portfolio built with React and Framer Motion.",
+            "summary": "A portfolio designed to look and feel like a computer desktop, with interactive windows, applications, and a terminal instead of a conventional scrolling page.",
+            "problem": "Presents personal information and projects through an interactive desktop-style experience.",
+            "highlights": [
+                "Desktop-inspired interface",
+                "Interactive application windows",
+                "Terminal-style portfolio interaction"
+            ],
+            "technologies": [
+                "React",
+                "Framer Motion",
+                "JavaScript",
+                "CSS",
+                "Vite",
+                "Tailwind CSS"
+            ],
+            "topics": [
+                "Frontend Development",
+                "UI/UX",
+                "Interactive Interfaces"
+            ],
+            "isPortfolioSite": true,
+            "liveUrl": "https://portfolio-five-rosy-095v6w6jha.vercel.app/",
+            "githubUrl": "https://github.com/AyushSabale2013/Portfolio"
+        },
+        {
+            "id": 2,
+            "title": "Track Academy",
+            "aliases": [
+                "Track Academy",
+                "Coaching Institute Management Platform"
+            ],
+            "category": "Full Stack Development",
+            "description": "A coaching institute management platform with student and teacher dashboards.",
+            "summary": "A web platform intended to support coaching institute workflows through separate student and teacher experiences.",
+            "problem": "Aims to organize coaching institute information and provide dedicated interfaces for students and teachers.",
+            "highlights": [
+                "Student dashboard",
+                "Teacher dashboard",
+                "Full-stack web application"
+            ],
+            "technologies": [
+                "React",
+                "Node.js",
+                "Express",
+                "MongoDB",
+                "Figma"
+            ],
+            "topics": [
+                "Full Stack Development",
+                "Dashboard Design",
+                "Database Integration"
+            ],
+            "isPortfolioSite": false,
+            "liveUrl": "",
+            "githubUrl": "https://github.com/AyushSabale2013/track"
+        },
+        {
+            "id": 3,
+            "title": "Solar Flare Prediction",
+            "aliases": [
+                "Solar Flare",
+                "ARUN-X",
+                "Aditya-L1 Solar Flare Prediction"
+            ],
+            "category": "AI / Machine Learning",
+            "description": "An ISRO hackathon project focused on forecasting solar flares using SoLEXS and HEL1OS observations from the Aditya-L1 mission.",
+            "summary": "A machine learning project that uses solar X-ray observations from India's Aditya-L1 mission to identify and forecast solar flare activity.",
+            "problem": "Explores how data from different solar instruments can be processed and used to predict solar flare events.",
+            "highlights": [
+                "Works with HEL1OS hard X-ray and SoLEXS soft X-ray observations",
+                "Includes a data preprocessing and feature engineering pipeline",
+                "Uses GOES flare event data as a reference for event labels",
+                "Explores flare classification, nowcasting, and forecasting at multiple time horizons"
+            ],
+            "technologies": [
+                "Python",
+                "XGBoost",
+                "TensorFlow",
+                "React",
+                "Pandas",
+                "NumPy",
+                "Astropy"
+            ],
+            "topics": [
+                "Solar Physics Data",
+                "Time-Series Processing",
+                "Machine Learning",
+                "Classification",
+                "Forecasting"
+            ],
+            "isPortfolioSite": false,
+            "liveUrl": "https://solar-ai-flare.vercel.app/",
+            "githubUrl": "https://github.com/ashutoshrajsingh82-code/solar-ai-flare"
+        },
+        {
+            "id": 4,
+            "title": "CamPass",
+            "aliases": [
+                "Campass",
+                "Smart Campus Entry Management System"
+            ],
+            "category": "Web Development",
+            "description": "A smart campus access system using QR-based entry and GPS verification.",
+            "summary": "A campus gate management system designed to help manage and track entry and exit activity using QR codes and location verification.",
+            "problem": "Aims to make campus entry workflows more organized and support verification at campus gates.",
+            "highlights": [
+                "QR-based entry workflow",
+                "GPS-based verification",
+                "Real-time communication using Socket.io"
+            ],
+            "technologies": [
+                "React",
+                "Node.js",
+                "Express.js",
+                "MongoDB Atlas",
+                "Socket.io",
+                "GPS"
+            ],
+            "topics": [
+                "Full Stack Development",
+                "Access Management",
+                "Real-Time Applications",
+                "Location Verification"
+            ],
+            "isPortfolioSite": false,
+            "liveUrl": "https://cam-pass-pi.vercel.app/",
+            "githubUrl": "https://github.com/AyushSabale2013/CamPass"
+        }
+    ],
+    "experience": [],
+    "achievements": [],
+    "certifications": [],
+    "contact": {
+        "email": "ayushsabale2013@gmail.com",
+        "emailLink": "mailto:ayushsabale2013@gmail.com",
+        "phone": "",
+        "resumeUrl": "/Resume.pdf",
+        "socials": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/AyushSabale2013",
+                "type": "code"
+            },
+            {
+                "name": "LinkedIn",
+                "url": "https://www.linkedin.com/in/ayush-sabale-763908369/",
+                "type": "professional"
+            },
+            {
+                "name": "LeetCode",
+                "url": "",
+                "type": "coding"
+            }
+        ],
+        "otherLinks": [
+            {
+                "name": "Resume",
+                "url": "/Resume.pdf",
+                "type": "document"
+            },
+            {
+                "name": "College Website",
+                "url": "https://www.iiitp.ac.in/",
+                "type": "education"
+            }
+        ]
+    },
+    "chatbotGuidance": {
+        "purpose": "Answer visitor questions about Ayush, his education, skills, projects, interests, and public contact links.",
+        "rules": [
+            "Use this JSON file as the single source of truth for portfolio knowledge.",
+            "Do not invent experience, achievements, certifications, project metrics, or missing URLs.",
+            "If a requested detail is empty or unavailable, clearly say that the information is not currently provided.",
+            "When asked for a link, return the matching URL from this file.",
+            "When asked how to contact Ayush, provide the public email address and its mailto link.",
+            "Do not reveal private information that is not included as public portfolio information.",
+            "Distinguish between technologies used in a project and technologies listed as general skills.",
+            "Do not claim expert-level proficiency unless the data explicitly supports it."
+        ],
+        "suggestedQuestions": [
+            "Who is Ayush?",
+            "Tell me about Ayush's background.",
+            "Where does Ayush study?",
+            "What is Ayush currently focusing on?",
+            "What programming languages does Ayush know?",
+            "What are Ayush's frontend and backend skills?",
+            "What AI and machine learning tools does Ayush use?",
+            "Show me all of Ayush's projects.",
+            "Tell me about the Solar Flare Prediction project.",
+            "What is Spider OS?",
+            "Show me Ayush's GitHub profile.",
+            "Show me Ayush's LinkedIn profile.",
+            "How can I contact Ayush?",
+            "Can I email Ayush?",
+            "Can I view Ayush's resume?",
+            "What are Ayush's interests?"
+        ]
+    }
+}

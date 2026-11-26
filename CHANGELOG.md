@@ -1,8 +1,19 @@
 # Changelog
 
-This log summarizes notable changes found in the Git history and current source. Git commit history is the source for released milestones. Items under **Unreleased** describe the working tree inspected on 2026-11-24 and may not be committed.
+This log summarizes notable changes found in the Git history and current source. Git commit history is the source for released milestones. Items under **Unreleased** describe the current working tree and may not be committed.
 
-## Unreleased — working tree on 2026-11-24
+## Unreleased — working tree on 2026-11-26
+
+- Moved Terminal Q&A logic and the simulated command registry out of the React UI into `src/chatbot/` modules.
+- Added project list reference resolution, unknown technology fallbacks, portfolio section replies, structured intent/entity/sentiment metadata, constructive responses to negative feedback, bounded history, and the 500 character input limit.
+- Lazy-loaded Terminal and memoized transcript rows; added Node tests for NLP, knowledge-backed replies, context, and simulated commands.
+- Documented the chatbot knowledge base, data flow, validation behavior, retrieval API and project update process in the README and architecture guide.
+- Kept `portfolio.json` as the chatbot's source for public facts; `src/data/projects.js` derives project text and maps bundled project images by ID.
+- Updated the Terminal banner to use `Kali Spider CLI` with the version from `versions.md`; removed the simulated distro and login timestamp lines.
+- Restyled suggested questions with light gray text, transparent backgrounds and no borders.
+- Updated the Spider CLI version in `versions.md` to `2.3.0`.
+
+## Earlier unreleased notes — working tree on 2026-11-24
 
 - Spider CLI is set to `2.0.1` in `versions.md`; Vite injects that value into the app at build time.
 - Terminal includes local commands, command recall and completion, and a rule-based portfolio Q&A helper with a typing animation. It uses local profile and project data; there is no chatbot API integration in this repository.

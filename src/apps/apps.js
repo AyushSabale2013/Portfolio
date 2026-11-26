@@ -5,7 +5,8 @@ import Home from "./Home/Home";
 import Projects from "./Projects/Projects";
 import Resume from "./Resume/Resume";
 import Contact from "./Contact/Contact";
-import Terminal from "./Terminal/Terminal";
+import { lazy } from "react";
+const Terminal = lazy(() => import("./Terminal/Terminal"));
 import Folder from "./Folder/Folder";
 import Browser from "./Browser/Browser";
 
@@ -65,7 +66,7 @@ export const apps = {
         title: "Terminal",
         component: Terminal,
         icon: terminalIcon,
-        info: "Interact with Spider CLI, an interactive terminal and AI-powered portfolio assistant. Execute commands such as help, ls, clear, whoami, and history, or ask questions about Ayush, his skills, projects, and technical experience using natural language.",
+        info: "Interact with Spider CLI, an interactive terminal and local portfolio assistant. Execute commands such as help, ls, clear, whoami, and history, or ask questions about Ayush, his skills, projects, and technical experience using natural language.",
         desktop: true,
     },
 

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Window from "./Window";
 import { apps } from "../apps/apps";
 
@@ -57,12 +58,14 @@ export default function WindowManager({
                             closeApp(id);
                         }}
                     >
+                        <Suspense fallback={null}>
                         <Component
                             openApp={openApp}
                             closeApp={closeApp}
                             focusWindow={focusWindow}
                             windowId={id}
                         />
+                        </Suspense>
                     </Window>
                 );
             })}
