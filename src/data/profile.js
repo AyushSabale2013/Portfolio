@@ -63,7 +63,7 @@ export const profile = {
         {
             name: "LeetCode",
             icon: SiLeetcode,
-            link: "https://www.iiitp.ac.in/",
+            link: "https://leetcode.com/u/AYUSH_SABALE_2282/",
         },
 
         {

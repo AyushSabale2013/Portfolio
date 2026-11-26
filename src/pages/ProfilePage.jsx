@@ -1,6 +1,9 @@
 // src/pages/ProfilePage.jsx
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState, useCallback, memo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
+import { Mail, FileDown, Phone, ArrowLeft } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 import "./ProfilePage.css";
 
 // components
@@ -55,6 +58,34 @@ const staggerContainer = {
 const fadeUpItem = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 120, damping: 14 } }
+};
+
+const ACTION_ICONS = { mail: Mail, github: FaGithub, resume: FileDown, phone: Phone };
+const contactValue = (type) => profile.contacts.find((contact) => contact.type === type)?.value ?? "";
+const socialLink = (name) => profile.socials.find((social) => social.name === name)?.link ?? "";
+const photoContactActions = [
+    { name: "Mail", icon: "mail", href: `mailto:${contactValue("email")}` },
+    { name: "GitHub", icon: "github", href: socialLink("GitHub") },
+    { name: "Resume", icon: "resume", href: socialLink("Resume") },
+    ...(contactValue("phone") ? [{ name: "Call", icon: "phone", href: `tel:${contactValue("phone").replace(/[^+\d]/g, "")}` }] : []),
+];
+
+const getQuickLink = (contact) => {
+    if (contact.type === "email") {
+        return {
+            href: `mailto:${contact.value}`,
+            fallbackHref: `mailto:${contact.value}`,
+            gmailHref: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contact.value)}`,
+        };
+    }
+    if (contact.type === "phone") {
+        return { href: `tel:${contact.value.replace(/[^+\d]/g, "")}` };
+    }
+    if (contact.type === "location") {
+        return { href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.value)}` };
+    }
+    if (contact.type === "college") return { href: "https://iiitp.ac.in/" };
+    return null;
 };
 
 /* ------------------------------------------------------
@@ -341,11 +372,11 @@ const ContentSections = memo(function ContentSections() {
                 <p className="sv-section-sub">Shoot a web. Signal received instantaneously.</p>
 
                 <div className="sv-channel-grid">
-                    {profile.socials.map((ch) => (
+                    {profile.socials.filter((ch) => Boolean(ch.link)).map((ch) => (
                         <motion.a
                             key={ch.name}
                             className="sv-channel-card sv-comic-panel-border"
-                            href={ch.link} target="_blank" rel="noreferrer"
+                            href={ch.link} target="_blank" rel="noopener noreferrer"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             transition={{ type: "spring", stiffness: 300 }}
@@ -371,25 +402,26 @@ const ContentSections = memo(function ContentSections() {
                 >
                     <span className="sv-quicklinks-title">Quick Links</span>
                     <div className="sv-quicklinks-grid">
-                        {profile.contacts.map((c) => (
-                            c.link ? (
+                        {profile.contacts.map((c) => {
+                            const link = getQuickLink(c);
+                            return (
                                 <a
                                     className="sv-quicklink-row"
                                     key={c.type}
-                                    href={c.link}
-                                    target="_blank"
-                                    rel="noreferrer"
+                                    href={link?.href}
+                                    {...(link?.gmailHref ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                                    onClick={link?.gmailHref ? (event) => {
+                                        event.preventDefault();
+                                        const opened = window.open(link.gmailHref, "_blank");
+                                        if (opened) opened.opener = null;
+                                        else window.location.href = link.fallbackHref;
+                                    } : undefined}
                                 >
                                     <span className="sv-id-label">{c.title}</span>
                                     <span className="sv-quicklink-value">{c.value}</span>
                                 </a>
-                            ) : (
-                                <div className="sv-quicklink-row" key={c.type}>
-                                    <span className="sv-id-label">{c.title}</span>
-                                    <span className="sv-quicklink-value">{c.value}</span>
-                                </div>
-                            )
-                        ))}
+                            );
+                        })}
                     </div>
                 </motion.div>
             </section>
@@ -399,6 +431,8 @@ const ContentSections = memo(function ContentSections() {
 
 export default function ProfilePage({ onClose }) {
     const [glitchActive, setGlitchActive] = useState(false);
+    const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+    const photoButtonRef = useRef(null);
     const [activeSection, setActiveSection] = useState(NAV_ITEMS[0].id);
     const [isMobile, setIsMobile] = useState(() =>
         window.matchMedia("(max-width: 768px)").matches
@@ -413,6 +447,19 @@ export default function ProfilePage({ onClose }) {
         mql.addEventListener("change", handleChange);
         return () => mql.removeEventListener("change", handleChange);
     }, []);
+
+    useEffect(() => {
+        if (!isPhotoOpen) return undefined;
+        const trigger = photoButtonRef.current;
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") setIsPhotoOpen(false);
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            trigger?.focus({ preventScroll: true });
+        };
+    }, [isPhotoOpen]);
 
     // Scroll-spy: highlight the sidebar item for whichever section is in view.
     // Only touches activeSection state — SidebarNav is the only thing that
@@ -515,12 +562,21 @@ export default function ProfilePage({ onClose }) {
                             transition={{ delay: 0.6, type: "spring" }}
                         >
                             <div className="sv-avatar-container">
-                                <motion.img
-                                    className="sv-avatar"
-                                    src={profile.basic.avatar}
-                                    alt={profile.basic.name}
-                                    whileHover={{ scale: 1.06, rotate: -2 }}
-                                />
+                                <motion.button
+                                    ref={photoButtonRef}
+                                    type="button"
+                                    className="sv-avatar-trigger"
+                                    onClick={() => setIsPhotoOpen(true)}
+                                    aria-label={`View a larger photo of ${profile.basic.name}`}
+                                >
+                                    <motion.img
+                                        className="sv-avatar"
+                                        src={profile.basic.avatar}
+                                        alt={profile.basic.name}
+                                        onClick={() => setIsPhotoOpen(true)}
+                                        whileHover={{ scale: 1.06, rotate: -2 }}
+                                    />
+                                </motion.button>
                                 <span className="sv-avatar-badge">Hey....!</span>
                             </div>
                             <div className="sv-id-fields">
@@ -545,6 +601,57 @@ export default function ProfilePage({ onClose }) {
                     <ContentSections />
                 </main>
             </div>
+            {createPortal(
+                <AnimatePresence>
+                    {isPhotoOpen && (
+                        <motion.div
+                            className="sv-photo-lightbox"
+                            role="presentation"
+                            onClick={() => setIsPhotoOpen(false)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                        >
+                            <motion.div
+                                className="sv-photo-dialog"
+                                role="dialog"
+                                aria-modal="true"
+                                aria-label={`${profile.basic.name} profile photo`}
+                                onClick={(event) => event.stopPropagation()}
+                                initial={{ opacity: 0, scale: 0.88 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.92 }}
+                                transition={{ duration: 0.24, ease: "easeOut" }}
+                            >
+                            <div className="sv-photo-content">
+                                <img src={profile.basic.avatar} alt={profile.basic.name} />
+                                <nav className="sv-photo-actions" aria-label="Contact options">
+                                    {photoContactActions.map((action) => {
+                                        const Icon = ACTION_ICONS[action.icon];
+                                        return (
+                                            <a
+                                                key={action.name}
+                                                className="sv-photo-action"
+                                                href={action.href}
+                                                {...(["github", "resume"].includes(action.icon) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                                            >
+                                                <Icon size={18} aria-hidden="true" />
+                                                <span>{action.name}</span>
+                                            </a>
+                                        );
+                                    })}
+                                </nav>
+                            </div>
+                            </motion.div>
+                            <button className="sv-photo-close" type="button" autoFocus onClick={() => setIsPhotoOpen(false)} aria-label="Back to profile">
+                                <ArrowLeft size={24} aria-hidden="true" />
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </motion.div>
     );
 }

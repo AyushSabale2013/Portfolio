@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   FaEnvelope,
   FaCode, FaLaptopCode,
   FaMapMarkerAlt, FaUniversity, FaExternalLinkAlt,
-  FaChevronDown, FaChevronUp, FaGithub,
+  FaChevronDown, FaChevronUp, FaGithub, FaArrowLeft, FaFilePdf, FaPhone,
 } from "react-icons/fa";
 import { GiSpiderWeb } from "react-icons/gi";
 
@@ -40,6 +41,15 @@ const SOCIALS = profile.socials.map((s, i) => ({
   href: s.link,
   col: SOCIAL_COLORS[s.name] ?? SOCIAL_FALLBACK_COLORS[i % SOCIAL_FALLBACK_COLORS.length],
 }));
+
+const PHOTO_ACTIONS = [
+  { name: "Mail", icon: FaEnvelope, href: `mailto:${profile.contacts.find(c => c.type === "email")?.value ?? ""}` },
+  { name: "GitHub", icon: FaGithub, href: profile.socials.find(s => s.name === "GitHub")?.link ?? "" },
+  { name: "Resume", icon: FaFilePdf, href: profile.socials.find(s => s.name === "Resume")?.link ?? "" },
+  ...(profile.contacts.find(c => c.type === "phone")?.value
+    ? [{ name: "Call", icon: FaPhone, href: `tel:${profile.contacts.find(c => c.type === "phone").value.replace(/[^+\d]/g, "")}` }]
+    : []),
+].filter(action => action.href);
 
 // profile.skills keys -> display labels
 const SKILL_LABELS = {
@@ -190,6 +200,12 @@ const CSS = `
   object-fit: cover;
   animation: avatarPop 0.8s cubic-bezier(.34,1.56,.64,1) 0.25s both;
 }
+.pf-avatar-button {
+  display: block; width: 110px; height: 110px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent;
+  cursor: pointer; pointer-events: auto;
+}
+.pf-avatar-button img { display: block; cursor: pointer; pointer-events: auto; }
 @keyframes avatarPop {
   from { transform: scale(0) rotate(-18deg); opacity: 0; }
   to   { transform: scale(1) rotate(0); opacity: 1; }
@@ -202,6 +218,7 @@ const CSS = `
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem;
   animation: spinSlow 8s linear infinite;
+  pointer-events: none;
 }
 @keyframes spinSlow { to { transform: rotate(360deg); } }
 
@@ -485,6 +502,46 @@ const CSS = `
   color: #3d3d5c;
 }
 
+.pf-photo-viewer {
+  position: fixed; inset: 0; z-index: 2147483000;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(8, 8, 12, 0.94); backdrop-filter: blur(10px);
+  animation: pfViewerFade 0.22s ease-out both;
+}
+@keyframes pfViewerFade { from { opacity: 0; } to { opacity: 1; } }
+.pf-photo-dialog {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; width: 100%; max-height: 94vh; position: relative;
+  animation: pfViewerZoom 0.24s ease-out both;
+}
+@keyframes pfViewerZoom { from { opacity: 0; transform: scale(.88); } to { opacity: 1; transform: scale(1); } }
+.pf-photo-image {
+  display: block; width: min(86vw, 820px); height: min(64vh, 620px);
+  max-width: 100%; object-fit: contain; object-position: center;
+  border-radius: 10px; box-shadow: 0 24px 70px rgba(0,0,0,.55);
+}
+.pf-photo-actions {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; width: 100%;
+}
+.pf-photo-action {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-width: 78px; min-height: 44px; padding: 9px 12px;
+  border: 2px solid #fff9ed; border-radius: 8px; background: rgba(255,255,255,.12);
+  color: #fff9ed; font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; text-decoration: none;
+}
+.pf-photo-close {
+  position: fixed; top: 14px; left: 14px; z-index: 1;
+  display: grid; place-items: center; width: 46px; height: 46px;
+  border: 1px solid rgba(255,255,255,.55); border-radius: 50%;
+  background: rgba(0,0,0,.55); color: #fff; font-size: 20px; cursor: pointer;
+}
+@media (max-width: 480px) {
+  .pf-photo-image { width: 90vw; height: 58vh; }
+  .pf-photo-actions { gap: 8px; }
+  .pf-photo-action { flex: 1 1 calc(50% - 8px); min-width: 0; min-height: 48px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -496,6 +553,8 @@ export default function PortfolioPhone() {
   const [roleKey, setRoleKey] = useState(0);
   const [activeNav, setActiveNav] = useState("hero");
   const [coursesOpen, setCoursesOpen] = useState(false);
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const photoButtonRef = useRef(null);
   const sectionRefs = useRef({});
 
   /* Role rotator */
@@ -506,6 +565,19 @@ export default function PortfolioPhone() {
     }, 2400);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    if (!isPhotoOpen) return undefined;
+    const trigger = photoButtonRef.current;
+    const handleKeyDown = event => {
+      if (event.key === "Escape") setIsPhotoOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      trigger?.focus({ preventScroll: true });
+    };
+  }, [isPhotoOpen]);
 
   /* Scroll spy */
   useEffect(() => {
@@ -556,7 +628,9 @@ export default function PortfolioPhone() {
         <div id="hero" ref={ref("hero")} className="pf-hero">
           <div className="pf-hero-glow"/>
           <div className="pf-avatar-wrap">
-            <img src={profile.basic.avatar} alt={profile.basic.name} className="pf-avatar"/>
+            <button ref={photoButtonRef} type="button" className="pf-avatar-button" onClick={() => setIsPhotoOpen(true)} aria-label={`View a larger photo of ${profile.basic.name}`}>
+              <img src={profile.basic.avatar} alt={profile.basic.name} className="pf-avatar" onClick={() => setIsPhotoOpen(true)}/>
+            </button>
             <div className="pf-web-badge"><GiSpiderWeb/></div>
           </div>
           <div className="pf-name">{profile.basic.name.toUpperCase()}</div>
@@ -779,6 +853,23 @@ export default function PortfolioPhone() {
           ))}
         </nav>
       </div>
+      {isPhotoOpen && createPortal(
+        <div className="pf-photo-viewer" onClick={() => setIsPhotoOpen(false)}>
+          <div className="pf-photo-dialog" role="dialog" aria-modal="true" aria-label={`${profile.basic.name} profile photo`} onClick={event => event.stopPropagation()}>
+            <img src={profile.basic.avatar} alt={profile.basic.name} className="pf-photo-image"/>
+            <nav className="pf-photo-actions" aria-label="Contact options">
+              {PHOTO_ACTIONS.map(action => {
+                const Icon = action.icon;
+                return <a key={action.name} className="pf-photo-action" href={action.href} {...(["GitHub", "Resume"].includes(action.name) ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                  <Icon aria-hidden="true"/><span>{action.name}</span>
+                </a>;
+              })}
+            </nav>
+          </div>
+          <button className="pf-photo-close" type="button" autoFocus onClick={() => setIsPhotoOpen(false)} aria-label="Back to profile"><FaArrowLeft aria-hidden="true"/></button>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
